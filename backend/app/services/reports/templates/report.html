@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Match Report — {{ company }}</title>
+<style>
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 40px; color: #1a1a1a; }
+  .cover-page { text-align: center; margin-bottom: 40px; padding: 40px 0; border-bottom: 2px solid #e5e7eb; }
+  .cover-page h1 { font-size: 28px; margin-bottom: 10px; }
+  .cover-page .company { font-size: 22px; color: #4b5563; }
+  .score-gauge { font-size: 48px; font-weight: bold; margin: 20px 0; }
+  .score-green { color: #16a34a; }
+  .score-yellow { color: #ca8a04; }
+  .score-red { color: #dc2626; }
+  .section { margin-bottom: 30px; }
+  .section h2 { font-size: 20px; border-bottom: 1px solid #d1d5db; padding-bottom: 8px; }
+  .breakdown-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .breakdown-table th, .breakdown-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
+  .breakdown-table .bar { background: #3b82f6; height: 16px; border-radius: 4px; }
+  .skill-list { list-style: none; padding: 0; }
+  .skill-list li { padding: 4px 0; }
+  .skill-list li::before { content: "✓ "; color: #16a34a; font-weight: bold; }
+  .missing-list li::before { content: "✗ "; color: #dc2626; }
+  .talking-points li { margin-bottom: 6px; }
+  .cover-letter { white-space: pre-wrap; line-height: 1.6; background: #f9fafb; padding: 20px; border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<div class="cover-page">
+  <h1>{{ job_title }}</h1>
+  <p class="company">{{ company }}</p>
+  <div class="score-gauge {{ score_color }}">{{ overall_score }}</div>
+  <p>Overall Match Score</p>
+</div>
+
+<div class="section">
+  <h2>Score Breakdown</h2>
+  <table class="breakdown-table">
+    <thead>
+      <tr><th>Dimension</th><th>Score</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for dim, score in breakdown.items() %}
+      <tr>
+        <td>{{ dim | capitalize }}</td>
+        <td>{{ score }}/10</td>
+        <td><div class="bar" style="width: {{ score * 10 }}%"></div></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Reasoning</h2>
+  <p>{{ reasoning }}</p>
+</div>
+
+<div class="section">
+  <h2>Strengths</h2>
+  <ul class="skill-list">
+  {% for s in strengths %}
+    <li>{{ s }}</li>
+  {% endfor %}
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Skills to Develop</h2>
+  <ul class="skill-list missing-list">
+  {% for s in missing_skills %}
+    <li>{{ s }}</li>
+  {% endfor %}
+  </ul>
+</div>
+
+{% if interview_talking_points %}
+<div class="section">
+  <h2>Interview Talking Points</h2>
+  <ul class="talking-points">
+  {% for point in interview_talking_points %}
+    <li>{{ point }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if salary_min or salary_max %}
+<div class="section">
+  <h2>Salary Range</h2>
+  <p>
+  {% if salary_min and salary_max %}
+    {{ salary_currency | default("USD") }} {{ "{:,}".format(salary_min) }} – {{ "{:,}".format(salary_max) }}
+  {% elif salary_min %}
+    From {{ salary_currency | default("USD") }} {{ "{:,}".format(salary_min) }}
+  {% elif salary_max %}
+    Up to {{ salary_currency | default("USD") }} {{ "{:,}".format(salary_max) }}
+  {% endif %}
+  </p>
+</div>
+{% endif %}
+
+{% if cover_letter %}
+<div class="section">
+  <h2>Cover Letter</h2>
+  <div class="cover-letter">{{ cover_letter }}</div>
+</div>
+{% endif %}
+
+</body>
+</html>

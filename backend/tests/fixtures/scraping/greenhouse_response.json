@@ -1,0 +1,46 @@
+{
+  "jobs": [
+    {
+      "id": 4012345,
+      "title": "Senior Software Engineer",
+      "content": "<p>We are looking for a <strong>Senior Software Engineer</strong> to join our platform team.</p><h3>What you'll do</h3><ul><li>Build scalable APIs with Python and FastAPI</li><li>Design distributed systems</li><li>Mentor junior engineers</li></ul><h3>Requirements</h3><ul><li>5+ years of software engineering experience</li><li>Strong Python skills</li><li>Experience with PostgreSQL</li></ul>",
+      "updated_at": "2025-01-15T10:00:00Z",
+      "location": {
+        "name": "San Francisco, CA"
+      },
+      "absolute_url": "https://boards.greenhouse.io/testcompany/jobs/4012345",
+      "metadata": [],
+      "departments": [
+        {
+          "id": 101,
+          "name": "Engineering"
+        }
+      ],
+      "offices": [
+        {
+          "id": 201,
+          "name": "San Francisco",
+          "location": "San Francisco, CA"
+        }
+      ]
+    },
+    {
+      "id": 4012346,
+      "title": "Product Designer",
+      "content": "<p>Join our design team to create beautiful user experiences.</p><h3>Requirements</h3><ul><li>3+ years of product design</li><li>Figma proficiency</li></ul>",
+      "updated_at": "2025-01-14T09:00:00Z",
+      "location": {
+        "name": "Remote"
+      },
+      "absolute_url": "https://boards.greenhouse.io/testcompany/jobs/4012346",
+      "metadata": [],
+      "departments": [
+        {
+          "id": 102,
+          "name": "Design"
+        }
+      ],
+      "offices": []
+    }
+  ]
+}

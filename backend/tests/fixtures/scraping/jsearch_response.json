@@ -1,0 +1,79 @@
+{
+  "status": "OK",
+  "request_id": "test-request-001",
+  "parameters": {
+    "query": "Python Developer",
+    "page": 1,
+    "num_pages": 1
+  },
+  "data": [
+    {
+      "job_id": "jsearch-aaa111",
+      "employer_name": "TechCorp Solutions",
+      "employer_logo": "https://example.com/logo1.png",
+      "employer_website": "https://techcorp.example.com",
+      "job_title": "Python Developer",
+      "job_description": "We are seeking a Python Developer to join our growing team. You'll build backend services, work with databases, and contribute to our cloud infrastructure. Strong Python skills and experience with web frameworks required.",
+      "job_city": "Austin",
+      "job_state": "TX",
+      "job_country": "US",
+      "job_is_remote": false,
+      "job_apply_link": "https://techcorp.example.com/careers/python-dev",
+      "job_employment_type": "FULLTIME",
+      "job_min_salary": 120000,
+      "job_max_salary": 160000,
+      "job_salary_currency": "USD",
+      "job_salary_period": "YEAR",
+      "job_required_experience": {
+        "no_experience_required": false,
+        "required_experience_in_months": 36,
+        "experience_level": "mid"
+      },
+      "job_posted_at_datetime_utc": "2025-01-10T00:00:00Z"
+    },
+    {
+      "job_id": "jsearch-bbb222",
+      "employer_name": "DataFlow Inc.",
+      "employer_logo": null,
+      "employer_website": null,
+      "job_title": "Senior Python Engineer",
+      "job_description": "Join DataFlow as a Senior Python Engineer. Lead the development of our data pipeline platform. Experience with FastAPI, PostgreSQL, and AWS required.",
+      "job_city": "",
+      "job_state": "",
+      "job_country": "US",
+      "job_is_remote": true,
+      "job_apply_link": "https://dataflow.example.com/jobs/senior-python",
+      "job_employment_type": "FULLTIME",
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_currency": null,
+      "job_salary_period": null,
+      "job_required_experience": {
+        "no_experience_required": false,
+        "required_experience_in_months": 60,
+        "experience_level": "senior"
+      },
+      "job_posted_at_datetime_utc": "2025-01-12T00:00:00Z"
+    },
+    {
+      "job_id": "jsearch-ccc333",
+      "employer_name": "StartupABC",
+      "employer_logo": null,
+      "employer_website": null,
+      "job_title": "Full Stack Developer (Python/React)",
+      "job_description": "We need a full stack developer comfortable with Python on the backend and React on the frontend.",
+      "job_city": "San Francisco",
+      "job_state": "CA",
+      "job_country": "US",
+      "job_is_remote": false,
+      "job_apply_link": "https://startupxyz.example.com/apply/fullstack",
+      "job_employment_type": "FULLTIME",
+      "job_min_salary": 140000,
+      "job_max_salary": 180000,
+      "job_salary_currency": "USD",
+      "job_salary_period": "YEAR",
+      "job_required_experience": null,
+      "job_posted_at_datetime_utc": "2025-01-11T00:00:00Z"
+    }
+  ]
+}

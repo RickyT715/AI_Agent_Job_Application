@@ -1,0 +1,73 @@
+{
+  "results": [
+    {
+      "id": 4001001,
+      "title": "Senior Python Developer",
+      "description": "We are looking for a Senior Python Developer to join our team. Strong experience with Django, FastAPI, and cloud services required.",
+      "redirect_url": "https://www.adzuna.com/land/ad/4001001",
+      "company": {
+        "display_name": "TechCorp Inc"
+      },
+      "location": {
+        "display_name": "San Francisco, CA",
+        "area": ["San Francisco", "California", "US"]
+      },
+      "salary_min": 140000,
+      "salary_max": 190000,
+      "contract_time": "full_time",
+      "contract_type": "permanent",
+      "category": {
+        "label": "IT Jobs",
+        "tag": "it-jobs"
+      },
+      "created": "2026-02-20T10:00:00Z"
+    },
+    {
+      "id": 4001002,
+      "title": "Backend Engineer",
+      "description": "Backend engineer role focused on building scalable microservices with Python and Go.",
+      "redirect_url": "https://www.adzuna.com/land/ad/4001002",
+      "company": {
+        "display_name": "DataFlow Labs"
+      },
+      "location": {
+        "display_name": "Remote",
+        "area": ["Remote"]
+      },
+      "salary_min": null,
+      "salary_max": null,
+      "contract_time": "full_time",
+      "contract_type": "permanent",
+      "category": {
+        "label": "IT Jobs",
+        "tag": "it-jobs"
+      },
+      "created": "2026-02-21T14:30:00Z"
+    },
+    {
+      "id": 4001003,
+      "title": "DevOps Contractor",
+      "description": "Short-term contract role for DevOps automation and CI/CD pipeline work.",
+      "redirect_url": "https://www.adzuna.com/land/ad/4001003",
+      "company": {
+        "display_name": "CloudNine Systems"
+      },
+      "location": {
+        "display_name": "New York, NY",
+        "area": ["New York", "New York", "US"]
+      },
+      "salary_min": 80,
+      "salary_max": 120,
+      "contract_time": "part_time",
+      "contract_type": "contract",
+      "category": {
+        "label": "IT Jobs",
+        "tag": "it-jobs"
+      },
+      "created": "2026-02-22T09:15:00Z"
+    }
+  ],
+  "count": 3,
+  "mean": 95000,
+  "__CLASS__": "Adzuna::API::Response::JobSearchResults"
+}

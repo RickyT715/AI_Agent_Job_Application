@@ -1,0 +1,1705 @@
+{
+  "Software Engineer": {
+    "scraped_count": 100,
+    "scored_count": 20,
+    "sources_used": [
+      "greenhouse",
+      "arbeitnow"
+    ],
+    "duration_sec": 448.9,
+    "matches": [
+      {
+        "title": "Software Engineer Intern, Developer Tools (2026) (London, United Kingdom)",
+        "company": "Figma",
+        "location": "London, England",
+        "score": 6.8,
+        "breakdown": {
+          "skills": 9,
+          "experience": 8,
+          "education": 10,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses excellent technical skills, including strong proficiency in React, TypeScript, and AI/LLM integrations, which perfectly align with Figma's Developer Tools and AI initiatives. However, the overall match is significantly hindered by a location mismatch (London vs. North America/Remote preferences) and a potential timeline conflict, as the candidate graduates in late 2025 for a 2026 internship role.",
+        "strengths": [
+          "Strong proficiency in JavaScript, TypeScript, and React, which are core to Figma's tech stack.",
+          "Extensive experience building AI-assisted tools, RAG pipelines, and LLM agents, highly relevant to Figma's AI-assisted code translation goals.",
+          "Solid academic foundation with a Master's in Electrical and Computer Engineering and a high GPA.",
+          "Proven ability to build end-to-end full-stack applications and data pipelines."
+        ],
+        "missing_skills": [
+          "Redux",
+          "WebAssembly"
+        ],
+        "apply_url": "https://boards.greenhouse.io/figma/jobs/5621177004?gh_jid=5621177004",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer Intern (Summer 2026) - Austin, TX",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 6.5,
+        "breakdown": {
+          "skills": 8,
+          "experience": 9,
+          "education": 3,
+          "location": 7,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong technical skills in Python, C++, and TypeScript, along with impressive internship experience building production-grade systems. However, there is a significant timeline mismatch: the candidate is scheduled to graduate in October 2025, making them likely ineligible for a Summer 2026 internship which requires currently enrolled students.",
+        "strengths": [
+          "Proficiency in key languages used at Cloudflare, including Python, C++, and JavaScript/TypeScript.",
+          "Demonstrated passion for software development through complex personal projects and research.",
+          "Solid foundation in backend development, microservices, and containerization (Docker, FastAPI)."
+        ],
+        "missing_skills": [
+          "Go",
+          "Rust",
+          "Experience with Cloudflare developer platform (Bonus)"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7206269?gh_jid=7206269",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, AI - Lisbon",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 6.2,
+        "breakdown": {
+          "skills": 8,
+          "experience": 6,
+          "education": 10,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong AI/ML skills and relevant experience in TypeScript/JavaScript, matching the technical and bonus requirements well. However, the significant location mismatch (Lisbon vs. North America) and potential salary expectation gap lower the overall fit.",
+        "strengths": [
+          "Strong AI/ML expertise including RAG, LLMs, and Computer Vision",
+          "Proficiency in TypeScript and JavaScript",
+          "Solid educational background in Computer Engineering",
+          "Experience with containerization (Docker) and backend APIs (FastAPI, Node.js)"
+        ],
+        "missing_skills": [
+          "Rust programming language",
+          "Deep Linux/UNIX systems knowledge",
+          "WebAssembly",
+          "Extensive full-time production experience"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/6998511?gh_jid=6998511",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer - Network Services",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 6.2,
+        "breakdown": {
+          "skills": 6,
+          "experience": 7,
+          "education": 9,
+          "location": 4,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong educational background in Computer Engineering and solid backend/API development skills. However, their experience is heavily skewed towards AI/ML and Computer Vision, whereas the role emphasizes network protocols, distributed systems, and systems-level programming. Additionally, there is a location mismatch as the role requires hybrid work in specific cities (Austin, London, Lisbon) while the candidate is based in Canada.",
+        "strengths": [
+          "Strong educational background in Computer Engineering (BASc and MEng)",
+          "Experience designing and building APIs (FastAPI, REST APIs)",
+          "Experience with relational databases (PostgreSQL) and containerization (Docker)",
+          "Proficient in multiple programming languages including C++, Python, Java, and JavaScript"
+        ],
+        "missing_skills": [
+          "Go or Rust programming languages",
+          "Deep understanding of network protocols (TCP/IP, TLS, HTTP)",
+          "Experience with high-volume distributed systems",
+          "Unix systems-level programming"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7343760?gh_jid=7343760",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer Intern (Summer 2026)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 5.8,
+        "breakdown": {
+          "skills": 8,
+          "experience": 9,
+          "education": 6,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong technical skills and relevant internship experience that align well with Cloudflare's engineering stack. However, there is a major location mismatch (London vs. North America/Remote) and a timeline conflict, as the candidate graduates in October 2025 for a Summer 2026 internship.",
+        "strengths": [
+          "Proficiency in Python, C++, and TypeScript/JavaScript, which are key languages at Cloudflare.",
+          "Proven track record of building production-grade systems and data pipelines during previous internships.",
+          "Demonstrated passion for software development through complex, full-stack personal projects."
+        ],
+        "missing_skills": [
+          "Go",
+          "Rust",
+          "Cloudflare Developer Platform experience"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7296923?gh_jid=7296923",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, Application Performance",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 5.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 2,
+          "education": 10,
+          "location": 6,
+          "salary": 5
+        },
+        "reasoning": "The candidate has an excellent educational background in Computer Engineering but falls significantly short of the desired 4+ years of professional experience. Additionally, their skill set is heavily focused on AI/ML and full-stack development, whereas the role requires deep expertise in distributed systems, networking protocols, and systems-level programming.",
+        "strengths": [
+          "Strong educational foundation with a Master's and Bachelor's in Computer Engineering",
+          "Experience with PostgreSQL, Git, and Docker",
+          "Demonstrated ability to architect and deploy complex software pipelines"
+        ],
+        "missing_skills": [
+          "4+ years of professional software engineering experience",
+          "Systems-level programming languages (Go, Rust)",
+          "Deep understanding of networking protocols (TCP/QUIC, HTTP, Linux networking)",
+          "Experience building and debugging high-volume distributed systems",
+          "Monitoring and alerting for production systems"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7261038?gh_jid=7261038",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer (Backend)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 2,
+          "education": 9,
+          "location": 4,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong educational background and solid foundational skills in Python, TypeScript, and AI/ML integrations. However, they lack the required 3-5+ years of enterprise experience and specific expertise in developing Model Context Protocol (MCP) servers and Infrastructure as Code (Terraform/Ansible) mandated by the role.",
+        "strengths": [
+          "Strong programming skills in Python and TypeScript.",
+          "Experience building AI/ML pipelines, specifically RAG and LLM integrations.",
+          "Solid backend development experience with FastAPI, REST APIs, and Docker."
+        ],
+        "missing_skills": [
+          "Model Context Protocol (MCP) server development",
+          "3-5+ years of enterprise experience",
+          "Infrastructure as Code (Terraform, Ansible, Chef)",
+          "CI/CD pipeline development (GitLab/GitHub Actions)",
+          "Go (programming language)"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7603643?gh_jid=7603643",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, R2 Storage",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 4,
+          "experience": 3,
+          "education": 8,
+          "location": 4,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong academic background in Computer Engineering and solid internship experience in AI/ML and backend development. However, they lack the specific distributed storage systems experience and key programming languages (Rust, Go) required for the Cloudflare R2 team, and are currently a student with only internship-level experience.",
+        "strengths": [
+          "Academic foundation in Computer Engineering",
+          "Experience with TypeScript in full-stack projects",
+          "Familiarity with high-throughput backend technologies like Kafka, Redis, and Docker",
+          "Strong problem-solving skills demonstrated through complex architectural projects"
+        ],
+        "missing_skills": [
+          "Rust",
+          "Go",
+          "Distributed storage systems",
+          "Consensus algorithms",
+          "Data replication"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7104127?gh_jid=7104127",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, Enterprise Readiness",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 2,
+          "education": 9,
+          "location": 5,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses a strong educational background and impressive projects in AI and full-stack development, aligning well with the job's interest in Agentic AI. However, the role requires 3+ years of professional backend experience and proficiency in Go and Kubernetes, whereas the candidate is at the entry/intern level with a Python/JS focus.",
+        "strengths": [
+          "Strong academic background in Computer Engineering (Master's and Bachelor's).",
+          "Direct experience with Agentic AI development (LangGraph, RAG), which is explicitly mentioned as a desirable skill.",
+          "Familiarity with full-stack development and core technologies like React, TypeScript, PostgreSQL, Redis, and Docker."
+        ],
+        "missing_skills": [
+          "Go (Golang)",
+          "Kubernetes",
+          "Observability tools (Kibana, Jaeger, Sentry, Elasticsearch)",
+          "PHP",
+          "3+ years of professional backend experience"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/6467350?gh_jid=6467350",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, KV ",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 4.2,
+        "breakdown": {
+          "skills": 5,
+          "experience": 2,
+          "education": 8,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong academic background in computer engineering and AI/ML, but lacks the required 2+ years of high-volume production software experience and specific systems programming languages like Go or Rust. Furthermore, there is a complete mismatch in location preferences, as the role requires hybrid work in Lisbon or London, while the candidate prefers North America or remote.",
+        "strengths": [
+          "Proficiency in C++ and JavaScript",
+          "Experience building APIs and working with data pipelines",
+          "Strong academic foundation in Computer Engineering",
+          "Hands-on experience with Redis, which is relevant to key-value store development"
+        ],
+        "missing_skills": [
+          "Go",
+          "Rust",
+          "2+ years of high-volume production experience",
+          "Distributed systems at scale",
+          "Monitoring and alerting tools"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7493433?gh_jid=7493433",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Network Software Engineer",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 2,
+          "experience": 3,
+          "education": 7,
+          "location": 3,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong background in AI/ML and full-stack development, but lacks the core networking and systems programming (Go/Rust) skills required for this Network Software Engineer role. Additionally, the hybrid location requirement in Austin, London, or Lisbon conflicts with the candidate's current location in Canada and preference for remote work.",
+        "strengths": [
+          "Experience with public clouds (AWS, Azure) and containerization (Docker)",
+          "Experience designing and integrating RESTful APIs and backend systems",
+          "Strong educational background in Computer Engineering with high GPA"
+        ],
+        "missing_skills": [
+          "Go or Rust programming",
+          "Layer 3 and Layer 4 networking (VPCs, BGP, GRE tunnels)",
+          "Network engineering protocols (OSPF, MPLS)",
+          "Kubernetes",
+          "Prometheus",
+          "Network orchestration platforms"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7343755?gh_jid=7343755",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer (Full Stack)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 10,
+          "location": 1,
+          "salary": 3
+        },
+        "reasoning": "The candidate has relevant technical skills in Python, React, and AI technologies, along with a matching educational background. However, they fall significantly short of the 6+ years of required experience and have conflicting location preferences (Bengaluru in-office vs. North America/Remote).",
+        "strengths": [
+          "Strong educational background with a B.A.Sc and ongoing M.Eng in relevant engineering fields.",
+          "Relevant full-stack tech stack experience including Python, Java, React, TypeScript, and PostgreSQL.",
+          "Hands-on experience with AI components, vector databases (Milvus, ChromaDB), and RAG pipelines, which is a highlighted requirement."
+        ],
+        "missing_skills": [
+          "6+ years of professional experience",
+          "Go",
+          "Scala",
+          "ClickHouse",
+          "Mentorship experience",
+          "System architecture at scale"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7566807?gh_jid=7566807",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, Cloudforce One",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 4,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses several relevant technical skills including TypeScript, PostgreSQL, REST APIs, and Redis, along with a strong educational background. However, they fall significantly short of the 5+ years of required experience, as they only have internship-level experience, making them a poor fit for this mid-to-senior level role.",
+        "strengths": [
+          "Experience with TypeScript, PostgreSQL, and REST APIs",
+          "Familiarity with nice-to-have technologies like Kafka, React, and Redis",
+          "Demonstrated ability to write well-tested code (80%+ coverage in projects)"
+        ],
+        "missing_skills": [
+          "5+ years of software engineering experience",
+          "Go (Golang)",
+          "Rust",
+          "Kubernetes",
+          "Trust & Safety or Legal domain experience"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7309174?gh_jid=7309174",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer , AI Agents Tooling & Platforms ",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 9,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "While the candidate has strong foundational knowledge in AI frameworks and TypeScript, they fall significantly short of the 5+ years of required experience. Additionally, the candidate's location preferences (North America/Remote) conflict with the hybrid requirement in Lisbon or London.",
+        "strengths": [
+          "Hands-on experience building AI agents and RAG pipelines using LangChain and LangGraph.",
+          "Proficiency in TypeScript, JavaScript, and C++.",
+          "Strong academic background with a Master's degree in Electrical and Computer Engineering."
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience.",
+          "Go or Rust programming languages.",
+          "Experience with high-volume, large-scale distributed systems.",
+          "Cloudflare Workers development experience."
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/5879768?gh_jid=5879768",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Network Dev",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 4,
+          "experience": 1,
+          "education": 9,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a current master's student with only internship experience, falling significantly short of the 5+ years required for this senior-level role. Furthermore, the position is located in Bengaluru (In-Office), which directly conflicts with the candidate's preferences for Remote, US, or Canada.",
+        "strengths": [
+          "Strong educational background with degrees in Computer Engineering and Electrical and Computer Engineering.",
+          "Proficiency in Python and SQL (PostgreSQL).",
+          "Hands-on experience with containerization using Docker."
+        ],
+        "missing_skills": [
+          "5+ years of software development experience",
+          "Network automation",
+          "Golang",
+          "Observability systems (Prometheus, Grafana)",
+          "CI/CD pipelines",
+          "Layer 2 and Layer 3 networking protocols"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7167953?gh_jid=7167953",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer, AI Applications Tooling",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 3,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses relevant foundational skills in AI, LLMs, and modern agent patterns, which aligns well with the job's technical focus. However, they are currently a student with only internship experience, falling drastically short of the 5+ years of professional experience required for this senior-level role.",
+        "strengths": [
+          "Hands-on experience with LLMs, RAG, and modern agent patterns (LangGraph)",
+          "Proficiency in TypeScript and full-stack development",
+          "Experience building AI evaluation pipelines using RAGAS"
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience",
+          "Cloudflare platform or edge/serverless architectures",
+          "Large-scale distributed systems experience",
+          "Security depth (prompt injection protection, PII handling, secrets management)"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/6628327?gh_jid=6628327",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer- AI",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 2,
+          "education": 8,
+          "location": 1,
+          "salary": 3
+        },
+        "reasoning": "The candidate possesses relevant technical skills in AI, LLMs, and LangChain, but falls significantly short of the 5+ years of required experience. Furthermore, there is a complete mismatch in location, as the role is in-office in Bengaluru, India, while the candidate prefers North America or remote work.",
+        "strengths": [
+          "Hands-on experience with LangChain, RAG, and LLM application development.",
+          "Proficiency in TypeScript and building full-stack AI applications.",
+          "Experience deploying applications using Docker and FastAPI."
+        ],
+        "missing_skills": [
+          "5+ years of software development experience",
+          "Cloudflare AI Gateway",
+          "Kubernetes (K8s)",
+          "Terraform",
+          "Observability tools (Grafana, OTEL)"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7603196?gh_jid=7603196",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, Game Development (f/m/d)",
+        "company": "Iteration One GmbH",
+        "location": "Karlsruhe",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 3,
+          "experience": 2,
+          "education": 8,
+          "location": 1,
+          "salary": 3
+        },
+        "reasoning": "The candidate possesses a strong AI background that aligns well with the company's vision, but lacks the core C# and Unity skills required for the role. Furthermore, the candidate's location preferences and salary expectations are highly incompatible with an on-site role in Germany.",
+        "strengths": [
+          "Extensive hands-on experience with AI, LLMs, and RAG pipelines, matching the company's AI-first culture.",
+          "Background in mobile app development and Android Studio.",
+          "Strong academic foundation in Software and Computer Engineering."
+        ],
+        "missing_skills": [
+          "C#",
+          "Unity",
+          "Live game operations",
+          "Game performance optimization",
+          "UniRx"
+        ],
+        "apply_url": "https://www.arbeitnow.com/jobs/companies/iteration-one-gmbh/software-engineer-game-development-karlsruhe-245798",
+        "source": "arbeitnow"
+      },
+      {
+        "title": "Senior Software Engineer - Energy Markets (m/f/d)",
+        "company": "1KOMMA5˚",
+        "location": "Berlin",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 3,
+          "experience": 1,
+          "education": 7,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a recent graduate with internship experience, whereas the role requires a Senior Software Engineer with leadership capabilities and specific domain knowledge in energy markets. Additionally, there is a geographic mismatch as the role is based in Germany and the candidate prefers North America.",
+        "strengths": [
+          "Strong background in Python and backend development",
+          "Experience with data pipelines and processing",
+          "Solid educational foundation in Computer Engineering"
+        ],
+        "missing_skills": [
+          "Senior-level architectural and mentoring experience",
+          "TypeScript",
+          "GCP (Google Cloud Platform)",
+          "Energy market domain knowledge",
+          "CI/CD"
+        ],
+        "apply_url": "https://www.arbeitnow.com/jobs/companies/1komma50/senior-software-engineer-energy-markets-berlin-425979",
+        "source": "arbeitnow"
+      },
+      {
+        "title": "Senior Backend VPP Software Engineer - TypeScript (m/f/d)",
+        "company": "1KOMMA5˚",
+        "location": "Berlin",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 3,
+          "experience": 1,
+          "education": 7,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a recent graduate with internship experience, whereas the role requires a Senior Backend Engineer with specific domain expertise in virtual power plants and energy markets. Additionally, there is a geographic mismatch as the role is based in Germany and the candidate prefers North America.",
+        "strengths": [
+          "Python experience (listed as a bonus requirement)",
+          "Backend development experience (Node.js, FastAPI, Docker)",
+          "Strong educational background in Computer Engineering"
+        ],
+        "missing_skills": [
+          "Senior-level backend experience",
+          "Virtual Power Plant (VPP) and energy market integration",
+          "NestJS",
+          "Google Cloud Platform (GCP)",
+          "Terraform",
+          "CI/CD with GitHub Actions"
+        ],
+        "apply_url": "https://www.arbeitnow.com/jobs/companies/1komma50/senior-backend-vpp-software-engineer-typescript-berlin-340536",
+        "source": "arbeitnow"
+      }
+    ]
+  },
+  "AI Engineer": {
+    "scraped_count": 32,
+    "scored_count": 20,
+    "sources_used": [
+      "greenhouse",
+      "arbeitnow"
+    ],
+    "duration_sec": 426.9,
+    "matches": [
+      {
+        "title": "Software Engineer Intern (Summer 2026) - Austin, TX",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 7.4,
+        "breakdown": {
+          "skills": 9,
+          "experience": 9,
+          "education": 6,
+          "location": 8,
+          "salary": 5
+        },
+        "reasoning": "The candidate has an excellent technical background with strong proficiency in Python, C++, and TypeScript, matching Cloudflare's tech stack. However, their expected graduation in October 2025 may make them ineligible for a Summer 2026 internship unless they plan to pursue further education.",
+        "strengths": [
+          "Proficiency in Python, C++, and JavaScript/TypeScript",
+          "Relevant software engineering internship experience",
+          "Strong portfolio of complex, full-stack personal projects",
+          "Currently pursuing a highly relevant Master's degree in Electrical and Computer Engineering"
+        ],
+        "missing_skills": [
+          "Go",
+          "Rust"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer Intern, Developer Tools (2026) (London, United Kingdom)",
+        "company": "Figma",
+        "location": "London, England",
+        "score": 6.8,
+        "breakdown": {
+          "skills": 9,
+          "experience": 8,
+          "education": 10,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong technical skills, particularly in React, JavaScript, C++, and AI/ML, which align perfectly with Figma's DevTools stack and AI initiatives. However, there is a significant location mismatch as the role is based in London, while the candidate prefers Remote, US, or Canada, and the 2026 internship timeline may conflict with their 2025 graduation.",
+        "strengths": [
+          "Strong proficiency in required languages and frameworks (JavaScript, React, C++, Python).",
+          "Relevant experience building AI/ML pipelines and LLM applications, aligning with Figma's AI-assisted design-to-code tools.",
+          "Solid foundation in core CS concepts and full-stack development.",
+          "Previous software engineering internship experience demonstrating ability to ship technical projects."
+        ],
+        "missing_skills": [
+          "WebAssembly",
+          "Redux"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Melbourne, Australia",
+        "score": 6.0,
+        "breakdown": {
+          "skills": 7,
+          "experience": 2,
+          "education": 8,
+          "location": 8,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and LangChain, aligning well with the core technical requirements of the role. However, the candidate is still completing their Master's degree and lacks the 'extensive years of hands-on industry data science experience' required for this customer-facing Forward Deployed Engineer position.",
+        "strengths": [
+          "Hands-on experience building and deploying production-grade RAG systems and multi-agent pipelines.",
+          "Proficiency with required tools like LangChain, LangGraph, and vector databases (Milvus, ChromaDB).",
+          "Experience with GenAI evaluation frameworks (RAGAS, LLM self-critique).",
+          "Pursuing a relevant graduate degree in Electrical and Computer Engineering."
+        ],
+        "missing_skills": [
+          "Extensive industry data science experience",
+          "PyTorch, pandas, scikit-learn",
+          "DSPy",
+          "Databricks Intelligence Platform",
+          "Apache Spark",
+          "Customer-facing or technical advisory experience"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8330188002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Sydney, Australia",
+        "score": 6.0,
+        "breakdown": {
+          "skills": 8,
+          "experience": 3,
+          "education": 9,
+          "location": 7,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and multi-agent systems, directly aligning with the core technical requirements of the role. However, the position calls for 'extensive years of hands-on industry data science experience' and a customer-facing advisory capacity, whereas the candidate is currently a Master's student with only internship-level experience.",
+        "strengths": [
+          "Hands-on experience building production-grade RAG systems and multi-agent pipelines using LangChain and LangGraph.",
+          "Experience with GenAI evaluation frameworks like RAGAS and LLM self-critique.",
+          "Graduate degree in Electrical and Computer Engineering (in progress).",
+          "Experience deploying ML models using Docker, FastAPI, and cloud platforms (AWS, Azure)."
+        ],
+        "missing_skills": [
+          "Extensive years of industry data science experience",
+          "Customer-facing or technical advisory experience",
+          "Databricks Intelligence Platform and Apache Spark",
+          "DSPy",
+          "Text2SQL"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8298792002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Amsterdam, Netherlands",
+        "score": 5.6,
+        "breakdown": {
+          "skills": 8,
+          "experience": 3,
+          "education": 10,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and LangChain, perfectly aligning with the core technical requirements of the role. However, the candidate lacks the 'extensive years' of industry experience requested and is located in Canada, which conflicts with the European location requirements of the job.",
+        "strengths": [
+          "Hands-on experience building and evaluating RAG pipelines and multi-agent systems using LangChain and LangGraph.",
+          "Experience deploying ML/GenAI applications using Docker, FastAPI, AWS, and Azure.",
+          "Graduate degree in Electrical and Computer Engineering."
+        ],
+        "missing_skills": [
+          "Extensive industry data science experience (pandas, scikit-learn)",
+          "Databricks Intelligence Platform and Apache Spark",
+          "DSPy and HuggingFace",
+          "Customer-facing or technical advisory experience"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8189900002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer Intern (Summer 2026)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 5.5,
+        "breakdown": {
+          "skills": 8,
+          "experience": 9,
+          "education": 5,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong technical skills and relevant software engineering internship experience that align well with Cloudflare's tech stack. However, there are major mismatches regarding location (London vs. North America/Remote) and internship eligibility, as the candidate is scheduled to graduate in October 2025, well before the Summer 2026 internship.",
+        "strengths": [
+          "Proficiency in key languages mentioned in the job description, including Python, C++, and JavaScript/TypeScript",
+          "Demonstrated ability to build and deploy end-to-end software pipelines and full-stack applications",
+          "Strong academic background in Computer Engineering and Software Engineering",
+          "Proactive in building complex personal projects, which aligns with the company's desired traits"
+        ],
+        "missing_skills": [
+          "Go",
+          "Rust"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Canada",
+        "score": 5.5,
+        "breakdown": {
+          "skills": 7,
+          "experience": 2,
+          "education": 9,
+          "location": 10,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses highly relevant GenAI skills, including RAG and LangChain, and meets the educational and location requirements. However, the role requires extensive industry experience, whereas the candidate is a current student with only internship-level experience.",
+        "strengths": [
+          "Hands-on experience with RAG, LangChain, and multi-agent systems (LangGraph)",
+          "Experience with GenAI evaluation frameworks like RAGAS",
+          "Pursuing a relevant Master's degree in Electrical and Computer Engineering",
+          "Location and salary expectations align perfectly with the role"
+        ],
+        "missing_skills": [
+          "Extensive years of industry data science experience",
+          "Databricks Intelligence Platform",
+          "Apache Spark",
+          "DSPy",
+          "Text2SQL",
+          "PyTorch, pandas, scikit-learn"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8419885002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, AI - Lisbon",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 5.5,
+        "breakdown": {
+          "skills": 8,
+          "experience": 5,
+          "education": 10,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong AI and TypeScript skills along with an excellent educational background that matches the job requirements. However, there is a significant location mismatch as the role is hybrid in Lisbon while the candidate prefers North America or remote work, and their professional background consists primarily of internships rather than proven full-time experience.",
+        "strengths": [
+          "Strong educational background with a Bachelor's and Master's in Computer/Electrical Engineering.",
+          "Hands-on experience with AI solutions, including RAG, LLMs, and Computer Vision.",
+          "Proficiency in TypeScript and JavaScript, which are key languages for the role.",
+          "Experience with operational deployment using Docker, FastAPI, and Redis."
+        ],
+        "missing_skills": [
+          "Rust programming language",
+          "Deep Linux/UNIX systems or kernel knowledge",
+          "WebAssembly",
+          "Proven full-time industry experience"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "London, United Kingdom",
+        "score": 5.4,
+        "breakdown": {
+          "skills": 7,
+          "experience": 4,
+          "education": 9,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and LangChain, and is pursuing the required graduate degree. However, the candidate falls short on the 'extensive years' of industry experience requested and has a major location mismatch, as the role is in London while the candidate prefers North America.",
+        "strengths": [
+          "Hands-on experience building and deploying RAG pipelines and multi-agent systems using LangChain and LangGraph.",
+          "Experience with production deployments using Docker, FastAPI, and cloud platforms (AWS, Azure).",
+          "Pursuing a Master's degree in Electrical and Computer Engineering, meeting the graduate degree requirement.",
+          "Experience with GenAI evaluation frameworks like RAGAS."
+        ],
+        "missing_skills": [
+          "Extensive industry data science experience (pandas, scikit-learn, PyTorch)",
+          "Databricks Intelligence Platform",
+          "Apache Spark",
+          "DSPy",
+          "Text2SQL"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8024004002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Munich, Germany",
+        "score": 5.0,
+        "breakdown": {
+          "skills": 7,
+          "experience": 3,
+          "education": 8,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and LangChain, aligning well with the core technical requirements of the role. However, the candidate lacks the 'extensive years' of industry experience required and is located in Canada, which conflicts with the European location requirements of the job.",
+        "strengths": [
+          "Hands-on experience building and evaluating production-grade RAG pipelines using LangChain and RAGAS.",
+          "Experience with multi-agent systems (LangGraph) and vector databases (Milvus, ChromaDB).",
+          "Pursuing a relevant Master's degree in Electrical and Computer Engineering.",
+          "Experience deploying ML models using Docker, FastAPI, and cloud platforms (AWS, Azure)."
+        ],
+        "missing_skills": [
+          "Extensive years of industry data science experience",
+          "PyTorch, pandas, scikit-learn",
+          "Databricks Intelligence Platform and Apache Spark",
+          "DSPy",
+          "HuggingFace"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8395599002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer , AI Agents Tooling & Platforms ",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 2,
+          "education": 9,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in AI agents, TypeScript, and C++, aligning well with the team's focus on AI tooling. However, the role requires 5+ years of experience and is located in Lisbon or London, which severely mismatches the candidate's entry-level status and North American location preferences.",
+        "strengths": [
+          "Hands-on experience building AI agent pipelines using LangGraph and LangChain",
+          "Proficiency in TypeScript, React, and web technologies",
+          "Knowledge of C++ and strong computer science fundamentals",
+          "Experience building production-grade RAG systems and evaluating AI models"
+        ],
+        "missing_skills": [
+          "5+ years of software engineering experience",
+          "Experience with high-volume, distributed systems at scale",
+          "Go or Rust programming languages",
+          "Cloudflare Workers experience"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Paris, France",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 8,
+          "experience": 2,
+          "education": 8,
+          "location": 2,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and multi-agent systems, aligning well with the role's technical requirements. However, there is a significant mismatch in experience level, as the role requires 'extensive years of industry experience' while the candidate only has internship experience. Additionally, the candidate's location preferences (US/Canada) conflict with the job's European location requirements.",
+        "strengths": [
+          "Hands-on experience building production-grade RAG pipelines and multi-agent systems using LangChain and LangGraph.",
+          "Experience with GenAI evaluation frameworks like RAGAS.",
+          "Pursuing a graduate degree in a quantitative discipline (Master's in ECE).",
+          "Experience deploying ML models using Docker, FastAPI, and cloud platforms (AWS, Azure)."
+        ],
+        "missing_skills": [
+          "Extensive years of industry data science experience",
+          "Databricks Intelligence Platform",
+          "Apache Spark",
+          "DSPy",
+          "HuggingFace",
+          "Pandas",
+          "Scikit-learn"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8395601002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, R2 Storage",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 3,
+          "education": 8,
+          "location": 4,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong academic background and impressive AI/ML projects, but lacks the specific distributed systems and storage experience required for the R2 Storage team. Additionally, the candidate's heavy focus on AI/ML does not align well with the core infrastructure nature of the role, and they lack professional experience in Rust or Go.",
+        "strengths": [
+          "Strong academic background in Computer Engineering",
+          "Experience with backend development, Docker, and Redis",
+          "Familiarity with TypeScript through project work"
+        ],
+        "missing_skills": [
+          "Rust",
+          "Go",
+          "Distributed systems (consensus, replication)",
+          "Distributed storage systems",
+          "High-throughput, low-latency systems at scale"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "AI Engineer - FDE (Forward Deployed Engineer)",
+        "company": "Databricks",
+        "location": "Remote - India",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 6,
+          "experience": 2,
+          "education": 9,
+          "location": 3,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in GenAI, RAG, and LangChain, aligning well with the role's technical requirements. However, they fall significantly short of the 5+ years of required experience and prefer North America while the role is specifically designated for Remote - India.",
+        "strengths": [
+          "Hands-on experience building production-grade RAG pipelines and multi-agent systems using LangChain and LangGraph.",
+          "Experience deploying machine learning and GenAI applications using Docker, FastAPI, and AWS/Azure.",
+          "Relevant educational background with a Master's degree in Electrical and Computer Engineering."
+        ],
+        "missing_skills": [
+          "5+ years of Data Science experience",
+          "Customer-facing or consulting experience",
+          "Databricks Intelligence Platform",
+          "Apache Spark",
+          "DSPy",
+          "PyTorch",
+          "pandas",
+          "scikit-learn"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8099751002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer (Backend)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 1,
+          "education": 8,
+          "location": 5,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong academic background and relevant internship experience in AI/ML and backend development using Python and TypeScript. However, they fall significantly short of the 3-5+ years of required enterprise experience and lack specific required expertise in Model Context Protocol (MCP) servers and Infrastructure as Code.",
+        "strengths": [
+          "Strong programming skills in Python and TypeScript.",
+          "Experience building backend services with FastAPI and REST APIs.",
+          "Hands-on experience with LLMs, RAG pipelines, and AI integration.",
+          "Containerization experience with Docker."
+        ],
+        "missing_skills": [
+          "3-5+ years of enterprise experience",
+          "Model Context Protocol (MCP) server development",
+          "Infrastructure as Code (Terraform, Ansible, Chef)",
+          "Go programming language",
+          "Enterprise automation and configuration management"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer, AI Applications Tooling",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 5,
+          "experience": 1,
+          "education": 8,
+          "location": 4,
+          "salary": 5
+        },
+        "reasoning": "While the candidate possesses strong foundational knowledge in LLMs, RAG, and agentic frameworks, they fall significantly short of the 5+ years of experience required for this senior role. Additionally, they lack the required expertise in edge/serverless architectures and large-scale distributed systems.",
+        "strengths": [
+          "Hands-on experience with modern AI agent patterns (LangGraph, LangChain) and RAG pipelines.",
+          "Experience building automated AI evaluation pipelines using RAGAS.",
+          "Proficiency in TypeScript and full-stack development."
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience.",
+          "Experience with Cloudflare platform or similar edge/serverless architectures.",
+          "Large-scale distributed systems and edge-optimized model inference.",
+          "Production-level AI observability and safety systems."
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Energy Markets (m/f/d)",
+        "company": "1KOMMA5˚",
+        "location": "Berlin",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 3,
+          "experience": 1,
+          "education": 7,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a recent graduate with internship experience, whereas the role requires a Senior Software Engineer with deep expertise in TypeScript backends and energy market integrations. Furthermore, there is a geographic mismatch as the role is based in Germany and the candidate prefers North America.",
+        "strengths": [
+          "Python and backend development experience (FastAPI, Node.js)",
+          "Data pipeline and processing experience",
+          "Strong academic background in Computer Engineering"
+        ],
+        "missing_skills": [
+          "Senior-level engineering experience",
+          "Energy service interfaces (smart meters, load balancing)",
+          "GCP (Google Cloud Platform)",
+          "CI/CD (GitHub Actions)",
+          "Virtual power plant infrastructure"
+        ],
+        "apply_url": null,
+        "source": "arbeitnow"
+      },
+      {
+        "title": "Software Engineer, Game Development (f/m/d)",
+        "company": "Iteration One GmbH",
+        "location": "Karlsruhe",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 2,
+          "education": 8,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong background in AI and software engineering, which aligns well with the company's heavy emphasis on AI tools. However, the candidate lacks the core technical requirements for the role (C# and Unity) and has location preferences (Remote/US/Canada) that fundamentally conflict with the job's on-site requirement in Germany.",
+        "strengths": [
+          "Strong AI/ML background including LLMs, RAG, and Computer Vision",
+          "Solid academic foundation in software engineering and computer engineering",
+          "Experience with mobile app development concepts and Android Studio"
+        ],
+        "missing_skills": [
+          "C#",
+          "Unity",
+          "Live game operations",
+          "Reactive programming (UniRx)",
+          "Game performance optimization"
+        ],
+        "apply_url": null,
+        "source": "arbeitnow"
+      },
+      {
+        "title": "Senior Backend VPP Software Engineer - TypeScript (m/f/d)",
+        "company": "1KOMMA5˚",
+        "location": "Berlin",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 3,
+          "experience": 1,
+          "education": 7,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a junior-level engineer with a strong AI/ML background, while the role requires a Senior Backend Engineer with deep expertise in TypeScript, GCP, and Virtual Power Plant (VPP) infrastructure. Additionally, there is a geographic mismatch as the role is based in Germany, whereas the candidate prefers North America.",
+        "strengths": [
+          "Experience with Python in Machine Learning and Data Engineering contexts (listed as a bonus requirement)",
+          "Backend development experience including Node.js, REST APIs, and databases",
+          "Familiarity with cloud platforms and containerization (Docker)"
+        ],
+        "missing_skills": [
+          "Senior-level backend experience",
+          "Virtual Power Plant (VPP) and energy market domain knowledge",
+          "NestJS",
+          "Google Cloud Platform (GCP)",
+          "Terraform",
+          "Datadog"
+        ],
+        "apply_url": null,
+        "source": "arbeitnow"
+      },
+      {
+        "title": "Senior Software Engineer (Full Stack)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 7,
+          "experience": 1,
+          "education": 10,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "While the candidate possesses strong educational credentials and relevant skills in AI and full-stack development, they are a massive mismatch for experience and location. The role requires 6+ years of senior-level experience and is based in-office in Bengaluru, whereas the candidate is a current student with only internship experience seeking roles in North America or remote.",
+        "strengths": [
+          "M.S. and B.S. in Computer Engineering",
+          "Hands-on experience with modern AI infrastructure, including vector databases (Milvus, ChromaDB) and RAG pipelines",
+          "Full-stack development proficiency using React, TypeScript, Python, and PostgreSQL"
+        ],
+        "missing_skills": [
+          "6+ years of professional experience",
+          "Go",
+          "Scala",
+          "ClickHouse",
+          "Senior-level system architecture and production operation experience"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      }
+    ]
+  },
+  "Full-stack Developer": {
+    "scraped_count": 34,
+    "scored_count": 20,
+    "sources_used": [
+      "greenhouse"
+    ],
+    "duration_sec": 432.9,
+    "matches": [
+      {
+        "title": "Software Engineer, Full Stack",
+        "company": "Figma",
+        "location": "San Francisco, CA • New York, NY • United States",
+        "score": 8.0,
+        "breakdown": {
+          "skills": 8,
+          "experience": 5,
+          "education": 9,
+          "location": 10,
+          "salary": 10
+        },
+        "reasoning": "The candidate has a strong educational background and possesses many of the core technologies required by Figma, including React, TypeScript, Python, C++, and PostgreSQL. However, as a current Master's student with primarily internship experience, they may lack the extensive production experience typically expected for non-entry-level roles, though the posting mentions openness to varying seniority levels.",
+        "strengths": [
+          "Strong proficiency in modern full-stack technologies including React, TypeScript, Python, and PostgreSQL.",
+          "Experience with C++, which is specifically highlighted as a nice-to-have for Figma's user-facing applications.",
+          "Demonstrated ability to build and deploy end-to-end systems, such as the production-grade RAG pipeline.",
+          "Solid educational foundation with a Master's degree in Electrical and Computer Engineering."
+        ],
+        "missing_skills": [
+          "Extensive experience maintaining large-scale full-stack applications in production",
+          "WebAssembly (WASM)",
+          "Ruby or Go (though Python and C++ compensate for this)"
+        ],
+        "apply_url": "https://boards.greenhouse.io/figma/jobs/5691911004?gh_jid=5691911004",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Fullstack Software Engineer",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "score": 6.4,
+        "breakdown": {
+          "skills": 8,
+          "experience": 4,
+          "education": 9,
+          "location": 6,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses a strong educational background and relevant technical skills, particularly in TypeScript, React, PostgreSQL, and AI, which align well with the job's requirements and bonus points. However, the candidate's experience is limited to internships, which may not fully meet the expectations for a systems engineer responsible for designing, running, and scaling production services at Cloudflare's massive scale.",
+        "strengths": [
+          "Experience with TypeScript and React for UI frontends",
+          "Strong background in AI/ML and LLMs, which is listed as a bonus point",
+          "Experience with relational databases (PostgreSQL) and version control (Git)",
+          "Solid educational foundation with degrees in Computer Engineering"
+        ],
+        "missing_skills": [
+          "DNS and DNSSEC knowledge",
+          "Cloudflare Workers & Pages",
+          "Observability and monitoring tools (Kibana, Grafana, Prometheus)",
+          "Gitlab CI",
+          "Full-time production system operation and on-call experience"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7542471?gh_jid=7542471",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Amsterdam, Netherlands",
+        "score": 5.2,
+        "breakdown": {
+          "skills": 7,
+          "experience": 3,
+          "education": 10,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong educational background and a tech stack that aligns well with the full-stack requirements, including React, Python, Node.js, and cloud technologies. However, the candidate lacks the required 2+ years of professional experience and large-scale distributed systems background, and the job location in Amsterdam conflicts with their preference for North America or remote work.",
+        "strengths": [
+          "Strong educational background with a BS and MS in Computer Engineering/ECE.",
+          "Excellent match for the required tech stack, including React, Vue, Python, Java, Node.js, and SQL.",
+          "Hands-on experience with cloud technologies (AWS, Azure) and containerization (Docker)."
+        ],
+        "missing_skills": [
+          "2+ years of professional frontend (HTML/CSS/JS) experience",
+          "Experience operating large-scale distributed systems in a production environment",
+          "Kubernetes"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8029677002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Seattle, Washington",
+        "score": 5.0,
+        "breakdown": {
+          "skills": 7,
+          "experience": 2,
+          "education": 8,
+          "location": 9,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses a strong foundation in the required technology stack, including React, Python, Node.js, and cloud technologies. However, as a current Master's student with only internship experience, they fall significantly short of the 5+ years of professional experience required for this Senior Software Engineer role.",
+        "strengths": [
+          "Strong alignment with the required tech stack (JavaScript, React, Python, Java, C++, SQL).",
+          "Experience with cloud and containerization technologies (AWS, Azure, Docker).",
+          "Solid educational background in Computer Engineering."
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience.",
+          "Experience developing large-scale distributed systems in a production environment.",
+          "Deep front-end architecture experience at an enterprise scale."
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=6544403002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Mountain View, California; San Francisco, California",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 8,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses a strong technical foundation in GenAI, RAG, and full-stack development that perfectly aligns with the team's product focus. However, as a current Master's student with only internship experience, they fall significantly short of the 5+ years of professional experience required for this Senior Software Engineer role.",
+        "strengths": [
+          "Strong alignment with the team's GenAI, RAG, and LLM focus",
+          "Full-stack technical skills including React, Python, Java, and SQL",
+          "Experience with cloud and containerization technologies (AWS, Docker)"
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience",
+          "Experience developing large-scale distributed systems in a production environment",
+          "Senior-level system architecture and mentorship experience"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=7898766002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Vancouver, Canada",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 7,
+          "experience": 1,
+          "education": 9,
+          "location": 10,
+          "salary": 9
+        },
+        "reasoning": "While the candidate possesses a strong educational background and matches many of the required technical skills like React, Python, and Docker, there is a significant gap in experience. The position is for a Senior Software Engineer requiring 5+ years of experience, whereas the candidate is a current Master's student with only internship-level experience.",
+        "strengths": [
+          "Proficient in required frontend and backend technologies including JavaScript, React, Python, Java, and SQL.",
+          "Hands-on experience with cloud platforms (AWS, Azure) and containerization (Docker).",
+          "Strong background in AI/ML, RAG, and LLMs, which aligns well with Databricks' AI-focused product teams.",
+          "Location compatibility with the Vancouver office."
+        ],
+        "missing_skills": [
+          "5+ years of professional full-stack software engineering experience.",
+          "Experience developing and maintaining large-scale distributed systems.",
+          "Kubernetes (k8s) experience."
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8099342002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Staff Software Engineer - Fullstack (NYC)",
+        "company": "Databricks",
+        "location": "New York City, New York",
+        "score": 4.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 8,
+          "salary": 9
+        },
+        "reasoning": "The candidate possesses a strong foundation in the required tech stack, including modern JavaScript frameworks, backend languages, and GenAI technologies which aligns well with the team's goals. However, the role is for a Staff Software Engineer requiring 10+ years of experience, whereas the candidate is a current Master's student with only internship experience, making them severely underqualified for this seniority level.",
+        "strengths": [
+          "Hands-on experience with GenAI, RAG, and LLMs, aligning perfectly with the team's GenAI-first approach",
+          "Proficiency in required frontend technologies including HTML, CSS, JavaScript, React, and Vue",
+          "Strong backend and database foundation with Python, Java, C++, Node.js, and SQL"
+        ],
+        "missing_skills": [
+          "10+ years of professional software engineering experience",
+          "Experience building complex analytics visualizations at scale",
+          "Staff-level architectural design and technical leadership experience"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8384595002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Fullstack (NYC)",
+        "company": "Databricks",
+        "location": "New York",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 7,
+          "experience": 1,
+          "education": 8,
+          "location": 7,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses a strong educational background and relevant technical skills in full-stack development and AI/ML, which aligns well with the team's GenAI focus. However, the role is for a Senior Software Engineer requiring 5+ years of experience, whereas the candidate only has internship-level experience, making them significantly underqualified for this specific position.",
+        "strengths": [
+          "Strong tech stack match including React, Vue, Python, Java, C++, Node.js, and SQL.",
+          "Hands-on experience with GenAI, LLMs, and RAG pipelines, aligning with the team's GenAI-first approach.",
+          "Solid educational background with a Master's degree in Electrical and Computer Engineering."
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience.",
+          "Experience building complex analytics visualizations.",
+          "Proven track record of shipping high-quality code at high velocity in a large-scale production environment."
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8211634002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Amsterdam, Netherlands",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 10,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate has a strong educational background and possesses many of the required technical skills, including React, Python, and cloud technologies. However, this is a Senior role requiring 5+ years of experience and large-scale distributed systems expertise, whereas the candidate only has internship experience. Additionally, the location (Amsterdam) does not align with the candidate's preferences.",
+        "strengths": [
+          "Strong educational background with a Master's in progress and a Bachelor's in Computer Engineering.",
+          "Relevant tech stack including React, Vue, Python, Java, C++, SQL, AWS, and Docker.",
+          "Experience building full-stack applications and AI/RAG pipelines."
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience",
+          "Experience operating large-scale distributed systems in production",
+          "Deep understanding of front-end architecture at an enterprise level",
+          "Kubernetes"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8029679002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Full Stack Engineer, Link",
+        "company": "Stripe",
+        "location": "Toronto, Remote in Canada",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 10,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong full-stack technical skills and a solid educational background in computer engineering. However, they completely lack the strict minimum requirement of 2+ years of non-internship industry experience, making them fundamentally too junior for this mid-level role.",
+        "strengths": [
+          "Full-stack development capabilities (React, Node.js, FastAPI, PostgreSQL)",
+          "Familiarity with preferred cloud and containerization technologies (AWS, Docker)",
+          "Strong academic background in Computer Engineering with high GPA"
+        ],
+        "missing_skills": [
+          "2+ years of non-internship industry experience",
+          "Mentoring experience",
+          "Large-scale financial tracking systems",
+          "gRPC",
+          "GraphQL"
+        ],
+        "apply_url": "https://stripe.com/jobs/search?gh_jid=6447175",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Staff Fullstack Engineer",
+        "company": "Databricks",
+        "location": "San Francisco, California",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 7,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses a solid technical foundation with relevant skills in React, JavaScript, and backend technologies. However, there is a significant mismatch in experience level, as the candidate is a current Master's student with only internship experience applying for a Staff/Senior level role that requires 5+ years of experience and proven leadership.",
+        "strengths": [
+          "Proficiency in modern JavaScript frameworks including React and Vue",
+          "Experience with server-side web technologies such as Node.js, FastAPI, and PostgreSQL",
+          "Strong academic background in Computer Engineering with high GPA"
+        ],
+        "missing_skills": [
+          "5+ years of professional software engineering experience",
+          "Experience leading large multi-quarter engineering efforts",
+          "Front-end architecture design at a massive scale",
+          "Demonstrated business impact in a senior or staff capacity"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=6704975002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Staff Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Vancouver, Canada",
+        "score": 4.0,
+        "breakdown": {
+          "skills": 5,
+          "experience": 1,
+          "education": 9,
+          "location": 10,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses a strong educational background and familiarity with the required tech stack including React, Python, Docker, and AWS. However, the role is for a Staff Software Engineer requiring 10+ years of experience, whereas the candidate is a current Master's student with only internship experience, making them vastly underqualified for this seniority level.",
+        "strengths": [
+          "Strong academic background in Computer Engineering with high GPAs.",
+          "Hands-on experience with modern full-stack and AI technologies including React, Python, FastAPI, Docker, RAG, and LLMs.",
+          "Experience with cloud platforms such as AWS and Azure.",
+          "Location match with ties to Vancouver as a UBC alumni."
+        ],
+        "missing_skills": [
+          "10+ years of frontend development experience",
+          "10+ years of backend or server-side development experience",
+          "Experience developing large-scale distributed systems in a production environment",
+          "Kubernetes"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8099343002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer (Full Stack)",
+        "company": "Cloudflare",
+        "location": "In-Office",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 10,
+          "location": 1,
+          "salary": 3
+        },
+        "reasoning": "The candidate has relevant technical skills in Python, React, and AI technologies, along with a matching educational background. However, they fall significantly short of the 6+ years of required experience and have conflicting location preferences (Bengaluru in-office vs. North America/Remote).",
+        "strengths": [
+          "Strong educational background with a B.A.Sc and ongoing M.Eng in relevant engineering fields.",
+          "Relevant full-stack tech stack experience including Python, Java, React, TypeScript, and PostgreSQL.",
+          "Hands-on experience with AI components, vector databases (Milvus, ChromaDB), and RAG pipelines, which is a highlighted requirement."
+        ],
+        "missing_skills": [
+          "6+ years of professional experience",
+          "Go",
+          "Scala",
+          "ClickHouse",
+          "Mentorship experience",
+          "System architecture at scale"
+        ],
+        "apply_url": "https://boards.greenhouse.io/cloudflare/jobs/7566807?gh_jid=7566807",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Staff Fullstack Engineer, Agentic Applications",
+        "company": "Databricks",
+        "location": "Mountain View, California",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 7,
+          "salary": 10
+        },
+        "reasoning": "The candidate possesses highly relevant technical skills in AI, LLMs, and full-stack development that align perfectly with the 'Agentic Applications' focus of the role. However, there is a massive gap in experience, as the position requires a Staff-level engineer with 12+ years of experience and 3+ years of leadership, whereas the candidate is a current Master's student with only internship experience.",
+        "strengths": [
+          "Hands-on experience building agentic applications using LangGraph and LangChain.",
+          "Strong background in RAG systems, vector databases (ChromaDB, Milvus), and LLM integration.",
+          "Full-stack cloud-native development skills including React, FastAPI, Docker, and PostgreSQL.",
+          "Demonstrated ability to build end-to-end AI pipelines and evaluate them using frameworks like RAGAS."
+        ],
+        "missing_skills": [
+          "12+ years of software engineering experience",
+          "3+ years of engineering leadership and team management",
+          "Experience defining technical strategy and roadmaps at an enterprise level",
+          "Mentoring junior engineers",
+          "Staff-level system design and architecture for large-scale enterprise applications"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8220836002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Software Engineer, Fullstack - Figma Weave (Tel Aviv, Israel) ",
+        "company": "Figma",
+        "location": "Tel Aviv, Israel",
+        "score": 3.5,
+        "breakdown": {
+          "skills": 7,
+          "experience": 2,
+          "education": 8,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses strong foundational skills in full-stack development and AI, which align well with Figma's tech stack and AI initiatives. However, the candidate falls significantly short of the 5+ years of required experience and prefers North America, whereas the role is based in Tel Aviv.",
+        "strengths": [
+          "Experience with React, TypeScript, Node.js, and PostgreSQL",
+          "Strong background in AI/ML, LLMs, and RAG, aligning with Figma's AI-native focus",
+          "Academic background in Computer Graphics"
+        ],
+        "missing_skills": [
+          "5+ years of professional experience",
+          "Ruby",
+          "Go",
+          "Rust",
+          "WebAssembly"
+        ],
+        "apply_url": "https://boards.greenhouse.io/figma/jobs/5692524004?gh_jid=5692524004",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Staff Fullstack Engineer, Privy",
+        "company": "Stripe",
+        "location": "NYC-Privy, US-Remote ",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 1,
+          "education": 7,
+          "location": 10,
+          "salary": 8
+        },
+        "reasoning": "The candidate has a strong academic background and relevant full-stack skills including React and TypeScript. However, they are vastly underqualified for this Staff-level role, which requires 8+ years of experience compared to the candidate's internship-level background.",
+        "strengths": [
+          "Experience with React and TypeScript",
+          "Full-stack development capabilities",
+          "Has published academic work, aligning with a preferred qualification"
+        ],
+        "missing_skills": [
+          "8+ years of professional experience",
+          "Next.js",
+          "Web3/crypto experience",
+          "Developer tooling experience",
+          "Experience working closely with designers"
+        ],
+        "apply_url": "https://stripe.com/jobs/search?gh_jid=7091959",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Sr. Staff Fullstack Engineer, Agentic Applications",
+        "company": "Databricks",
+        "location": "Mountain View, California",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 5,
+          "experience": 1,
+          "education": 8,
+          "location": 8,
+          "salary": 10
+        },
+        "reasoning": "The candidate has highly relevant technical skills in AI, RAG, and full-stack development that align perfectly with the team's focus on agentic applications. However, the role is a Senior Staff position requiring 12+ years of experience and significant leadership, which the candidate completely lacks as a recent graduate.",
+        "strengths": [
+          "Direct experience building RAG systems and agentic pipelines using LangChain and LangGraph.",
+          "Strong full-stack engineering capabilities including React, FastAPI, and Docker.",
+          "Demonstrated passion for AI and data intelligence through academic research and projects."
+        ],
+        "missing_skills": [
+          "12+ years of software engineering experience",
+          "3+ years of engineering leadership",
+          "Technical strategy and roadmap definition",
+          "Mentoring and team leadership"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8220902002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Fullstack Engineer, App Foundation",
+        "company": "Airbnb",
+        "location": "China",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 6,
+          "experience": 1,
+          "education": 8,
+          "location": 3,
+          "salary": 5
+        },
+        "reasoning": "The candidate possesses relevant full-stack skills and a strong educational background, but falls significantly short of the 5+ years of experience required for this senior role. Furthermore, the candidate's location preferences (US/Canada) do not align well with the China-based requirement.",
+        "strengths": [
+          "Relevant full-stack technology stack including React, TypeScript, Java, and C++",
+          "Strong educational background in Computer Engineering",
+          "Demonstrated experience with testing practices and CI/CD pipelines",
+          "Likely bilingual in English and Chinese based on education and internship history"
+        ],
+        "missing_skills": [
+          "5+ years of professional software development experience",
+          "Experience designing and scaling high-traffic backend services",
+          "Experience building foundational frameworks for large-scale applications"
+        ],
+        "apply_url": "https://careers.airbnb.com/positions/7551863?gh_jid=7551863",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Staff Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Bengaluru, India",
+        "score": 3.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 1,
+          "education": 7,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a current Master's student with internship experience, falling significantly short of the 10+ years of industry experience required for this Staff-level role. Furthermore, the job is located in Bengaluru, India, which conflicts with the candidate's geographic preferences.",
+        "strengths": [
+          "Full-stack development skills including React, Node.js, and FastAPI",
+          "Experience with modern AI/ML technologies and data pipelines",
+          "Strong educational background in Computer Engineering"
+        ],
+        "missing_skills": [
+          "10+ years of industry experience",
+          "Experience leading large multi-quarter efforts",
+          "Experience developing large-scale distributed systems from scratch",
+          "Mentoring junior engineers",
+          "SaaS platform or SOA experience at scale"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8037500002",
+        "source": "greenhouse"
+      },
+      {
+        "title": "Senior Software Engineer - Fullstack",
+        "company": "Databricks",
+        "location": "Bengaluru, India",
+        "score": 2.0,
+        "breakdown": {
+          "skills": 4,
+          "experience": 1,
+          "education": 7,
+          "location": 1,
+          "salary": 5
+        },
+        "reasoning": "The candidate is a current Master's student with only internship experience, falling significantly short of the 6+ years of industry experience required for this senior-level role. Furthermore, the position is located in Bengaluru, India, which directly conflicts with the candidate's geographic preferences for Remote, US, or Canada.",
+        "strengths": [
+          "Full-stack development experience including React, FastAPI, and Node.js",
+          "Strong academic background in Computer Engineering and Software Engineering",
+          "Hands-on experience with AI/ML, specifically building RAG systems and working with LLMs"
+        ],
+        "missing_skills": [
+          "6+ years of industry experience",
+          "Experience developing large-scale distributed systems from scratch",
+          "Leading large multi-quarter efforts with demonstrated business impact",
+          "Extensive experience working on a SaaS platform or with Service-Oriented Architectures at scale"
+        ],
+        "apply_url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8278343002",
+        "source": "greenhouse"
+      }
+    ]
+  }
+}

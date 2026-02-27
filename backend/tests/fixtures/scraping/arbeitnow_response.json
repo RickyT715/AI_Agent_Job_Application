@@ -1,0 +1,49 @@
+{
+  "data": [
+    {
+      "slug": "senior-software-engineer-acme-corp-12345",
+      "company_name": "Acme Corp",
+      "title": "Senior Software Engineer",
+      "description": "Join our engineering team to build next-generation software solutions using Python, TypeScript, and cloud-native technologies.",
+      "remote": true,
+      "url": "https://www.arbeitnow.com/view/senior-software-engineer-acme-corp-12345",
+      "tags": ["python", "typescript", "aws", "docker"],
+      "job_types": ["Full-Time"],
+      "location": "Remote",
+      "created_at": 1708516800
+    },
+    {
+      "slug": "frontend-developer-webworks-67890",
+      "company_name": "WebWorks",
+      "title": "Frontend Developer",
+      "description": "We need a talented Frontend Developer with React and Next.js experience.",
+      "remote": false,
+      "url": "https://www.arbeitnow.com/view/frontend-developer-webworks-67890",
+      "tags": ["react", "nextjs", "javascript", "css"],
+      "job_types": ["Full-Time"],
+      "location": "Berlin, Germany",
+      "created_at": 1708430400
+    },
+    {
+      "slug": "data-engineer-analytica-11111",
+      "company_name": "Analytica",
+      "title": "Data Engineer",
+      "description": "Build and maintain data pipelines with Python, Spark, and Airflow.",
+      "remote": true,
+      "url": "https://www.arbeitnow.com/view/data-engineer-analytica-11111",
+      "tags": ["python", "spark", "airflow", "sql"],
+      "job_types": ["Full-Time"],
+      "location": "Remote (EU)",
+      "created_at": 1708344000
+    }
+  ],
+  "links": {
+    "next": "https://www.arbeitnow.com/api/job-board-api?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "path": "https://www.arbeitnow.com/api/job-board-api",
+    "per_page": 100
+  }
+}

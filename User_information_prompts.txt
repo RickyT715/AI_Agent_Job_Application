@@ -1,0 +1,176 @@
+Ruiqi Tian
+ https://www.linkedin.com/in/ruiqi-tian-a53159249/
+ https://github.com/RickyT715
+ Education
+ Email : ruiqitian@outlook.com
+ Mobile : +1-236-989-3086
+ • Master of Engineering in Electrical and Computer Engineering GPA: 3.9
+ University of Waterloo
+ Waterloo, ON
+ Sept. 2024– Oct. 2025
+ ◦ Specialization: Software Engineering, Full-stack development, Computer Graphics, Computer Vision, Reinforcement, LLM, DevOps, Performance Test, 
+ Learning, Autonomous Driving
+ • Bachelor of Applied Science in Computer Engineering GPA: 3.7
+ University of British Columbia
+ Vancouver, BC
+ Sept. 2020– May. 2024
+ ◦ Specialization: Software Engineering, Full-stack Development, Phone App Development, Computer Graphics, Computer
+ Vision, Deep Learning, Embedded Development, Operating System, Hardware Engineering
+ ◦ Honor: 2022,2023,2024 Dean’s Honor List
+
+
+Experience
+
+
+Software Engineer Intern
+Disanji Technology Institute · Internship
+Jun 2024 to Aug 2024 · 3 mos
+Nanjing, Jiangsu, China · On-site
+(Full version:
+Built a production-grade RAG system that lets users ask natural-language questions over 500+ pages Chinese documents and get accurate, source-cited answers in seconds.
+• Architected an end-to-end RAG pipeline for online QA platform covering over 500+ pages Chinese documents (PDF, DOCX, TXT), using LangChain LCEL with modular ingestion, retrieval, re-ranking, and generation layers with streaming support.
+• Implemented hybrid retrieval combining BM25 (jieba segmentation) + BGE-M3 dense/sparse vectors in Milvus, fused via RRF — improving retrieval precision 35% over vector-only baseline. Integrated BGE-reranker-v2-m3 cross-encoder as a second pass (top-30 → top-5), improving NDCG@5 by 12 points at only ~50ms added latency.
+• Designed a provider-agnostic LLM layer supporting ERNIE Bot, DeepSeek, and Qwen. Benchmarked both on Chinese QA across latency, cost, and accuracy
+• Built an automated evaluation pipeline using RAGAS (Retrieval-Augmented Generation Assessment), tracking three core metrics: Context Recall (did we retrieve the right passages?), Faithfulness (is the answer grounded in retrieved context?), and Answer Relevancy (does the answer address the question?). Created a hand-annotated golden dataset of 100 question-answer pairs with source references spanning diverse query types (factual, comparative, temporal, multi-hop). Achieved 0.84 context recall and 0.82 faithfulness; reduced hallucination rate from 15% to 4%.
+• Deployed via Docker Compose (one-command startup) with FastAPI + SSE streaming, Redis semantic caching (60% fewer API calls), and Langfuse tracing for per-step latency and cost monitoring. P95 latency <2s
+• Build a backend server for AWS resource connection using javascript, REST API endpoints establishments, and LLM utilization
+)
+(Short Version:
+• Architected end-to-end RAG pipeline (LangChain LCEL) for online QA platform over 500+ pages Chinese documents with modular retrieval, re-ranking, and streaming generation
+• Implemented hybrid search (BM25 + BGE-M3 dense/sparse vectors, RRF fusion) with cross-encoder re-ranking (top-30 → top-5), improving precision 35% over vector-only baseline
+• Built RAGAS evaluation pipeline with 100-question golden dataset + GitHub Actions CI; achieved 0.84 context recall, 0.82 faithfulness, reducing hallucinations 15% → 4%
+• Benchmarked 3 LLMs (ERNIE Bot, DeepSeek, Qwen) and 3 embedding models on Chinese QA
+)
+Skills: RAG, LLM, JavaScript, Agent, Word Embeddings, fibjs, rest apis, Back-End web development, AI Prompting, python, machine learning, AWS, React.js
+
+
+
+
+Research Assistant
+Nanjing University · Internship
+Jun 2023 - Aug 2023 · 3 mosJun 2023 to Aug 2023 · 3 mos
+Nanjing, Jiangsu, China · On-siteNanjing, Jiangsu, China · On-site
+(Full version:
+• Co-developed Dual Branches Video Modeling (DBVM), an end-to-end pipeline that splits video understanding into two branches: a Knowledge Graph branch for structural queries (entity recognition, relationship extraction, multi-modal feature fusion) and a Video-Language Model branch for non-structural queries (scene matching, sentiment retrieval, interaction prediction)
+• Designed a cross-matching strategy that combines text-to-video (T2V) and video-to-text (V2T) similarity matrices with mean subtraction, improving description-scene retrieval accuracy from 0.52 to 0.76 across the DVUC benchmark dataset
+• Engineered a coarse-to-fine keyframe selection pipeline for SeViLA to process full-length movies within single-GPU memory constraints (RTX 3090), reducing per-movie processing time from 5 days to 1 day
+• Integrated and fine-tuned multiple pre-trained VLMs — XClip, Clip4Clip, and SeViLA — for video-text matching and video QA, validating that pre-trained VLMs significantly outperform prior KG-only approaches on non-structural queries
+• Published: "Deep Video Understanding with Video-Language Model," Proceedings of the 31st ACM International Conference on Multimedia (MM '23), Ottawa, Canada DOI: https://doi.org/10.1145/3581783.3612863
+)
+(Short Version:
+• Co-developed DBVM, a dual-branch pipeline combining knowledge graphs and video-language models (SeViLA, XClip, Clip4Clip) for multimodal QA on 90-min movies
+• Designed cross-matching strategy fusing T2V/V2T similarity matrices, improving description-scene retrieval accuracy from 0.52 to 0.76
+• Published "Deep Video Understanding with Video-Language Model" in ACM MM '23 proceedings
+)
+Skills: C++, Computer Vision, python, machine learning, digital image processing, computer graphics, LLM, multi-model model
+
+
+Software Engineer Intern
+GuoLing Technology Institute · Internship
+Apr 2023 - May 2023 · 2 mos
+Suzhou, Jiangsu, China · On-site
+
+Developed a deep learning-based automated visual inspection system for quality control of electroplated PIM inductors and capacitors.
+(Full version:
+• Designed and trained 4 face-specific YOLOv8 object detection models for automated visual inspection of electroplated PIM inductors/capacitors. The system covers 20 distinct defect types (chipping, solder defects, rust, electrode exposure, plating peeling, dark cracks, etc.) across 4 inspection surfaces (A-face, B-face, C-short edge, C-long edge), achieving 91% mAP@50 — matching human inspector-level accuracy at 15ms per frame.
+• Engineered a complete data pipeline handling 5,000+ images from a 7-camera inspection station. Built automated workflows for CLAHE contrast enhancement on reflective surfaces, camera-to-face routing, CVAT annotation in YOLO format, and stratified splitting (70/15/15). Designed a custom Albumentations augmentation strategy (Mosaic, Copy-Paste, HSV jitter) expanding effective training data 5× and improving rare-defect recall by 8%.
+• Tackled severe class imbalance (some defects appeared <30 times) by combining Copy-Paste augmentation, Focal Loss, and class-weighted sampling. Ablation study confirmed the combined strategy improved mAP on rare categories (dark cracks, mixed materials) by 8% while maintaining common-defect performance.
+• Conducted rigorous architecture comparison evaluating YOLOv5s, YOLOv7, YOLOv8s, and YOLOv8s+P2 (custom small-object detection head) on the hardest B-face dataset (10 classes). Controlled all variables: identical epochs, image size, augmentation, splits. Parallel augmentation ablation across 4 configurations. Documented in technical report with per-class AP and confusion matrices, directly informing production architecture decisions.
+)
+(Short Version:
+• Trained 4 face-specific YOLOv8 models for industrial defect detection across 20 classes, achieving 91% mAP@50 on held-out test data
+• Built end-to-end data pipeline processing 5,000+ images from 7 cameras: CLAHE preprocessing, CVAT annotation, Albumentations augmentation, and stratified splitting
+• Designed multi-strategy augmentation pipeline (Copy-Paste, Mosaic, Focal Loss) to address class imbalance, improving rare-defect recall by 8% mAP
+• Conducted controlled architecture comparison (YOLOv5 vs YOLOv7 vs YOLOv8) with ablation study across 4 augmentation configs, documenting results for production decision
+)
+
+Skills: Convolutional Neural Networks (CNN), C++, python, computer vision, backend web development, java, machine learning, computer graphics, Qt structure          
+
+
+Projects
+
+AI Agent-powered Resume & Cover Letter Generator
+Oct 2025 - Feb 2026
+
+(Full version:
+An end-to-end AI system that generates tailored, ATS-optimized resumes and cover letters from job descriptions using a multi-agent orchestration pipeline — built to solve a real problem I experienced during my own job search.
+• Architected a LangGraph StateGraph pipeline orchestrating 4 specialized agents (JD Analyzer → Relevance Matcher → Resume Generator → Cover Letter Agent) with Pydantic v2 structured outputs for schema-driven responses. Chose LangGraph over a simple LLM chain for its conditional edge routing: a quality-gate evaluates each generated resume and routes back to the generation agent with specific feedback if the score falls below threshold, up to 3 retries — ensuring consistent output quality across 50+ generations.
+• Engineered a Retrieval-Augmented Generation (RAG) pipeline using ChromaDB and BGE-M3 embeddings to ground generated content in real company context. Built automated web scraping with Firecrawl to index company career pages, about pages, and news articles, with metadata-tagged chunking (source type, content category, scrape date) for precise filtered retrieval. This reduced manual company research from ~2 hours to under 30 seconds per application.
+• Built an automated dual-layer evaluation framework: a deterministic ATS scoring layer (spaCy NER + TF-IDF cosine similarity for keyword coverage, action verb density, and section completeness) combined with an LLM-as-a-judge self-critique loop using DeepEval's G-Eval rubrics. The self-critique feeds structured improvement feedback back into the LangGraph pipeline, creating a generate → evaluate → revise cycle that measurably improves output quality with each iteration.
+• Developed the full-stack application with an async FastAPI backend (SQLAlchemy 2.0 + PostgreSQL for task persistence and resume version control), a React/TypeScript frontend featuring shadcn/ui components, Zustand + TanStack Query for state management, react-pdf for inline PDF preview, Recharts for skill-matching visualization, and react-diff-viewer for version comparison. Real-time multi-agent progress tracking via WebSocket with requestAnimationFrame batching prevents UI jank during streaming.
+• Maintained production engineering standards: LaTeX compilation with smart retry logic (error feedback to LLM for auto-correction), Docker multi-stage builds, GitHub Actions CI/CD enforcing ruff linting + mypy strict type checking + pytest with 80%+ code coverage, and conventional commit history.
+)
+(Short Version:
+• Architected a 4-agent LangGraph pipeline with quality-gated routing and retry loops to generate tailored resumes from job descriptions
+• Engineered a RAG pipeline using ChromaDB and BGE-M3 embeddings over scraped company data, reducing manual research time by ~97%
+• Built dual-layer evaluation with ATS keyword scoring (spaCy/TF-IDF) and LLM-as-a-judge self-critique, achieving 0.85+ quality correlation
+• Deployed full-stack app with FastAPI, React/TypeScript, WebSocket streaming, PostgreSQL persistence, Docker, and 80%+ test coverage via CI/CD
+)
+
+Skills: Machine Learning · React.js · Computer Graphics · Amazon Web Services (AWS) · Full-Stack Development · Python (Programming Language) · Back-End Web Development · Object Tracking · Image Generation · Database Design · Computer Vision · Convolutional Neural Networks (CNN) · JavaScript · Object Recognition
+
+
+
+
+Aerial Drone Footage – Lost Hiker Challenge
+Sep 2023 - Apr 2024
+• Developed a deep learning model using YOLOv8 to accurately detect lost hikers and survival items (e.g., backpacks, water bottles) in aerial drone footage, designed to accelerate search and rescue (SAR) operations.
+• Managed the complete data lifecycle by sourcing and annotating a custom dataset of aerial images with Roboflow and applying extensive data augmentation (rotation, mosaic, brightness) to enhance model robustness.
+• Implemented a Slicing-Aided Hyper Inference (SAHI) pipeline with OpenCV to process 4K video, significantly improving the model's ability to detect small, distant objects often missed by standard inference methods.
+• Engineered a training pipeline utilizing transfer learning on a pre-trained YOLOv8 model, systematically monitoring and evaluating performance metrics like Mean Average Precision (mAP) on a hold-out test set.
+• Built a practical inference script with OpenCV to process video feeds, draw bounding boxes on detected objects, and generate alerts by saving high-confidence frames for rapid operator review. Send timestamps and geographic coordinates of identified frames to the frontend.
+• Created a frontend webpage using JavaScript that enables users to upload drone footage, view a preview of the processing, showcasing frames detected by the model with bounding boxes and geographic coordinates, and receive the processed footage from the server.
+Skills: Machine Learning · React.js · Computer Graphics · Amazon Web Services (AWS) · Full-Stack Development · Python (Programming Language) · Back-End Web Development · Object Tracking · Image Generation · Database Design · Computer Vision · Convolutional Neural Networks (CNN) · JavaScript · Object Recognition
+Other contributorsOther contributors
+
+
+
+
+Google Hackathon DND Game
+Jul 2023 - Jul 2023
+• Enable player to generate player characteristics and world background
+• Use Google Bert API to generate the start of story based on player and world
+• Enable player to write interaction and story will automatically be generated based on interaction
+
+
+Skills: Large Language Models (LLM) · Stable Diffusion · AI Prompting · Cascading Style Sheets (CSS) · BERT (Language Model) · Python (Programming Language) · Back-End Web Development · Java · Tkinter · HTML
+Other contributorsOther contributors
+
+
+
+
+Hotel Room Facial Recognition Locking System
+Jan 2023 - Apr 2023
+• Use SQL and Javascript to build a Database and backend server to save information of guest and interact with booking phone app and lock control system.
+• Use Android Studio to build a booking application on phone for customers to login, book hotel room and upload photos for facial recognition.
+• Train a facial recognition model and run the model on backend server to detect facial similarity.
+• Make a room lock control system by using FPGA and hardware components such as wifi module, camera and VGA screen to take pictures, send pictures to the server and unlock room based on the result of facial recognition.
+Skills: Machine Learning · Computer Hardware · Full-Stack Development · Cascading Style Sheets (CSS) · Facial Recognition · Back-End Web Development · Java · VHDL · Database Design · Intel Quartus Prime · PHP · Convolutional Neural Networks (CNN) · Signal Processing · JavaScript · Git · SQL · Verilog · Android Studio · HTML Scripting · Field-Programmable Gate Arrays (FPGA) · Lua
+
+
+Eloquent phone app
+May 2022 - Aug 2022
+• Build a phone application Eloquent which can manage visual cue card sets and help people to prepare/make presentation.
+• Build a mongodb database to save cue cards sets and user data on virtual machine by visual studio.
+• Build a node Java Script backend server for login, manage cue cards sets and import/export cue cards sets on virtual machine by visual studio.
+• Build a websocket server to implement live collaboration on virtual machine by visual studio.
+• Design a RESTful API to transfer data between backend and frontend.
+• Deal with the edit cue card sets use case in frontend by android studio.
+• Deal with live collaboration use case, which enable multiple users to edit a cue card set at the same time without interrupting each other by android studio and visual studio.
+Skills: WebSocket · Node.js · Full-Stack Development · Back-End Web Development · Java · REST APIs · MongoDB · JavaScript · SQL · Android Studio
+
+
+
+
+Other skills
+
+
+• Languages:Python, Javascript, C++, SQL, Java, Verilog, VHDL, HTML, CSS, Lua
+• Technologies: AWS, Azure, Kafka, React, Vue, Qt, Git, Android Studio, Quartus Prime, Modelsim
+
+
+Best Offer already got
+
+Huawei AI Software Engineer
+
+

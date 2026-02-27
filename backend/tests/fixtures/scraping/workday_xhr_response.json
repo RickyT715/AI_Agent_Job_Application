@@ -1,0 +1,30 @@
+{
+  "jobPostings": [
+    {
+      "id": "wd-job-001",
+      "title": "Software Development Engineer",
+      "company": "BigEnterprise Co",
+      "locationsText": "Seattle, WA",
+      "description": "Design and develop software solutions for enterprise customers. Work with Java, Python, and cloud technologies.",
+      "externalPath": "/en-US/job/seattle/software-development-engineer/JR001",
+      "subtitles": [
+        {
+          "instances": [
+            {"text": "Engineering"}
+          ]
+        }
+      ],
+      "bulletFields": ["Full-time", "Engineering"]
+    },
+    {
+      "id": "wd-job-002",
+      "title": "Product Manager",
+      "company": "BigEnterprise Co",
+      "locationsText": "Remote",
+      "description": "Lead product strategy and roadmap for our core platform. Work cross-functionally with engineering and design.",
+      "externalPath": "/en-US/job/remote/product-manager/JR002",
+      "subtitles": [],
+      "bulletFields": ["Full-time", "Product"]
+    }
+  ]
+}

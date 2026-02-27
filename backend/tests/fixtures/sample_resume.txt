@@ -1,0 +1,41 @@
+JOHN DOE
+Software Engineer | john.doe@email.com | (555) 123-4567 | linkedin.com/in/johndoe | github.com/johndoe
+
+SUMMARY
+Experienced software engineer with 5+ years building scalable backend systems and APIs. Proficient in Python, FastAPI, PostgreSQL, and cloud infrastructure. Strong background in machine learning pipelines and data engineering. Looking for remote-first opportunities in AI/ML or backend engineering.
+
+SKILLS
+Languages: Python, TypeScript, SQL, Go
+Frameworks: FastAPI, Django, React, LangChain
+Databases: PostgreSQL, Redis, ChromaDB, MongoDB
+Cloud: AWS (EC2, S3, Lambda, ECS), GCP (Cloud Run, BigQuery)
+ML/AI: scikit-learn, PyTorch, LangChain, RAG pipelines, vector databases
+Tools: Docker, Kubernetes, GitHub Actions, Terraform
+Practices: TDD, CI/CD, microservices, event-driven architecture
+
+EXPERIENCE
+Senior Software Engineer | TechCorp Inc. | 2022 - Present | Remote
+- Designed and built a real-time ML inference pipeline processing 10M+ predictions/day
+- Led migration from monolith to microservices architecture, reducing deployment time by 70%
+- Built RAG-based document search system using LangChain, ChromaDB, and GPT-4
+- Mentored team of 4 junior engineers on Python best practices and code review
+
+Software Engineer | DataFlow Labs | 2020 - 2022 | San Francisco, CA
+- Developed REST APIs with FastAPI serving 50K+ daily active users
+- Implemented automated ETL pipelines using Airflow and Python
+- Reduced database query latency by 40% through index optimization and query rewriting
+- Built CI/CD pipelines with GitHub Actions and Docker
+
+Junior Software Engineer | StartupXYZ | 2019 - 2020 | New York, NY
+- Built full-stack features using Django and React
+- Wrote comprehensive unit and integration tests achieving 90%+ code coverage
+- Participated in on-call rotation and incident response
+
+EDUCATION
+Bachelor of Science in Computer Science | University of California, Berkeley | 2019
+- GPA: 3.7/4.0
+- Relevant coursework: Machine Learning, Distributed Systems, Database Systems
+
+CERTIFICATIONS
+- AWS Solutions Architect Associate
+- Google Cloud Professional Data Engineer

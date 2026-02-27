@@ -1,0 +1,43 @@
+# User preferences for job search and matching
+# Edit this file to customize your job search
+
+job_titles:
+  - Software Engineer
+  - Backend Engineer
+  - Python Developer
+
+locations:
+  - Remote
+  - San Francisco, CA
+  - New York, NY
+
+employment_types:
+  - FULLTIME
+
+date_posted: month
+salary_min: 120000
+salary_max: 200000
+salary_currency: USD
+
+workplace_types:
+  - remote
+  - hybrid
+
+experience_level: mid
+final_results_count: 10
+num_pages_per_source: 1
+
+enabled_sources:
+  - jsearch
+
+greenhouse_board_tokens: []
+lever_companies: []
+workday_urls: []
+
+# Scoring weights (must sum to 1.0)
+weights:
+  skills: 0.35
+  experience: 0.25
+  education: 0.15
+  location: 0.15
+  salary: 0.10

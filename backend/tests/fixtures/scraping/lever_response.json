@@ -1,0 +1,46 @@
+[
+  {
+    "id": "abc12345-def6-7890-ghij-klmn12345678",
+    "text": "Backend Engineer",
+    "descriptionPlain": "We are looking for a backend engineer to build core infrastructure. You will work on APIs, databases, and cloud infrastructure.",
+    "categories": {
+      "commitment": "Full-time",
+      "location": "New York, NY",
+      "team": "Engineering"
+    },
+    "lists": [
+      {
+        "text": "Requirements",
+        "content": "<li>4+ years backend development</li><li>Python or Go</li><li>PostgreSQL experience</li>"
+      },
+      {
+        "text": "Nice to have",
+        "content": "<li>Kubernetes experience</li><li>GraphQL</li>"
+      }
+    ],
+    "hostedUrl": "https://jobs.lever.co/testcompany/abc12345",
+    "applyUrl": "https://jobs.lever.co/testcompany/abc12345/apply",
+    "createdAt": 1705334400000,
+    "updatedAt": 1705420800000
+  },
+  {
+    "id": "xyz98765-uvw4-3210-abcd-efgh98765432",
+    "text": "Data Analyst",
+    "descriptionPlain": "Analyze product metrics and drive data-informed decisions across the organization.",
+    "categories": {
+      "commitment": "Full-time",
+      "location": "Remote",
+      "team": "Data"
+    },
+    "lists": [
+      {
+        "text": "Requirements",
+        "content": "<li>2+ years data analysis</li><li>SQL proficiency</li><li>Python or R</li>"
+      }
+    ],
+    "hostedUrl": "https://jobs.lever.co/testcompany/xyz98765",
+    "applyUrl": "https://jobs.lever.co/testcompany/xyz98765/apply",
+    "createdAt": 1705248000000,
+    "updatedAt": 1705334400000
+  }
+]

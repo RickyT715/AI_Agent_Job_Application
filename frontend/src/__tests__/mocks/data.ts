@@ -66,5 +66,14 @@ export function makePreferences(): PreferencesResponse {
     workplace_types: ["remote", "hybrid"],
     experience_level: "mid",
     weights: { skills: 0.3, experience: 0.25, education: 0.15, location: 0.15, salary: 0.15 },
+    employment_types: ["FULLTIME"],
+    date_posted: "month",
+    salary_currency: "USD",
+    final_results_count: 10,
+    num_pages_per_source: 1,
+    enabled_sources: ["jsearch"],
+    greenhouse_board_tokens: [],
+    lever_companies: [],
+    workday_urls: [],
   };
 }

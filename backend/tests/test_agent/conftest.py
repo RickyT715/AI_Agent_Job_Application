@@ -4,7 +4,6 @@ import pytest
 
 from app.services.agent.state import ApplicationState, make_initial_state
 
-
 SAMPLE_USER_PROFILE = {
     "first_name": "John",
     "last_name": "Doe",

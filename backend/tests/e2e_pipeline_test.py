@@ -16,7 +16,7 @@ import logging
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Ensure backend package is importable
@@ -50,7 +50,7 @@ import chromadb
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
 from app.config import UserConfig, get_settings, reset_settings
-from app.schemas.matching import JobMatchScore, JobPosting, ScoredMatch
+from app.schemas.matching import JobPosting, ScoredMatch
 from app.services.matching.embedder import JobEmbedder
 from app.services.matching.pipeline import MatchingPipeline
 from app.services.matching.scorer import JobScorer
@@ -322,7 +322,7 @@ async def match_jobs(
     indexed = pipeline.index_jobs(jobs)
     logger.info(f"  Indexed {indexed} new jobs")
 
-    logger.info(f"  Running matching pipeline (retrieve → rerank → score)...")
+    logger.info("  Running matching pipeline (retrieve → rerank → score)...")
     matches = await pipeline.match(resume_text=RESUME_TEXT, jobs=jobs)
     logger.info(f"  Scored {len(matches)} matches")
 
@@ -337,12 +337,12 @@ def generate_report(
     output_path: Path,
 ) -> None:
     """Generate comprehensive Markdown report."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     lines: list[str] = []
     lines.append("# AI Job Application Agent — End-to-End Pipeline Test Report")
     lines.append(f"\n**Generated:** {now}")
-    lines.append(f"**User:** Ruiqi Tian (Master of Engineering, U of Waterloo)")
+    lines.append("**User:** Ruiqi Tian (Master of Engineering, U of Waterloo)")
     lines.append(f"**Search Titles:** {', '.join(SEARCH_TITLES)}")
     lines.append(f"**Target Locations:** {', '.join(USER_CONFIG.locations)}")
     lines.append(
@@ -357,8 +357,8 @@ def generate_report(
     lines.append("")
     total_scraped = sum(r["scraped_count"] for r in all_results.values())
     total_matched = sum(len(r["matches"]) for r in all_results.values())
-    lines.append(f"| Metric | Value |")
-    lines.append(f"|--------|-------|")
+    lines.append("| Metric | Value |")
+    lines.append("|--------|-------|")
     lines.append(f"| Total Jobs Scraped | {total_scraped} |")
     lines.append(f"| Total Jobs Scored | {total_matched} |")
     lines.append(f"| Search Queries | {len(SEARCH_TITLES)} |")
@@ -367,9 +367,9 @@ def generate_report(
     for r in all_results.values():
         sources_used.update(r.get("sources_used", []))
     lines.append(f"| Scraping Sources | {', '.join(sorted(sources_used))} |")
-    lines.append(f"| Scoring Model | Gemini (via Google AI) |")
-    lines.append(f"| Embedding Model | Gemini embedding-001 |")
-    lines.append(f"| Retrieval | ChromaDB (top-30) → FlashRank rerank (top-20) |")
+    lines.append("| Scoring Model | Gemini (via Google AI) |")
+    lines.append("| Embedding Model | Gemini embedding-001 |")
+    lines.append("| Retrieval | ChromaDB (top-30) → FlashRank rerank (top-20) |")
     lines.append("")
 
     # Scraping sources detail
@@ -454,19 +454,19 @@ def generate_report(
             lines.append("")
 
             if m.score.strengths:
-                lines.append(f"**Strengths (Why it fits):**")
+                lines.append("**Strengths (Why it fits):**")
                 for s in m.score.strengths:
                     lines.append(f"- {s}")
                 lines.append("")
 
             if m.score.missing_skills:
-                lines.append(f"**Gaps (Why it may not fit):**")
+                lines.append("**Gaps (Why it may not fit):**")
                 for s in m.score.missing_skills:
                     lines.append(f"- {s}")
                 lines.append("")
 
             if m.score.interview_talking_points:
-                lines.append(f"**Interview Talking Points:**")
+                lines.append("**Interview Talking Points:**")
                 for p in m.score.interview_talking_points:
                     lines.append(f"- {p}")
                 lines.append("")

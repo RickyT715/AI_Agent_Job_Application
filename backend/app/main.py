@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI):
     # --- ARQ Redis pool ---
     try:
         from arq import create_pool
+
         from app.worker.settings import get_redis_settings
 
         app.state.arq_pool = await create_pool(get_redis_settings())

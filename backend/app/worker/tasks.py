@@ -74,7 +74,9 @@ def _build_scrapers(config: UserConfig) -> list:
     return scrapers
 
 
-async def run_scraping(ctx: dict, queries: list[str], location: str = "", remote_only: bool = False):
+async def run_scraping(
+    ctx: dict, queries: list[str], location: str = "", remote_only: bool = False,
+):
     """Background task: run scraping orchestrator.
 
     Args:
@@ -103,7 +105,9 @@ async def run_scraping(ctx: dict, queries: list[str], location: str = "", remote
             location=location,
             remote_only=remote_only,
             num_pages=config.num_pages_per_source,
-            employment_type=config.employment_types[0] if config.employment_types else None,
+            employment_type=(
+                config.employment_types[0] if config.employment_types else None
+            ),
             date_posted=config.date_posted,
         )
         all_jobs.extend(result.jobs)

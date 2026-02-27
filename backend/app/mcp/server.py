@@ -4,9 +4,7 @@ Exposes job application agent capabilities as MCP tools, resources, and prompts.
 Supports stdio transport (local) and Streamable HTTP (remote).
 """
 
-import json
 import logging
-from pathlib import Path
 
 from fastmcp import FastMCP
 
@@ -140,7 +138,10 @@ async def match_resume_to_jobs(
     scrape_result = await orchestrator.run(query, location=location)
 
     if not scrape_result.jobs:
-        return {"error": "No jobs found for the given query.", "scraping_errors": scrape_result.errors}
+        return {
+            "error": "No jobs found for the given query.",
+            "scraping_errors": scrape_result.errors,
+        }
 
     # Match
     pipeline = MatchingPipeline(user_config=user_config, final_k=top_k)
@@ -185,7 +186,7 @@ async def fill_application(
     from app.services.agent.nodes import detect_ats
     from app.services.agent.state import make_initial_state
 
-    user_config = _load_user_config()
+    _load_user_config()
     resume_text = _load_resume_text()
 
     state = make_initial_state(

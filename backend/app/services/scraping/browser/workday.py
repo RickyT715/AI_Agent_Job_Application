@@ -6,7 +6,6 @@ responses from the search API rather than parsing the DOM.
 This is best-effort — Workday layouts vary significantly between companies.
 """
 
-import json
 import logging
 from typing import Any
 
@@ -38,7 +37,7 @@ class WorkdayScraper(BaseScraper):
         urls = kwargs.get("base_urls", self._base_urls)
 
         try:
-            from playwright.async_api import async_playwright
+            from playwright.async_api import async_playwright  # noqa: F401
         except ImportError:
             logger.warning("Playwright not installed, skipping Workday scraping")
             result.errors.append("Playwright not installed")

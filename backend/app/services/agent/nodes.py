@@ -304,7 +304,11 @@ async def api_submit(state: ApplicationState) -> dict:
                 idx = parts.index("boards.greenhouse.io")
                 board_token = parts[idx + 1] if len(parts) > idx + 1 else ""
                 jobs_idx = parts.index("jobs") if "jobs" in parts else -1
-                gh_job_id = parts[jobs_idx + 1] if jobs_idx >= 0 and len(parts) > jobs_idx + 1 else ""
+                gh_job_id = (
+                    parts[jobs_idx + 1]
+                    if jobs_idx >= 0 and len(parts) > jobs_idx + 1
+                    else ""
+                )
             except (ValueError, IndexError):
                 pass
 
@@ -331,7 +335,9 @@ async def api_submit(state: ApplicationState) -> dict:
                 pass
 
         submitter = LeverSubmitter()
-        result = await submitter.submit(company_slug, posting_id, fields_filled, resume_path or None)
+        result = await submitter.submit(
+            company_slug, posting_id, fields_filled, resume_path or None,
+        )
         return {
             "status": "submitted" if result.success else "failed",
             "error_message": "" if result.success else result.message,

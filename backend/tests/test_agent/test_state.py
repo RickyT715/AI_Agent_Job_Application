@@ -1,10 +1,7 @@
 """Tests for agent state schema and validation."""
 
-import pytest
 
 from app.services.agent.state import (
-    VALID_ATS_PLATFORMS,
-    VALID_STATUSES,
     make_initial_state,
     validate_ats_platform,
     validate_status,

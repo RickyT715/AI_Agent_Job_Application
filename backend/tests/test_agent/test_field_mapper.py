@@ -1,6 +1,5 @@
 """Tests for the field mapper that maps user profile to form fields."""
 
-import pytest
 
 from app.services.agent.field_mapper import FieldMapper
 

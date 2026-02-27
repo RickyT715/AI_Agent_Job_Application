@@ -1,6 +1,5 @@
 """Tests for the agent API router."""
 
-import pytest
 from httpx import AsyncClient
 
 

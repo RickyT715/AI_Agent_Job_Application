@@ -90,7 +90,7 @@ class LeverScraper(BaseScraper):
 
             # Workplace type from categories
             commitment = categories.get("commitment")  # e.g., "Full-time"
-            team = categories.get("team")
+            categories.get("team")
 
             # Description from lists
             description_parts = []

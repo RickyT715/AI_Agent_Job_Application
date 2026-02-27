@@ -1,6 +1,5 @@
 """Tests for the jobs API router."""
 
-import pytest
 from httpx import AsyncClient
 
 

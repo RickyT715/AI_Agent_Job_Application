@@ -14,14 +14,14 @@ from pathlib import Path
 # Add the backend directory to the path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.config import UserConfig, load_user_config
+import chromadb
+
+from app.config import load_user_config
 from app.schemas.matching import JobPosting
 from app.services.llm_factory import LLMTask, get_embeddings, get_llm
 from app.services.matching.embedder import JobEmbedder
 from app.services.matching.pipeline import MatchingPipeline
 from app.services.matching.scorer import JobScorer
-
-import chromadb
 
 FIXTURES_DIR = Path(__file__).parent.parent / "tests" / "fixtures"
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -84,7 +84,7 @@ async def main():
         print(f"   Title:    {job.title}")
         print(f"   Company:  {job.company}")
         print(f"   Location: {job.location or 'N/A'}")
-        print(f"   Salary:   ", end="")
+        print("   Salary:   ", end="")
         if job.salary_min and job.salary_max:
             print(f"${job.salary_min:,} - ${job.salary_max:,}")
         else:

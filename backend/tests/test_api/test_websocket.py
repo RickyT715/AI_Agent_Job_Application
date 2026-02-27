@@ -1,6 +1,5 @@
 """Tests for WebSocket connection manager."""
 
-import pytest
 
 from app.core.websocket import ConnectionManager
 

@@ -4,7 +4,6 @@ Run: uv run pytest -m integration tests/test_integration/test_scraping_e2e.py
 Requires: GOOGLE_API_KEY, ANTHROPIC_API_KEY, and JSEARCH_API_KEY in .env
 """
 
-import json
 from pathlib import Path
 
 import chromadb

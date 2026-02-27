@@ -1,6 +1,5 @@
 """Tests for Lever scraper."""
 
-import httpx
 import pytest
 from pytest_httpx import HTTPXMock
 

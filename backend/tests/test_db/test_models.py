@@ -6,7 +6,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.application import Application
-from app.models.cover_letter import CoverLetter
 from app.models.job import Job
 from app.models.match import MatchResult
 from app.models.user import User

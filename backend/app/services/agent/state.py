@@ -2,7 +2,6 @@
 
 from typing import Literal, TypedDict
 
-
 # Valid status transitions: pending → in_progress → paused → submitted/failed/aborted
 AgentStatus = Literal[
     "pending",

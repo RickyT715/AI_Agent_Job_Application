@@ -8,7 +8,6 @@ Usage:
     uv run python -m app.mcp --transport streamable-http --port 8001
 """
 
-import sys
 
 from app.mcp.server import mcp
 

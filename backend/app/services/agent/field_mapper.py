@@ -6,7 +6,6 @@ dict and prepares them for form filling.
 
 import re
 
-
 # Common form field name patterns mapped to profile keys
 FIELD_PATTERNS: dict[str, list[str]] = {
     "first_name": ["first_name", "firstname", "first name", "given_name", "fname"],

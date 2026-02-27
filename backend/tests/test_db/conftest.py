@@ -1,7 +1,6 @@
 """Database test fixtures using SQLite for fast isolated tests."""
 
 import pytest
-from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.models.base import Base

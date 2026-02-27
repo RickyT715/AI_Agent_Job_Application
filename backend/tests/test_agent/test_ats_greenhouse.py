@@ -1,6 +1,5 @@
 """Tests for Greenhouse ATS direct API submission."""
 
-import pytest
 from pytest_httpx import HTTPXMock
 
 from app.services.agent.ats.greenhouse import GreenhouseSubmitter

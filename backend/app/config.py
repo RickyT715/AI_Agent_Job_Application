@@ -11,7 +11,6 @@ import yaml
 from pydantic import BaseModel, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 # ---------------------------------------------------------------------------
 # Tier 1: Infrastructure settings from environment / .env
 # ---------------------------------------------------------------------------

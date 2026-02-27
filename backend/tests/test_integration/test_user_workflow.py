@@ -16,7 +16,6 @@ All external services (LLMs, scraper APIs) are mocked.
 All internal code paths (DB, routers, services, agent graph) are real.
 """
 
-import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -27,23 +26,19 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.db.session import get_db_session
 from app.main import app
 from app.models.base import Base
-from app.models.application import Application
-from app.models.cover_letter import CoverLetter
 from app.models.job import Job
 from app.models.match import MatchResult
 from app.models.user import User
-from app.schemas.matching import JobPosting, JobMatchScore, ScoreBreakdown
+from app.schemas.matching import JobMatchScore, JobPosting, ScoreBreakdown
 from app.services.agent.graph import compile_agent_graph
 from app.services.agent.state import make_initial_state
-from app.services.matching.embedder import JobEmbedder
 from app.services.matching.scorer import JobScorer
 from app.services.reports.cover_letter import CoverLetterGenerator
-from app.services.reports.evaluation import skill_match_f1, score_accuracy
+from app.services.reports.evaluation import score_accuracy, skill_match_f1
 from app.services.reports.generator import ReportGenerator
 from app.services.scraping.base import ScrapingResult
 from app.services.scraping.deduplicator import JobDeduplicator
 from app.services.scraping.orchestrator import ScrapingOrchestrator
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -884,8 +879,9 @@ class TestStep9_DockerConfig:
 
     def test_docker_compose_valid(self):
         """docker-compose.yml has all required services."""
-        import yaml
         from pathlib import Path
+
+        import yaml
 
         compose_path = Path(__file__).parent.parent.parent.parent / "docker-compose.yml"
         assert compose_path.exists(), f"docker-compose.yml not found at {compose_path}"

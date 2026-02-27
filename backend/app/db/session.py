@@ -20,7 +20,7 @@ def get_session_factory(database_url: str | None = None) -> async_sessionmaker[A
     return async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session() -> AsyncGenerator[AsyncSession]:
     """Dependency that yields a database session."""
     session_factory = get_session_factory()
     async with session_factory() as session:
@@ -33,7 +33,7 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @asynccontextmanager
-async def get_db_session_ctx() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session_ctx() -> AsyncGenerator[AsyncSession]:
     """Context manager for DB sessions outside of FastAPI dependency injection.
 
     Used by worker tasks and background jobs.

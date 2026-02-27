@@ -1,6 +1,5 @@
 """Tests for job deduplication."""
 
-import pytest
 
 from app.schemas.matching import JobPosting
 from app.services.scraping.deduplicator import (

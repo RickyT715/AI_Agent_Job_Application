@@ -1,9 +1,7 @@
 """Tests for the LangGraph agent graph structure and routing."""
 
-import pytest
 
 from app.services.agent.graph import (
-    API_SUBMIT_PLATFORMS,
     build_agent_graph,
     compile_agent_graph,
     route_after_ats,

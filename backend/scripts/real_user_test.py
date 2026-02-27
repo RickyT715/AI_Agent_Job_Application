@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # Load .env from project root (parent of backend/)
 from dotenv import load_dotenv
+
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 load_dotenv(os.path.join(PROJECT_ROOT, ".env"), override=True)
 
@@ -246,9 +247,9 @@ USER_PREFERENCES = {
 
 async def main():
     """Run the full real-user simulation."""
-    from app.config import Settings, UserConfig, get_settings, reset_settings
-    from app.schemas.matching import JobMatchScore, JobPosting, ScoreBreakdown, ScoredMatch
-    from app.services.llm_factory import get_embeddings, get_llm, LLMTask
+    from app.config import UserConfig, get_settings, reset_settings
+    from app.schemas.matching import JobPosting, ScoredMatch
+    from app.services.llm_factory import LLMTask, get_embeddings, get_llm
     from app.services.matching.embedder import JobEmbedder
     from app.services.matching.retriever import TwoStageRetriever
     from app.services.reports.generator import ReportGenerator

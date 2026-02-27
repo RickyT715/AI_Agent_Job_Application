@@ -8,7 +8,7 @@ Usage:
     embeddings = get_embeddings()         # → Gemini embedding-001
 """
 
-from enum import Enum
+from enum import StrEnum
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models import BaseChatModel
@@ -17,7 +17,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from app.config import get_settings
 
 
-class LLMTask(str, Enum):
+class LLMTask(StrEnum):
     """Task categories that determine which model to use."""
 
     # Gemini Flash tasks (cheap / free tier)

@@ -80,7 +80,7 @@ class ReportGenerator:
         html = self.render_html(**kwargs)  # type: ignore[arg-type]
 
         try:
-            from weasyprint import HTML as WeasyHTML
+            from weasyprint import HTML as WeasyHTML  # noqa: N811
             pdf_bytes = WeasyHTML(string=html).write_pdf()
             logger.info(f"Generated PDF report ({len(pdf_bytes)} bytes)")
             return pdf_bytes

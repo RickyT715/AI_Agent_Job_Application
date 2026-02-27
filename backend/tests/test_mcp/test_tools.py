@@ -4,8 +4,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.mcp.server import mcp
-
 
 class TestToolRegistration:
     """Tests for MCP tool registration."""

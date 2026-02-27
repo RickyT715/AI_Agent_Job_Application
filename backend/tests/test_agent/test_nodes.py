@@ -2,8 +2,6 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from app.services.agent.nodes import (
     abort_application,
     answer_questions,

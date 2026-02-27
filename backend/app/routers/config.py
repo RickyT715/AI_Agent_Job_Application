@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import MatchingWeights, UserConfig, load_user_config, get_settings
+from app.config import MatchingWeights, UserConfig, get_settings, load_user_config
 from app.db.session import get_db_session
 from app.models.user import User
 from app.schemas.api import (

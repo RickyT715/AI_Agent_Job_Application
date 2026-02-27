@@ -2,8 +2,6 @@
 
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-
 from app.schemas.matching import JobPosting
 from app.services.scraping.base import ScrapingResult
 from app.services.scraping.orchestrator import ScrapingOrchestrator

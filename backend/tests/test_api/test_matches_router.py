@@ -1,6 +1,5 @@
 """Tests for the matches API router."""
 
-import pytest
 from httpx import AsyncClient
 
 

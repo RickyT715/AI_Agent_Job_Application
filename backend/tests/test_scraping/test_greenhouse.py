@@ -1,6 +1,5 @@
 """Tests for Greenhouse scraper."""
 
-import httpx
 import pytest
 from pytest_httpx import HTTPXMock
 

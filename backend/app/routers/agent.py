@@ -52,7 +52,7 @@ async def agent_status_ws(websocket: WebSocket):
     try:
         while True:
             # Keep connection alive, listen for client messages
-            data = await websocket.receive_text()
+            await websocket.receive_text()
             # Client can send pings or commands
     except WebSocketDisconnect:
         manager.disconnect(websocket)

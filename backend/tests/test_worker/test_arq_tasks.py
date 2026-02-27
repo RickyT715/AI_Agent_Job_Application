@@ -2,8 +2,6 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from app.worker.tasks import run_agent, run_matching, run_scraping
 
 

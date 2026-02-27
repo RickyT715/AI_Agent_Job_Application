@@ -1,6 +1,5 @@
 """Tests for LangSmith custom evaluator functions."""
 
-import pytest
 
 from app.services.reports.evaluation import score_accuracy, skill_match_f1
 

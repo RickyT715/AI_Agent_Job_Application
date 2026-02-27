@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 
 from app.schemas.matching import JobPosting
 from app.services.matching.embedder import JobEmbedder
-from app.services.scraping.base import BaseScraper, ScrapingResult
+from app.services.scraping.base import BaseScraper
 from app.services.scraping.deduplicator import JobDeduplicator
 
 logger = logging.getLogger(__name__)

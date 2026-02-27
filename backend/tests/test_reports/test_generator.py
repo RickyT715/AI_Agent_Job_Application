@@ -1,6 +1,5 @@
 """Tests for PDF/HTML report generator."""
 
-import pytest
 
 from app.services.reports.generator import ReportGenerator, _score_color
 

@@ -7,7 +7,7 @@ import logging
 
 from langchain_core.documents import Document
 
-from app.config import UserConfig, load_user_config
+from app.config import UserConfig
 from app.schemas.matching import JobPosting, ScoredMatch
 from app.services.llm_factory import LLMTask, get_embeddings, get_llm
 from app.services.matching.embedder import JobEmbedder

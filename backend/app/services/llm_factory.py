@@ -60,12 +60,16 @@ def get_llm(task: LLMTask, temperature: float = 0.0) -> BaseChatModel:
             temperature=temperature,
         )
     elif task in _CLAUDE_TASKS:
-        return ChatAnthropic(
-            model=settings.claude_model,
-            api_key=settings.anthropic_api_key.get_secret_value(),
-            temperature=temperature,
-            max_tokens=4096,
-        )
+        kwargs: dict = {
+            "model": settings.claude_model,
+            "api_key": settings.anthropic_api_key.get_secret_value(),
+            "temperature": temperature,
+            "max_tokens": 4096,
+        }
+        base_url = getattr(settings, "anthropic_base_url", "")
+        if isinstance(base_url, str) and base_url:
+            kwargs["base_url"] = base_url
+        return ChatAnthropic(**kwargs)
     else:
         msg = f"Unknown LLM task: {task}"
         raise ValueError(msg)

@@ -173,6 +173,7 @@ class PreferencesResponse(BaseModel):
     greenhouse_board_tokens: list[str] = []
     lever_companies: list[str] = []
     workday_urls: list[str] = []
+    anthropic_base_url: str = ""
 
 
 class PreferencesUpdateRequest(BaseModel):
@@ -194,6 +195,7 @@ class PreferencesUpdateRequest(BaseModel):
     greenhouse_board_tokens: list[str] | None = None
     lever_companies: list[str] | None = None
     workday_urls: list[str] | None = None
+    anthropic_base_url: str | None = None
 
 
 class ResumeUploadResponse(BaseModel):

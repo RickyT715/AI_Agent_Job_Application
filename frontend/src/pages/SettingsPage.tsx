@@ -19,6 +19,7 @@ const DEFAULT_PREFERENCES: PreferencesResponse = {
   greenhouse_board_tokens: [],
   lever_companies: [],
   workday_urls: [],
+  anthropic_base_url: "",
 };
 
 export function SettingsPage() {

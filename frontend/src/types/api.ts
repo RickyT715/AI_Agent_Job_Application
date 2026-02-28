@@ -71,6 +71,7 @@ export interface PreferencesResponse {
   greenhouse_board_tokens: string[];
   lever_companies: string[];
   workday_urls: string[];
+  anthropic_base_url: string;
 }
 
 export interface ResumeUploadResponse {

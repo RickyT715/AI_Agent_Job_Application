@@ -67,6 +67,9 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
   const [workdayUrls, setWorkdayUrls] = useState(
     (preferences.workday_urls ?? []).join("\n")
   );
+  const [anthropicBaseUrl, setAnthropicBaseUrl] = useState(
+    preferences.anthropic_base_url ?? ""
+  );
 
   const weightsTotal = Object.values(weights).reduce((a, b) => a + b, 0);
   const weightsValid = Math.abs(weightsTotal - 1.0) < 0.02;
@@ -119,6 +122,7 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
       greenhouse_board_tokens: greenhouseBoardTokens.split(",").map((s) => s.trim()).filter(Boolean),
       lever_companies: leverCompanies.split(",").map((s) => s.trim()).filter(Boolean),
       workday_urls: workdayUrls.split("\n").map((s) => s.trim()).filter(Boolean),
+      anthropic_base_url: anthropicBaseUrl.trim(),
     });
   };
 
@@ -369,6 +373,27 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
               <span className="hint">One Workday base URL per line</span>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* --- Claude Proxy Section --- */}
+      <div className="settings-section">
+        <h2>Claude API Proxy</h2>
+        <div className="form-section">
+          <div className="form-group">
+            <label>Proxy URL</label>
+            <input
+              type="text"
+              value={anthropicBaseUrl}
+              onChange={(e) => setAnthropicBaseUrl(e.target.value)}
+              placeholder="e.g. http://localhost:42069"
+              aria-label="Claude proxy URL"
+            />
+            <span className="hint">
+              Route Claude API calls through a local proxy (e.g. claude-code-proxy).
+              Leave empty to use direct Anthropic API with your API key.
+            </span>
+          </div>
         </div>
       </div>
 

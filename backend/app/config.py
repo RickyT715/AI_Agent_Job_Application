@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     claude_model: str = "claude-sonnet-4-6"
     embedding_model: str = "gemini-embedding-001"
 
+    # Claude proxy (e.g., claude-code-proxy at http://localhost:42069)
+    anthropic_base_url: str = ""
+
     # LangSmith
     langsmith_tracing: bool = False
     langsmith_api_key: SecretStr = SecretStr("")

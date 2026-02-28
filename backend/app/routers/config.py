@@ -26,6 +26,7 @@ async def get_preferences():
 
 def _config_to_response(config: UserConfig) -> PreferencesResponse:
     """Convert UserConfig to PreferencesResponse."""
+    settings = get_settings()
     return PreferencesResponse(
         job_titles=config.job_titles,
         locations=config.locations,
@@ -43,6 +44,7 @@ def _config_to_response(config: UserConfig) -> PreferencesResponse:
         greenhouse_board_tokens=config.greenhouse_board_tokens,
         lever_companies=config.lever_companies,
         workday_urls=config.workday_urls,
+        anthropic_base_url=settings.anthropic_base_url,
     )
 
 
@@ -64,6 +66,10 @@ async def update_preferences(request: PreferencesUpdateRequest):
             MatchingWeights(**update_data["weights"])
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e))
+
+    # Handle anthropic_base_url separately (infrastructure setting)
+    if "anthropic_base_url" in update_data:
+        settings.anthropic_base_url = update_data.pop("anthropic_base_url")
 
     merged = current.model_dump()
     merged.update(update_data)

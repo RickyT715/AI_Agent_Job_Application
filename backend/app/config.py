@@ -108,7 +108,7 @@ class UserConfig(BaseModel):
     )
     salary_currency: str = "USD"
     final_results_count: int = Field(
-        default=10, ge=1, le=50,
+        default=10, ge=1, le=200,
         description="How many final matched jobs to return",
     )
     num_pages_per_source: int = Field(

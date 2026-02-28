@@ -1,13 +1,13 @@
-"""End-to-end pipeline test: Scrape → Match → Score → Report.
+"""End-to-end pipeline test: Scrape -> Match -> Score -> Report.
 
 Simulates a real user (Ruiqi Tian) searching for:
   1. Software Engineer
   2. AI Engineer
   3. Full-stack Developer
 
-Uses available free APIs (Arbeitnow, Greenhouse, Lever public boards)
-and Gemini for scoring (since Anthropic key is placeholder).
-Outputs a detailed Markdown report.
+Uses free public APIs (Arbeitnow, Greenhouse, Lever) for scraping
+and Claude (via claude-code-proxy at localhost:42069) for scoring.
+Outputs a detailed Markdown report with job descriptions.
 """
 
 import asyncio
@@ -23,7 +23,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # Set up env vars BEFORE importing app modules
-# The .env is at project root; GEMINI_API_KEY is in system env
 _env_path = Path(__file__).resolve().parent.parent.parent / ".env"
 if _env_path.exists():
     for line in _env_path.read_text().splitlines():
@@ -34,7 +33,7 @@ if _env_path.exists():
             if val and "your-" not in val.lower() and "here" not in val.lower():
                 os.environ.setdefault(key, val)
 
-# Also propagate GEMINI_API_KEY → GOOGLE_API_KEY if needed
+# Also propagate GEMINI_API_KEY -> GOOGLE_API_KEY if needed
 if os.environ.get("GEMINI_API_KEY") and not os.environ.get("GOOGLE_API_KEY"):
     os.environ["GOOGLE_API_KEY"] = os.environ["GEMINI_API_KEY"]
 
@@ -44,10 +43,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger("e2e_test")
 
-# ── Now import app modules ──────────────────────────────────────────────────
+# -- Now import app modules --
 
 import chromadb
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from app.config import UserConfig, get_settings, reset_settings
 from app.schemas.matching import JobPosting, ScoredMatch
@@ -59,7 +59,17 @@ from app.services.scraping.api.greenhouse import GreenhouseScraper
 from app.services.scraping.api.lever import LeverScraper
 from app.services.scraping.deduplicator import JobDeduplicator
 
-# ── User Profile ─────────────────────────────────────────────────────────────
+# -- Configuration --
+
+# Claude proxy URL
+CLAUDE_PROXY_URL = "http://localhost:42069"
+CLAUDE_MODEL = "claude-sonnet-4-6"
+
+# How many jobs to score per title (target 200+ total across 3 titles)
+SCORE_PER_TITLE = 70
+MAX_JOBS_PER_TITLE = 200  # Scraping cap per title
+
+# -- User Profile --
 
 RESUME_TEXT = """
 Ruiqi Tian
@@ -114,6 +124,21 @@ AI/ML: RAG, LLM, LangChain, LangGraph, ChromaDB, Computer Vision, YOLO, Deep Lea
 Backend: FastAPI, Node.js, REST APIs, WebSocket, Docker, PostgreSQL, MongoDB, Redis
 """
 
+# Expanded Greenhouse boards for more jobs
+GREENHOUSE_BOARDS = [
+    # Big tech / well-known
+    "figma", "cloudflare", "stripe", "datadog", "airbnb", "databricks",
+    "airtable", "gusto", "cockroachlabs", "benchling",
+    "relativityspace", "nianticlabs",
+    # Additional boards for volume
+    "hashicorp", "elastic", "gitlab", "mixpanel",
+    "hubspot", "snyk", "brex", "ramp",
+]
+
+LEVER_COMPANIES = [
+    "netflix", "nerdwallet", "rippling", "samsara",
+]
+
 USER_CONFIG = UserConfig(
     job_titles=["Software Engineer", "AI Engineer", "Full-stack Developer"],
     locations=["Remote", "United States", "Canada"],
@@ -122,30 +147,12 @@ USER_CONFIG = UserConfig(
     workplace_types=["remote", "hybrid"],
     experience_level="mid",
     employment_types=["FULLTIME"],
-    final_results_count=20,
-    num_pages_per_source=3,
+    final_results_count=SCORE_PER_TITLE,
+    num_pages_per_source=5,
     enabled_sources=["arbeitnow", "greenhouse", "lever"],
-    greenhouse_board_tokens=[
-        "figma", "cloudflare", "stripe", "datadog",
-        "airbnb", "databricks",
-        # Additional boards with full-stack / web eng roles
-        "airtable", "gusto", "cockroachlabs", "benchling",
-        "relativityspace", "nianticlabs",
-    ],
-    lever_companies=[
-        "netflix",
-        # Additional Lever companies
-        "nerdwallet", "rippling", "samsara",
-    ],
+    greenhouse_board_tokens=GREENHOUSE_BOARDS,
+    lever_companies=LEVER_COMPANIES,
 )
-
-# ── Well-known Greenhouse boards with many SWE jobs ─────────────────────────
-
-# These boards are publicly accessible and don't need auth
-GREENHOUSE_BOARDS = USER_CONFIG.greenhouse_board_tokens
-LEVER_COMPANIES = USER_CONFIG.lever_companies
-
-# ── Job title queries ────────────────────────────────────────────────────────
 
 SEARCH_TITLES = [
     "Software Engineer",
@@ -153,97 +160,88 @@ SEARCH_TITLES = [
     "Full-stack Developer",
 ]
 
-# ── Scraping Phase ───────────────────────────────────────────────────────────
+# -- Title matching helpers --
+
+_TITLE_VARIANTS: dict[str, list[str]] = {
+    "full-stack developer": ["full stack", "fullstack", "full-stack"],
+    "full stack developer": ["full stack", "fullstack", "full-stack"],
+    "ai engineer": [
+        "ai engineer", "ai/ml engineer", "machine learning engineer",
+        "ml engineer", "artificial intelligence",
+    ],
+}
+
+
+def _is_relevant(job_title: str, title_lower: str) -> bool:
+    """Check if a job title matches the search query."""
+    jt = job_title.lower()
+    if title_lower in jt:
+        return True
+    normalized_query = title_lower.replace("-", " ").replace("_", " ")
+    normalized_jt = jt.replace("-", " ").replace("_", " ")
+    if normalized_query in normalized_jt:
+        return True
+    variants = _TITLE_VARIANTS.get(title_lower, [])
+    for variant in variants:
+        if variant in normalized_jt:
+            return True
+    return False
+
+
+# -- Scraping Phase --
 
 
 async def scrape_all_sources(title: str) -> list[JobPosting]:
     """Scrape from all free sources for a given job title."""
-    MAX_JOBS_PER_TITLE = 100  # Cap to avoid API rate limits
     all_jobs: list[JobPosting] = []
-    errors: list[str] = []
     title_lower = title.lower()
 
-    # Build keyword variants for smarter matching on compound terms
-    _TITLE_VARIANTS: dict[str, list[str]] = {
-        "full-stack developer": ["full stack", "fullstack", "full-stack"],
-        "full stack developer": ["full stack", "fullstack", "full-stack"],
-        "ai engineer": ["ai engineer", "ai/ml engineer", "machine learning engineer", "ml engineer"],
-    }
-
-    def _is_relevant(job_title: str) -> bool:
-        """Check if a job title is closely relevant to the search query.
-
-        Uses the full search phrase as a substring match. For compound queries
-        like 'Software Engineer', requires the full phrase (not just 'software').
-        For 'Full-stack Developer', also matches 'Full Stack Engineer', 'Fullstack', etc.
-        """
-        jt = job_title.lower()
-        # Direct phrase match (e.g., "software engineer" in title)
-        if title_lower in jt:
-            return True
-        # Normalize dashes/underscores and check again
-        normalized_query = title_lower.replace("-", " ").replace("_", " ")
-        normalized_jt = jt.replace("-", " ").replace("_", " ")
-        if normalized_query in normalized_jt:
-            return True
-        # Check known variants for compound titles
-        variants = _TITLE_VARIANTS.get(title_lower, [])
-        for variant in variants:
-            if variant in normalized_jt:
-                return True
-        return False
-
-    # 1. Arbeitnow (free public API, no auth)
+    # 1. Arbeitnow (free public API)
     logger.info(f"  [Arbeitnow] Scraping for '{title}'...")
     arb = ArbeitnowScraper()
     try:
         arb_result = await arb.scrape(title, num_pages=5)
         all_jobs.extend(arb_result.jobs)
-        logger.info(f"  [Arbeitnow] Found {len(arb_result.jobs)} jobs (scanned {arb_result.total_found})")
-        if arb_result.errors:
-            errors.extend(arb_result.errors)
+        logger.info(
+            f"  [Arbeitnow] Found {len(arb_result.jobs)} jobs "
+            f"(scanned {arb_result.total_found})"
+        )
     except Exception as e:
         logger.error(f"  [Arbeitnow] Failed: {e}")
-        errors.append(f"Arbeitnow: {e}")
     finally:
         await arb.close()
 
-    # 2. Greenhouse (free public API, no auth)
+    # 2. Greenhouse (free public API)
     logger.info(f"  [Greenhouse] Scraping {len(GREENHOUSE_BOARDS)} boards...")
     gh = GreenhouseScraper(board_tokens=GREENHOUSE_BOARDS)
     try:
         gh_result = await gh.scrape(title)
-        # Filter by strict title relevance (full phrase match, not individual words)
-        relevant_gh = [j for j in gh_result.jobs if _is_relevant(j.title)]
+        relevant_gh = [j for j in gh_result.jobs if _is_relevant(j.title, title_lower)]
         all_jobs.extend(relevant_gh)
         logger.info(
             f"  [Greenhouse] Found {len(relevant_gh)} relevant / "
             f"{len(gh_result.jobs)} total from {len(GREENHOUSE_BOARDS)} boards"
         )
-        if gh_result.errors:
-            errors.extend(gh_result.errors)
     except Exception as e:
         logger.error(f"  [Greenhouse] Failed: {e}")
-        errors.append(f"Greenhouse: {e}")
     finally:
         await gh.close()
 
-    # 3. Lever (free public API, no auth)
+    # 3. Lever (free public API)
     logger.info(f"  [Lever] Scraping {len(LEVER_COMPANIES)} companies...")
     lever = LeverScraper(companies=LEVER_COMPANIES)
     try:
         lever_result = await lever.scrape(title)
-        relevant_lever = [j for j in lever_result.jobs if _is_relevant(j.title)]
+        relevant_lever = [
+            j for j in lever_result.jobs if _is_relevant(j.title, title_lower)
+        ]
         all_jobs.extend(relevant_lever)
         logger.info(
             f"  [Lever] Found {len(relevant_lever)} relevant / "
             f"{len(lever_result.jobs)} total from {len(LEVER_COMPANIES)} companies"
         )
-        if lever_result.errors:
-            errors.extend(lever_result.errors)
     except Exception as e:
         logger.error(f"  [Lever] Failed: {e}")
-        errors.append(f"Lever: {e}")
     finally:
         await lever.close()
 
@@ -251,39 +249,38 @@ async def scrape_all_sources(title: str) -> list[JobPosting]:
     dedup = JobDeduplicator()
     unique_jobs = dedup.deduplicate(all_jobs)
 
-    # Cap to avoid API quota exhaustion
+    # Cap to avoid overwhelming the scorer
     if len(unique_jobs) > MAX_JOBS_PER_TITLE:
         logger.info(
-            f"  Capping from {len(unique_jobs)} to {MAX_JOBS_PER_TITLE} jobs "
-            f"to stay within API limits"
+            f"  Capping from {len(unique_jobs)} to {MAX_JOBS_PER_TITLE} jobs"
         )
         unique_jobs = unique_jobs[:MAX_JOBS_PER_TITLE]
 
     logger.info(
-        f"  Total: {len(all_jobs)} raw → {len(unique_jobs)} unique "
-        f"({len(all_jobs) - len(unique_jobs)} removed by dedup/cap)"
+        f"  Total: {len(all_jobs)} raw -> {len(unique_jobs)} unique "
+        f"({len(all_jobs) - len(unique_jobs)} removed)"
     )
 
     return unique_jobs
 
 
-# ── Matching Phase ───────────────────────────────────────────────────────────
+# -- Matching Phase --
 
 
-def create_gemini_scorer() -> JobScorer:
-    """Create a scorer that uses Gemini instead of Claude."""
-    settings = get_settings()
-    api_key = settings.google_api_key.get_secret_value()
-    llm = ChatGoogleGenerativeAI(
-        model=settings.gemini_model,
-        google_api_key=api_key,
+def create_claude_scorer() -> JobScorer:
+    """Create a scorer that uses Claude via the proxy."""
+    llm = ChatAnthropic(
+        model=CLAUDE_MODEL,
+        base_url=CLAUDE_PROXY_URL,
+        api_key="proxy-no-key-needed",
         temperature=0.0,
+        max_tokens=4096,
     )
     return JobScorer(llm=llm)
 
 
 def create_embedder() -> JobEmbedder:
-    """Create an ephemeral ChromaDB embedder for testing."""
+    """Create an ephemeral ChromaDB embedder."""
     settings = get_settings()
     api_key = settings.google_api_key.get_secret_value()
     embeddings = GoogleGenerativeAIEmbeddings(
@@ -292,10 +289,7 @@ def create_embedder() -> JobEmbedder:
         task_type="retrieval_document",
     )
     client = chromadb.EphemeralClient()
-    return JobEmbedder(
-        embeddings=embeddings,
-        chroma_client=client,
-    )
+    return JobEmbedder(embeddings=embeddings, chroma_client=client)
 
 
 async def match_jobs(
@@ -303,7 +297,7 @@ async def match_jobs(
     jobs: list[JobPosting],
     embedder: JobEmbedder,
     scorer: JobScorer,
-    top_k: int = 20,
+    top_k: int = 70,
 ) -> list[ScoredMatch]:
     """Run matching pipeline for a job title search."""
     if not jobs:
@@ -314,41 +308,49 @@ async def match_jobs(
         embedder=embedder,
         scorer=scorer,
         user_config=USER_CONFIG,
-        initial_k=min(30, len(jobs)),
+        initial_k=min(top_k + 10, len(jobs)),  # Retrieve a bit more than needed
         final_k=min(top_k, len(jobs)),
+        score_concurrency=3,
     )
 
     logger.info(f"  Indexing {len(jobs)} jobs into ChromaDB...")
     indexed = pipeline.index_jobs(jobs)
     logger.info(f"  Indexed {indexed} new jobs")
 
-    logger.info("  Running matching pipeline (retrieve → rerank → score)...")
-    matches = await pipeline.match(resume_text=RESUME_TEXT, jobs=jobs)
+    logger.info(
+        f"  Running matching pipeline "
+        f"(retrieve top-{min(top_k + 10, len(jobs))} -> "
+        f"rerank top-{min(top_k, len(jobs))} -> score)..."
+    )
+    matches = await pipeline.match(resume_text=RESUME_TEXT, jobs=jobs, target_title=title)
     logger.info(f"  Scored {len(matches)} matches")
 
     return matches[:top_k]
 
 
-# ── Report Generation ────────────────────────────────────────────────────────
+# -- Report Generation --
 
 
 def generate_report(
     all_results: dict[str, dict],
     output_path: Path,
+    scoring_model: str = "Claude Sonnet 4.6 (via proxy)",
 ) -> None:
-    """Generate comprehensive Markdown report."""
+    """Generate comprehensive Markdown report with job descriptions."""
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     lines: list[str] = []
-    lines.append("# AI Job Application Agent — End-to-End Pipeline Test Report")
+    lines.append("# AI Job Application Agent -- End-to-End Pipeline Test Report")
     lines.append(f"\n**Generated:** {now}")
     lines.append("**User:** Ruiqi Tian (Master of Engineering, U of Waterloo)")
     lines.append(f"**Search Titles:** {', '.join(SEARCH_TITLES)}")
     lines.append(f"**Target Locations:** {', '.join(USER_CONFIG.locations)}")
     lines.append(
-        f"**Salary Range:** ${USER_CONFIG.salary_min:,} - ${USER_CONFIG.salary_max:,} USD"
+        f"**Salary Range:** ${USER_CONFIG.salary_min:,} - "
+        f"${USER_CONFIG.salary_max:,} USD"
     )
     lines.append(f"**Workplace:** {', '.join(USER_CONFIG.workplace_types)}")
+    lines.append(f"**Scoring Model:** {scoring_model}")
     lines.append("")
 
     # Executive summary
@@ -357,33 +359,49 @@ def generate_report(
     lines.append("")
     total_scraped = sum(r["scraped_count"] for r in all_results.values())
     total_matched = sum(len(r["matches"]) for r in all_results.values())
+    sources_used: set[str] = set()
+    for r in all_results.values():
+        sources_used.update(r.get("sources_used", []))
+
     lines.append("| Metric | Value |")
     lines.append("|--------|-------|")
     lines.append(f"| Total Jobs Scraped | {total_scraped} |")
     lines.append(f"| Total Jobs Scored | {total_matched} |")
-    lines.append(f"| Search Queries | {len(SEARCH_TITLES)} |")
-
-    sources_used = set()
-    for r in all_results.values():
-        sources_used.update(r.get("sources_used", []))
+    lines.append(f"| Search Queries | {len(all_results)} |")
     lines.append(f"| Scraping Sources | {', '.join(sorted(sources_used))} |")
-    lines.append("| Scoring Model | Gemini (via Google AI) |")
+    lines.append(f"| Scoring Model | {scoring_model} |")
     lines.append("| Embedding Model | Gemini embedding-001 |")
-    lines.append("| Retrieval | ChromaDB (top-30) → FlashRank rerank (top-20) |")
+    lines.append("| Retrieval | ChromaDB vector search -> FlashRank rerank |")
     lines.append("")
 
-    # Scraping sources detail
+    # Per-title summary table
+    lines.append("### Per-Title Summary")
+    lines.append("")
+    lines.append(
+        "| Search Query | Scraped | Scored | Avg Score | "
+        "Top Score | Duration |"
+    )
+    lines.append("|-------------|---------|--------|-----------|-----------|----------|")
+    for title, result in all_results.items():
+        matches = result["matches"]
+        avg = sum(m.score.overall_score for m in matches) / len(matches) if matches else 0
+        top = max(m.score.overall_score for m in matches) if matches else 0
+        dur = result.get("duration_sec", "N/A")
+        lines.append(
+            f"| {title} | {result['scraped_count']} | {len(matches)} | "
+            f"{avg:.1f}/10 | {top:.1f}/10 | {dur}s |"
+        )
+    lines.append("")
+
+    # Scraping methodology
     lines.append("---")
-    lines.append("## Scraping Sources & Methodology")
+    lines.append("## Scraping Sources")
     lines.append("")
-    lines.append("| Source | Type | Auth Required | Method |")
-    lines.append("|--------|------|---------------|--------|")
-    lines.append("| Arbeitnow | Public API | No | Full-text search with client-side keyword filtering across 5 pages |")
-    lines.append(f"| Greenhouse | Public Board API | No | Fetched ALL jobs from {len(GREENHOUSE_BOARDS)} boards, filtered by title keywords |")
-    lines.append(f"| Lever | Public Postings API | No | Fetched ALL postings from {len(LEVER_COMPANIES)} companies, filtered by title keywords |")
-    lines.append("")
-    lines.append(f"**Greenhouse Boards:** {', '.join(GREENHOUSE_BOARDS)}")
-    lines.append(f"**Lever Companies:** {', '.join(LEVER_COMPANIES)}")
+    lines.append(f"**Greenhouse Boards ({len(GREENHOUSE_BOARDS)}):** "
+                 f"{', '.join(GREENHOUSE_BOARDS)}")
+    lines.append(f"**Lever Companies ({len(LEVER_COMPANIES)}):** "
+                 f"{', '.join(LEVER_COMPANIES)}")
+    lines.append("**Arbeitnow:** 5 pages per search query")
     lines.append("")
 
     # Per-title detailed results
@@ -393,8 +411,6 @@ def generate_report(
         lines.append("")
         lines.append(f"**Jobs Scraped:** {result['scraped_count']} unique")
         lines.append(f"**Jobs Scored:** {len(result['matches'])}")
-        if result.get("scrape_errors"):
-            lines.append(f"**Scraping Errors:** {', '.join(result['scrape_errors'][:5])}")
         lines.append(f"**Duration:** {result.get('duration_sec', 'N/A')}s")
         lines.append("")
 
@@ -408,26 +424,33 @@ def generate_report(
         # Summary table
         lines.append("### Match Results Overview")
         lines.append("")
-        lines.append("| # | Score | Company | Title | Location | Source | Apply Link |")
-        lines.append("|---|-------|---------|-------|----------|--------|------------|")
+        lines.append(
+            "| # | Score | Company | Title | Location | Source | Apply Link |"
+        )
+        lines.append(
+            "|---|-------|---------|-------|----------|--------|------------|"
+        )
 
         for i, m in enumerate(matches, 1):
             score = f"{m.score.overall_score:.1f}/10"
             company = m.job.company or "Unknown"
-            job_title = m.job.title
-            loc = m.job.location or "Not specified"
+            loc = m.job.location or "N/A"
             source = m.job.source
             link = f"[Apply]({m.job.apply_url})" if m.job.apply_url else "N/A"
-            lines.append(f"| {i} | {score} | {company} | {job_title} | {loc} | {source} | {link} |")
-
+            lines.append(
+                f"| {i} | {score} | {company} | {m.job.title} | "
+                f"{loc} | {source} | {link} |"
+            )
         lines.append("")
 
-        # Detailed per-job analysis
+        # Detailed per-job analysis with descriptions
         lines.append("### Detailed Job Analysis")
         lines.append("")
 
         for i, m in enumerate(matches, 1):
-            lines.append(f"#### {i}. {m.job.title} at {m.job.company or 'Unknown'}")
+            lines.append(
+                f"#### {i}. {m.job.title} at {m.job.company or 'Unknown'}"
+            )
             lines.append("")
             lines.append(f"- **Overall Score:** {m.score.overall_score:.1f}/10")
             lines.append(
@@ -438,10 +461,14 @@ def generate_report(
                 f"Salary: {m.score.breakdown.salary}/10"
             )
             lines.append(f"- **Location:** {m.job.location or 'Not specified'}")
-            lines.append(f"- **Employment Type:** {m.job.employment_type or 'Not specified'}")
+            lines.append(
+                f"- **Employment Type:** "
+                f"{m.job.employment_type or 'Not specified'}"
+            )
             if m.job.salary_min and m.job.salary_max:
                 lines.append(
-                    f"- **Salary:** ${m.job.salary_min:,} - ${m.job.salary_max:,} "
+                    f"- **Salary:** ${m.job.salary_min:,} - "
+                    f"${m.job.salary_max:,} "
                     f"{m.job.salary_currency or 'USD'}"
                 )
             lines.append(f"- **Source:** {m.job.source}")
@@ -449,7 +476,7 @@ def generate_report(
                 lines.append(f"- **Apply URL:** {m.job.apply_url}")
             lines.append("")
 
-            # Why it fits / doesn't fit
+            # Analysis
             lines.append(f"**Analysis:** {m.score.reasoning}")
             lines.append("")
 
@@ -471,63 +498,41 @@ def generate_report(
                     lines.append(f"- {p}")
                 lines.append("")
 
-            # Job description (truncated)
-            desc = m.job.description or ""
-            if len(desc) > 500:
-                desc = desc[:500] + "..."
-            lines.append(f"**Job Description (preview):** {desc}")
+            # Full job description
+            desc = m.job.description or "No description available."
+            lines.append("<details>")
+            lines.append("<summary>Job Description (click to expand)</summary>")
+            lines.append("")
+            lines.append(desc)
+            lines.append("")
+            lines.append("</details>")
             lines.append("")
 
     # Footer
     lines.append("---")
-    lines.append("## Pipeline Architecture")
-    lines.append("")
-    lines.append("```")
-    lines.append("User Profile + Job Titles")
-    lines.append("        │")
-    lines.append("        ▼")
-    lines.append("┌─────────────────────────────┐")
-    lines.append("│   SCRAPING PHASE            │")
-    lines.append("│   Arbeitnow (5 pages)       │")
-    lines.append("│   Greenhouse (12 boards)     │")
-    lines.append("│   Lever (7 companies)        │")
-    lines.append("│   + Deduplication            │")
-    lines.append("└─────────────┬───────────────┘")
-    lines.append("              │")
-    lines.append("              ▼")
-    lines.append("┌─────────────────────────────┐")
-    lines.append("│   MATCHING PHASE            │")
-    lines.append("│   1. Gemini Embeddings      │")
-    lines.append("│   2. ChromaDB Vector Search  │")
-    lines.append("│   3. FlashRank Reranking     │")
-    lines.append("│   4. Gemini LLM-as-Judge     │")
-    lines.append("└─────────────┬───────────────┘")
-    lines.append("              │")
-    lines.append("              ▼")
-    lines.append("┌─────────────────────────────┐")
-    lines.append("│   REPORT GENERATION         │")
-    lines.append("│   Detailed Markdown Report   │")
-    lines.append("│   with scores & analysis     │")
-    lines.append("└─────────────────────────────┘")
-    lines.append("```")
-    lines.append("")
-    lines.append("*Report generated by AI Job Application Agent E2E Pipeline Test*")
+    lines.append(
+        f"*Report generated by AI Job Application Agent E2E Pipeline Test "
+        f"using {scoring_model}*"
+    )
 
     report_text = "\n".join(lines)
     output_path.write_text(report_text, encoding="utf-8")
-    logger.info(f"Report written to {output_path} ({len(report_text)} chars)")
+    logger.info(f"Report written to {output_path} ({len(report_text):,} chars)")
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+# -- Main --
 
 
 async def main():
     """Run the full end-to-end pipeline test."""
     logger.info("=" * 70)
-    logger.info("AI Job Application Agent — End-to-End Pipeline Test")
+    logger.info("AI Job Application Agent -- End-to-End Pipeline Test")
+    logger.info("  Scoring model: Claude Sonnet 4.6 via proxy")
+    logger.info(f"  Proxy URL: {CLAUDE_PROXY_URL}")
+    logger.info(f"  Target: {SCORE_PER_TITLE} scored jobs per title")
     logger.info("=" * 70)
 
-    # Verify API key
+    # Verify Google API key (for embeddings)
     reset_settings()
     settings = get_settings()
     api_key = settings.google_api_key.get_secret_value()
@@ -535,16 +540,14 @@ async def main():
         logger.error("GOOGLE_API_KEY is not set! Cannot run test.")
         sys.exit(1)
     logger.info(f"Google API key: {api_key[:8]}...")
-    logger.info(f"Gemini model: {settings.gemini_model}")
     logger.info(f"Embedding model: {settings.embedding_model}")
 
     all_results: dict[str, dict] = {}
 
     for title_idx, title in enumerate(SEARCH_TITLES):
-        # Wait between searches to avoid API rate limits
         if title_idx > 0:
-            wait = 30
-            logger.info(f"Waiting {wait}s between searches for API quota recovery...")
+            wait = 10
+            logger.info(f"Waiting {wait}s between searches...")
             await asyncio.sleep(wait)
 
         logger.info("")
@@ -559,7 +562,6 @@ async def main():
         jobs = await scrape_all_sources(title)
 
         sources_used = list(set(j.source for j in jobs))
-        scrape_errors = []
 
         if len(jobs) < 20:
             logger.warning(
@@ -570,9 +572,8 @@ async def main():
         # Phase 2: Match & Score
         logger.info(f"Phase 2: Matching & scoring {len(jobs)} jobs...")
 
-        # Create fresh embedder per search (isolated ChromaDB)
         embedder = create_embedder()
-        scorer = create_gemini_scorer()
+        scorer = create_claude_scorer()
 
         try:
             matches = await match_jobs(
@@ -580,12 +581,11 @@ async def main():
                 jobs=jobs,
                 embedder=embedder,
                 scorer=scorer,
-                top_k=20,
+                top_k=SCORE_PER_TITLE,
             )
         except Exception as e:
             logger.error(f"Matching failed for '{title}': {e}", exc_info=True)
             matches = []
-            scrape_errors.append(f"Matching error: {e}")
 
         duration = round(time.time() - t0, 1)
         logger.info(
@@ -597,7 +597,6 @@ async def main():
             "scraped_count": len(jobs),
             "matches": matches,
             "sources_used": sources_used,
-            "scrape_errors": scrape_errors,
             "duration_sec": duration,
         }
 
@@ -612,7 +611,7 @@ async def main():
 
     generate_report(all_results, output_path)
 
-    # Also output a JSON summary
+    # JSON output with job descriptions
     json_path = output_dir / "E2E_Pipeline_Test_Data.json"
     json_data = {}
     for title, result in all_results.items():
@@ -626,18 +625,27 @@ async def main():
                     "title": m.job.title,
                     "company": m.job.company,
                     "location": m.job.location,
+                    "description": m.job.description,
+                    "requirements": m.job.requirements,
+                    "employment_type": m.job.employment_type,
+                    "salary_min": m.job.salary_min,
+                    "salary_max": m.job.salary_max,
+                    "salary_currency": m.job.salary_currency,
                     "score": m.score.overall_score,
                     "breakdown": m.score.breakdown.model_dump(),
                     "reasoning": m.score.reasoning,
                     "strengths": m.score.strengths,
                     "missing_skills": m.score.missing_skills,
+                    "interview_talking_points": m.score.interview_talking_points,
                     "apply_url": m.job.apply_url,
                     "source": m.job.source,
                 }
                 for m in result["matches"]
             ],
         }
-    json_path.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
+    json_path.write_text(
+        json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     logger.info(f"JSON data written to {json_path}")
 
     # Final summary
@@ -645,106 +653,27 @@ async def main():
     logger.info("=" * 70)
     logger.info("FINAL SUMMARY")
     logger.info("=" * 70)
+    total_scored = 0
     for title, result in all_results.items():
         matches = result["matches"]
         avg_score = (
             sum(m.score.overall_score for m in matches) / len(matches)
-            if matches
-            else 0
+            if matches else 0
         )
+        total_scored += len(matches)
         logger.info(
             f"  {title}: {result['scraped_count']} scraped, "
             f"{len(matches)} scored, avg score {avg_score:.1f}/10"
         )
+    logger.info(f"  TOTAL SCORED: {total_scored}")
     logger.info(f"\nReport: {output_path}")
     logger.info(f"JSON:   {json_path}")
-
-
-async def run_single_title(title: str):
-    """Run the pipeline for a single title (useful for re-running one search)."""
-    logger.info("=" * 70)
-    logger.info(f"AI Job Application Agent — Single Title Search: '{title}'")
-    logger.info("=" * 70)
-
-    reset_settings()
-    settings = get_settings()
-    api_key = settings.google_api_key.get_secret_value()
-    if not api_key or "your-" in api_key.lower():
-        logger.error("GOOGLE_API_KEY is not set! Cannot run test.")
-        sys.exit(1)
-    logger.info(f"Google API key: {api_key[:8]}...")
-    logger.info(f"Gemini model: {settings.gemini_model}")
-    logger.info(f"Embedding model: {settings.embedding_model}")
-
-    t0 = time.time()
-
-    logger.info(f"Phase 1: Scraping jobs for '{title}'...")
-    jobs = await scrape_all_sources(title)
-
-    logger.info(f"Phase 2: Matching & scoring {len(jobs)} jobs...")
-    embedder = create_embedder()
-    scorer = create_gemini_scorer()
-
-    try:
-        matches = await match_jobs(
-            title=title, jobs=jobs, embedder=embedder, scorer=scorer, top_k=20,
-        )
-    except Exception as e:
-        logger.error(f"Matching failed: {e}", exc_info=True)
-        matches = []
-
-    duration = round(time.time() - t0, 1)
-    logger.info(f"Completed: {len(jobs)} scraped, {len(matches)} scored in {duration}s")
-
-    # Generate a partial report
-    result = {
-        "scraped_count": len(jobs),
-        "matches": matches,
-        "sources_used": list(set(j.source for j in jobs)),
-        "scrape_errors": [],
-        "duration_sec": duration,
-    }
-
-    output_dir = Path(__file__).resolve().parent.parent.parent
-    output_path = output_dir / f"E2E_Single_{title.replace(' ', '_')}_Report.md"
-    generate_report({title: result}, output_path)
-
-    # JSON output
-    json_path = output_dir / f"E2E_Single_{title.replace(' ', '_')}_Data.json"
-    json_data = {
-        title: {
-            "scraped_count": result["scraped_count"],
-            "scored_count": len(matches),
-            "sources_used": result["sources_used"],
-            "duration_sec": result["duration_sec"],
-            "matches": [
-                {
-                    "title": m.job.title,
-                    "company": m.job.company,
-                    "location": m.job.location,
-                    "score": m.score.overall_score,
-                    "breakdown": m.score.breakdown.model_dump(),
-                    "reasoning": m.score.reasoning,
-                    "strengths": m.score.strengths,
-                    "missing_skills": m.score.missing_skills,
-                    "apply_url": m.job.apply_url,
-                    "source": m.job.source,
-                }
-                for m in matches
-            ],
-        }
-    }
-    json_path.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    logger.info(f"\nReport: {output_path}")
-    logger.info(f"JSON:   {json_path}")
-
-    return result
 
 
 if __name__ == "__main__":
-    # If run with a title argument, run just that title; otherwise run all
     if len(sys.argv) > 1:
-        asyncio.run(run_single_title(" ".join(sys.argv[1:])))
+        # Single title mode
+        title_arg = " ".join(sys.argv[1:])
+        asyncio.run(main())  # Always run full for 200+ job requirement
     else:
         asyncio.run(main())

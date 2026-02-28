@@ -22,6 +22,22 @@ def _make_mock_scorer(return_value: JobMatchScore) -> JobScorer:
     return JobScorer(llm)
 
 
+def _make_mock_scorer_with_quick(
+    structured_return: JobMatchScore,
+    quick_return_text: str = '{"relevance": 7, "reason": "Good match"}',
+) -> JobScorer:
+    """Create a JobScorer with both structured and raw LLM mocks."""
+    llm = MagicMock()
+    structured_llm = AsyncMock()
+    structured_llm.ainvoke.return_value = structured_return
+    llm.with_structured_output.return_value = structured_llm
+    # Raw LLM ainvoke for quick_score
+    raw_response = MagicMock()
+    raw_response.content = quick_return_text
+    llm.ainvoke = AsyncMock(return_value=raw_response)
+    return JobScorer(llm)
+
+
 @pytest.fixture
 def scorer_with_high_match():
     return _make_mock_scorer(make_high_match_score())
@@ -115,3 +131,95 @@ class TestJobScorer:
             job_description="Build APIs",
         )
         assert isinstance(result.interview_talking_points, list)
+
+    async def test_score_accepts_new_kwargs(self, scorer_with_high_match):
+        """Verify the enriched prompt kwargs are accepted without error."""
+        result = await scorer_with_high_match.score(
+            resume_text="Test resume",
+            job_title="Backend Engineer",
+            job_company="TestCo",
+            job_description="Build APIs",
+            target_role="AI Engineer",
+            experience_level="senior",
+            workplace_types="remote",
+            weights={"skills": 40, "experience": 25, "education": 10, "location": 15, "salary": 10},
+        )
+        assert isinstance(result, JobMatchScore)
+        assert result.overall_score >= 1.0
+
+
+class TestQuickScore:
+    """Tests for the quick_score() method."""
+
+    async def test_quick_score_returns_tuple(self):
+        scorer = _make_mock_scorer_with_quick(
+            make_high_match_score(),
+            '{"relevance": 8, "reason": "Strong skills match"}',
+        )
+        relevance, reason = await scorer.quick_score(
+            resume_summary="Python, FastAPI, LangChain",
+            job_title="Backend Engineer",
+            job_company="TestCo",
+            job_description="Build APIs with Python and FastAPI",
+        )
+        assert isinstance(relevance, int)
+        assert 1 <= relevance <= 10
+        assert relevance == 8
+        assert "Strong skills match" in reason
+
+    async def test_quick_score_low_relevance(self):
+        scorer = _make_mock_scorer_with_quick(
+            make_high_match_score(),
+            '{"relevance": 2, "reason": "Unrelated field"}',
+        )
+        relevance, reason = await scorer.quick_score(
+            resume_summary="Python, FastAPI, LangChain",
+            job_title="Marketing Manager",
+            job_company="AdCo",
+            job_description="Lead marketing campaigns across digital channels",
+        )
+        assert relevance == 2
+        assert "Unrelated" in reason
+
+    async def test_quick_score_handles_bad_json(self):
+        scorer = _make_mock_scorer_with_quick(
+            make_high_match_score(),
+            "This is not valid JSON at all",
+        )
+        relevance, reason = await scorer.quick_score(
+            resume_summary="Python",
+            job_title="Engineer",
+            job_company="Co",
+            job_description="Do things",
+        )
+        # Should default to 5 on parse failure
+        assert relevance == 5
+        assert "parse" in reason.lower()
+
+    async def test_quick_score_clamps_to_range(self):
+        scorer = _make_mock_scorer_with_quick(
+            make_high_match_score(),
+            '{"relevance": 15, "reason": "Over the top"}',
+        )
+        relevance, _ = await scorer.quick_score(
+            resume_summary="Python",
+            job_title="Engineer",
+            job_company="Co",
+            job_description="Do things",
+        )
+        assert relevance == 10
+
+    async def test_quick_score_truncates_long_description(self):
+        scorer = _make_mock_scorer_with_quick(
+            make_high_match_score(),
+            '{"relevance": 7, "reason": "OK match"}',
+        )
+        long_desc = "x" * 1000
+        relevance, _ = await scorer.quick_score(
+            resume_summary="Python",
+            job_title="Engineer",
+            job_company="Co",
+            job_description=long_desc,
+        )
+        # Verify it didn't error — the truncation happens inside
+        assert 1 <= relevance <= 10

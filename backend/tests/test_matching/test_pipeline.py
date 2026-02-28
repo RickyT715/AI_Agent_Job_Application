@@ -5,18 +5,20 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from langchain_core.documents import Document
 
+from app.config import UserConfig
 from app.schemas.matching import JobPosting, ScoredMatch
-from app.services.matching.pipeline import MatchingPipeline
+from app.services.matching.pipeline import MatchingPipeline, _extract_skills_section
 from tests.fixtures.mock_responses import make_high_match_score, make_medium_match_score
 
 
-def _make_job(idx: int, title: str = "Engineer", company: str = "Co") -> JobPosting:
+def _make_job(idx: int, title: str = "Engineer", company: str = "Co", **kwargs) -> JobPosting:
     return JobPosting(
         external_id=f"job-{idx:03d}",
         source="test",
         title=title,
         company=company,
         description=f"Job description for {title} at {company}",
+        **kwargs,
     )
 
 
@@ -46,6 +48,7 @@ def mock_embedder():
 def mock_scorer():
     scorer = MagicMock()
     scorer.score = AsyncMock()
+    scorer.quick_score = AsyncMock(return_value=(7, "Relevant"))
     return scorer
 
 
@@ -120,7 +123,7 @@ class TestMatchingPipeline:
         pipeline = MatchingPipeline(embedder=mock_embedder, scorer=mock_scorer)
         await pipeline.match("Resume text", jobs=jobs)
 
-        mock_embedder.index_jobs.assert_called_once_with(jobs)
+        mock_embedder.index_jobs.assert_called_once()
 
     @patch("app.services.matching.pipeline.TwoStageRetriever")
     async def test_pipeline_handles_doc_without_job_lookup(
@@ -148,3 +151,102 @@ class TestMatchingPipeline:
 
         assert len(results) == 1
         assert results[0].job.company == "MysteryInc"
+
+    @patch("app.services.matching.pipeline.TwoStageRetriever")
+    async def test_pre_filter_runs_with_user_config(
+        self, mock_retriever_cls, mock_embedder, mock_scorer
+    ):
+        """Pre-filter should drop VP-level jobs for mid-level user."""
+        user_config = UserConfig(
+            experience_level="mid",
+            locations=["United States"],
+            employment_types=["FULLTIME"],
+        )
+
+        jobs = [
+            _make_job(1, "Software Engineer", "GoodCo", location="Remote", employment_type="Full-time"),
+            _make_job(2, "VP of Engineering", "BigCo", location="Remote", employment_type="Full-time"),
+        ]
+
+        # Only 1 job should survive pre-filter → only 1 doc
+        filtered_doc = _make_doc(jobs[0])
+        mock_retriever_instance = MagicMock()
+        mock_retriever_instance.retrieve.return_value = [filtered_doc]
+        mock_retriever_cls.return_value = mock_retriever_instance
+        mock_scorer.score.return_value = make_high_match_score()
+
+        pipeline = MatchingPipeline(
+            embedder=mock_embedder, scorer=mock_scorer, user_config=user_config
+        )
+        results = await pipeline.match("Resume text", jobs=jobs, target_title="Software Engineer")
+
+        # VP job was pre-filtered, so only 1 job was indexed
+        indexed_jobs = mock_embedder.index_jobs.call_args[0][0]
+        assert len(indexed_jobs) == 1
+        assert indexed_jobs[0].title == "Software Engineer"
+
+    @patch("app.services.matching.pipeline.TwoStageRetriever")
+    async def test_target_title_passed_through(
+        self, mock_retriever_cls, mock_embedder, mock_scorer
+    ):
+        """target_title should influence the retrieval query."""
+        jobs = [_make_job(1, "AI Engineer")]
+        docs = [_make_doc(jobs[0])]
+
+        mock_retriever_instance = MagicMock()
+        mock_retriever_instance.retrieve.return_value = docs
+        mock_retriever_cls.return_value = mock_retriever_instance
+        mock_scorer.score.return_value = make_high_match_score()
+
+        pipeline = MatchingPipeline(embedder=mock_embedder, scorer=mock_scorer)
+        await pipeline.match("Resume text", jobs=jobs, target_title="AI Engineer")
+
+        # Verify retriever was called with a query containing the target title
+        retrieve_call = mock_retriever_instance.retrieve.call_args[0][0]
+        assert "AI Engineer" in retrieve_call
+
+    @patch("app.services.matching.pipeline.TwoStageRetriever")
+    async def test_quick_score_filters_low_relevance(
+        self, mock_retriever_cls, mock_embedder, mock_scorer
+    ):
+        """Jobs with quick_score < 4 should be skipped from full scoring."""
+        jobs = [_make_job(1, "Good Job"), _make_job(2, "Bad Job")]
+        docs = [_make_doc(j) for j in jobs]
+
+        mock_retriever_instance = MagicMock()
+        mock_retriever_instance.retrieve.return_value = docs
+        mock_retriever_cls.return_value = mock_retriever_instance
+
+        # First job: high relevance, second: low
+        mock_scorer.quick_score.side_effect = [(8, "Great fit"), (2, "Unrelated")]
+        mock_scorer.score.return_value = make_high_match_score()
+
+        pipeline = MatchingPipeline(embedder=mock_embedder, scorer=mock_scorer)
+        results = await pipeline.match("Resume text", jobs=jobs)
+
+        # Only 1 job should be fully scored
+        assert mock_scorer.score.call_count == 1
+        assert len(results) == 1
+
+
+class TestExtractSkillsSection:
+    """Tests for the skills extraction helper."""
+
+    def test_extracts_skills_from_resume(self):
+        resume = """EDUCATION
+University of Waterloo
+
+SKILLS
+Languages: Python, JavaScript, C++
+Technologies: AWS, Docker, React
+
+EXPERIENCE
+Software Engineer at TestCo"""
+        skills = _extract_skills_section(resume)
+        assert "Python" in skills
+        assert "JavaScript" in skills
+
+    def test_returns_empty_for_no_skills(self):
+        resume = "Just a plain paragraph with no sections."
+        skills = _extract_skills_section(resume)
+        assert skills == ""

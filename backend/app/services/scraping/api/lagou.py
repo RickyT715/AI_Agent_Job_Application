@@ -86,10 +86,10 @@ class LagouScraper(BaseScraper):
             district = raw_data.get("district", "")
             location = f"{city} {district}".strip() if city else None
 
-            salary = raw_data.get("salary", "")
+            raw_data.get("salary", "")
             education = raw_data.get("education", "")
             experience = raw_data.get("workYear", "")
-            job_type = raw_data.get("firstType", "")
+            raw_data.get("firstType", "")
             description = raw_data.get("positionAdvantage", "")
             skills = raw_data.get("skillLables", []) or raw_data.get("skillLabels", [])
 

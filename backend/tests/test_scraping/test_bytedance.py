@@ -5,7 +5,6 @@ from pytest_httpx import HTTPXMock
 
 from app.services.scraping.api.bytedance import ByteDanceScraper
 
-
 MOCK_RESPONSE = {
     "data": {
         "total": 2,

@@ -16,7 +16,6 @@ from app.services.profile.linkedin_parser import (
     profile_to_resume_text,
 )
 
-
 SAMPLE_LINKEDIN_TEXT = """John Doe
 Senior Software Engineer at Acme Corp
 San Francisco, CA

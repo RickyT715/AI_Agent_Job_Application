@@ -92,7 +92,7 @@ class ByteDanceScraper(BaseScraper):
                 city = raw_data["city_info"]
 
             category = raw_data.get("job_category", {}).get("name", "")
-            recruit_type = raw_data.get("recruit_type", {}).get("name", "")
+            raw_data.get("recruit_type", {}).get("name", "")
 
             full_description = description
             if category:

@@ -5,7 +5,6 @@ from pytest_httpx import HTTPXMock
 
 from app.services.scraping.api.job51 import Job51Scraper
 
-
 MOCK_RESPONSE = {
     "resultbody": {
         "job": {

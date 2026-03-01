@@ -343,13 +343,18 @@ async def compute_ats_score_llm(
     prompt = (
         "Extract all technical skills, tools, frameworks, programming languages, "
         "and soft skills mentioned in the following text. "
-        "Return valid JSON with keys: \"technical\" (list of strings), \"soft\" (list of strings).\n\n"
+        'Return valid JSON with keys: "technical" (list of strings), '
+        '"soft" (list of strings).\n\n'
         "Text:\n{text}\n\nJSON:"
     )
 
     # Extract from job text
     job_response = await llm.ainvoke(prompt.format(text=job_text[:3000]))
-    job_content = job_response.content if hasattr(job_response, "content") else str(job_response)
+    job_content = (
+        job_response.content
+        if hasattr(job_response, "content")
+        else str(job_response)
+    )
     try:
         job_kws = _json.loads(job_content)
     except _json.JSONDecodeError:
@@ -359,7 +364,11 @@ async def compute_ats_score_llm(
 
     # Extract from resume
     resume_response = await llm.ainvoke(prompt.format(text=resume_text[:3000]))
-    resume_content = resume_response.content if hasattr(resume_response, "content") else str(resume_response)
+    resume_content = (
+        resume_response.content
+        if hasattr(resume_response, "content")
+        else str(resume_response)
+    )
     try:
         resume_kws = _json.loads(resume_content)
     except _json.JSONDecodeError:

@@ -94,7 +94,7 @@ class TencentScraper(BaseScraper):
             bg_name = raw_data.get("BGName", "")
             category = raw_data.get("CategoryName", "")
             description = raw_data.get("Responsibility", "")
-            last_update = raw_data.get("LastUpdateTime", "")
+            raw_data.get("LastUpdateTime", "")
 
             # Build requirements from category and BG
             requirements = ""

@@ -155,7 +155,7 @@ def _extract_sections(text: str) -> dict[str, str]:
 
 def _parse_header(text: str, profile: LinkedInProfile) -> None:
     """Extract name, headline, location from the top of the PDF."""
-    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    lines = [ln.strip() for ln in text.split("\n") if ln.strip()]
 
     if lines:
         profile.full_name = lines[0]
@@ -195,7 +195,7 @@ def _parse_experience_section(text: str) -> list[WorkExperience]:
     blocks = re.split(r"\n(?=\S)", text)
 
     for block in blocks:
-        lines = [l.strip() for l in block.strip().split("\n") if l.strip()]
+        lines = [ln.strip() for ln in block.strip().split("\n") if ln.strip()]
         if not lines:
             continue
 
@@ -243,7 +243,7 @@ def _parse_education_section(text: str) -> list[Education]:
     blocks = re.split(r"\n(?=\S)", text)
 
     for block in blocks:
-        lines = [l.strip() for l in block.strip().split("\n") if l.strip()]
+        lines = [ln.strip() for ln in block.strip().split("\n") if ln.strip()]
         if not lines:
             continue
 

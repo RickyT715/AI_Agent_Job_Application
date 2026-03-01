@@ -3,7 +3,7 @@
 import pytest
 from pytest_httpx import HTTPXMock
 
-from app.services.scraping.api.weworkremotely import CATEGORY_FEEDS, WeWorkRemotelyScraper
+from app.services.scraping.api.weworkremotely import WeWorkRemotelyScraper
 
 
 @pytest.fixture

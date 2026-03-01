@@ -95,7 +95,8 @@ class RemoteOKScraper(BaseScraper):
 
             # Apply URL
             slug = raw_data.get("slug", "")
-            apply_url = f"https://remoteok.com/remote-jobs/{slug}" if slug else raw_data.get("url", "")
+            base = f"https://remoteok.com/remote-jobs/{slug}"
+            apply_url = base if slug else raw_data.get("url", "")
 
             return JobPosting(
                 external_id=str(job_id),

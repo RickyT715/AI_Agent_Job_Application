@@ -5,7 +5,6 @@ from pytest_httpx import HTTPXMock
 
 from app.services.scraping.api.zhaopin import ZhaopinScraper
 
-
 MOCK_RESPONSE = {
     "data": {
         "numFound": 2,

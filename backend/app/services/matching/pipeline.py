@@ -13,8 +13,8 @@ from app.config import MatchingWeights, UserConfig
 from app.schemas.matching import JobPosting, ScoredMatch
 from app.services.llm_factory import LLMTask, get_embeddings, get_llm
 from app.services.matching.ats_scorer import compute_ats_score, compute_ats_score_llm
-from app.services.matching.language_detect import detect_language
 from app.services.matching.embedder import JobEmbedder
+from app.services.matching.language_detect import detect_language
 from app.services.matching.multi_query import MultiQueryRetriever
 from app.services.matching.pre_filter import JobPreFilter
 from app.services.matching.retriever import TwoStageRetriever, compute_dynamic_k
@@ -435,7 +435,10 @@ class MatchingPipeline:
 
         # Step 5: Sort by integrated score (fallback to overall_score)
         scored_matches.sort(
-            key=lambda m: m.integrated_score if m.integrated_score is not None else m.score.overall_score,
+            key=lambda m: (
+                m.integrated_score if m.integrated_score is not None
+                else m.score.overall_score
+            ),
             reverse=True,
         )
 

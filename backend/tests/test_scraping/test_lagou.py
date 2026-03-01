@@ -5,7 +5,6 @@ from pytest_httpx import HTTPXMock
 
 from app.services.scraping.api.lagou import LagouScraper
 
-
 MOCK_RESPONSE = {
     "content": {
         "positionResult": {

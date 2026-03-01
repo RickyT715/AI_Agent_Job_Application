@@ -2,7 +2,11 @@
 
 from unittest.mock import MagicMock, patch
 
-from app.services.matching.retriever import TwoStageRetriever, _build_compressor, _BgeRerankerCompressor
+from app.services.matching.retriever import (
+    TwoStageRetriever,
+    _BgeRerankerCompressor,
+    _build_compressor,
+)
 
 
 class TestBuildCompressor:

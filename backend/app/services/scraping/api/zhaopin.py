@@ -80,7 +80,7 @@ class ZhaopinScraper(BaseScraper):
             job_id = str(raw_data.get("number", ""))
             company = raw_data.get("company", {}).get("name", "")
             city = raw_data.get("city", {}).get("display", "")
-            salary = raw_data.get("salary", "")
+            raw_data.get("salary", "")
             description = raw_data.get("jobSummary", "")
             job_type = raw_data.get("jobType", {}).get("display", "")
             education = raw_data.get("education", {}).get("display", "")

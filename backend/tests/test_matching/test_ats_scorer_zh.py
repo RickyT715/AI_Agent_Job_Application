@@ -2,8 +2,6 @@
 
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-
 from app.schemas.matching import ATSKeywordScore
 from app.services.matching.ats_scorer import (
     SOFT_SKILL_KEYWORDS_ZH,

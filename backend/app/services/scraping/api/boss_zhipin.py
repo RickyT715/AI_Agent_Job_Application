@@ -95,9 +95,13 @@ class BossZhipinScraper(BaseScraper):
             if area:
                 location = f"{location} {area}"
 
-            salary = raw_data.get("salaryDesc", "")
+            raw_data.get("salaryDesc", "")
             description = raw_data.get("jobLabels", [])
-            desc_text = ", ".join(description) if isinstance(description, list) else str(description)
+            desc_text = (
+                ", ".join(description)
+                if isinstance(description, list)
+                else str(description)
+            )
 
             skills = raw_data.get("skills", [])
             if skills:

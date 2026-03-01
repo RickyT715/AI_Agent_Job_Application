@@ -90,7 +90,7 @@ class NetEaseScraper(BaseScraper):
                 return None
 
             post_id = str(raw_data.get("id", ""))
-            category = raw_data.get("postTypeFullName", "")
+            raw_data.get("postTypeFullName", "")
             description = raw_data.get("description", "")
             requirement = raw_data.get("requirement", "")
             department = raw_data.get("firstDepName", "")

@@ -5,7 +5,6 @@ which requires fonttools to decode.
 """
 
 import logging
-import re
 
 import httpx
 

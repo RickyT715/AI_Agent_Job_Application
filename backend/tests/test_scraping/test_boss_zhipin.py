@@ -5,7 +5,6 @@ from pytest_httpx import HTTPXMock
 
 from app.services.scraping.api.boss_zhipin import BossZhipinScraper
 
-
 MOCK_RESPONSE = {
     "zpData": {
         "jobList": [

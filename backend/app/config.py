@@ -165,11 +165,17 @@ class UserConfig(BaseModel):
     )
     reranker_mode: str = Field(
         default="auto",
-        description="Reranker: 'auto' (bge for zh, flashrank for en), 'bge', 'flashrank', 'flashrank-multilingual'",
+        description=(
+            "Reranker: 'auto' (bge for zh, flashrank for en), "
+            "'bge', 'flashrank', 'flashrank-multilingual'"
+        ),
     )
     embedding_model_choice: str = Field(
         default="gemini",
-        description="Embedding model: 'gemini' (recommended) or 'bge-m3' (local, 8192 token context)",
+        description=(
+            "Embedding model: 'gemini' (recommended) "
+            "or 'bge-m3' (local, 8192 token context)"
+        ),
     )
     recruitment_type: str = Field(
         default="social",

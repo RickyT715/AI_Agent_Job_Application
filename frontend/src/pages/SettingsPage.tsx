@@ -20,6 +20,15 @@ const DEFAULT_PREFERENCES: PreferencesResponse = {
   lever_companies: [],
   workday_urls: [],
   anthropic_base_url: "",
+  excluded_locations: [],
+  ats_mode: "auto",
+  reranker_mode: "auto",
+  embedding_model_choice: "gemini",
+  recruitment_type: "social",
+  graduation_year: null,
+  mokahr_org_ids: [],
+  alibaba_app_key: "",
+  boss_zhipin_cookie: "",
 };
 
 export function SettingsPage() {

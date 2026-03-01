@@ -1,0 +1,26 @@
+{
+  "Code": 200,
+  "Data": {
+    "Count": 2,
+    "Posts": [
+      {
+        "PostId": "1001",
+        "RecruitPostName": "高级后端开发工程师",
+        "LocationName": "深圳",
+        "BGName": "微信事业群",
+        "CategoryName": "技术",
+        "Responsibility": "负责微信支付后端系统开发，包括高并发交易处理、分布式系统设计。要求精通Java或Go语言。",
+        "LastUpdateTime": "2026-02-20"
+      },
+      {
+        "PostId": "1002",
+        "RecruitPostName": "机器学习算法工程师",
+        "LocationName": "北京",
+        "BGName": "AI Lab",
+        "CategoryName": "算法",
+        "Responsibility": "负责推荐系统算法研发，包括深度学习模型训练与优化。要求精通Python和PyTorch。",
+        "LastUpdateTime": "2026-02-18"
+      }
+    ]
+  }
+}

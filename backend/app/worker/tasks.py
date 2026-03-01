@@ -75,6 +75,54 @@ def _build_scrapers(config: UserConfig) -> list:
         from app.services.scraping.api.weworkremotely import WeWorkRemotelyScraper
         scrapers.append(WeWorkRemotelyScraper())
 
+    # --- Chinese public API scrapers ---
+    if "tencent" in config.enabled_sources:
+        from app.services.scraping.api.tencent import TencentScraper
+        scrapers.append(TencentScraper(recruitment_type=config.recruitment_type))
+
+    if "netease" in config.enabled_sources:
+        from app.services.scraping.api.netease import NetEaseScraper
+        scrapers.append(NetEaseScraper(recruitment_type=config.recruitment_type))
+
+    if "mokahr" in config.enabled_sources and config.mokahr_org_ids:
+        from app.services.scraping.api.mokahrjob import MokaHRScraper
+        scrapers.append(MokaHRScraper(
+            org_ids=config.mokahr_org_ids,
+            recruitment_type=config.recruitment_type,
+        ))
+
+    if "alibaba" in config.enabled_sources:
+        from app.services.scraping.api.alibaba import AlibabaScraper
+        scrapers.append(AlibabaScraper(
+            recruitment_type=config.recruitment_type,
+            app_key=config.alibaba_app_key,
+        ))
+
+    if "jd_campus" in config.enabled_sources:
+        from app.services.scraping.api.jd_campus import JDCampusScraper
+        scrapers.append(JDCampusScraper())
+
+    # --- Chinese browser-automation scrapers ---
+    if "boss_zhipin" in config.enabled_sources and config.boss_zhipin_cookie:
+        from app.services.scraping.api.boss_zhipin import BossZhipinScraper
+        scrapers.append(BossZhipinScraper(cookie=config.boss_zhipin_cookie))
+
+    if "zhaopin" in config.enabled_sources:
+        from app.services.scraping.api.zhaopin import ZhaopinScraper
+        scrapers.append(ZhaopinScraper())
+
+    if "job51" in config.enabled_sources:
+        from app.services.scraping.api.job51 import Job51Scraper
+        scrapers.append(Job51Scraper())
+
+    if "lagou" in config.enabled_sources:
+        from app.services.scraping.api.lagou import LagouScraper
+        scrapers.append(LagouScraper())
+
+    if "bytedance" in config.enabled_sources:
+        from app.services.scraping.api.bytedance import ByteDanceScraper
+        scrapers.append(ByteDanceScraper(recruitment_type=config.recruitment_type))
+
     # Default to JSearch if no scrapers configured
     if not scrapers:
         scrapers.append(JSearchScraper())

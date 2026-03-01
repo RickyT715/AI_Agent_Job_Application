@@ -17,6 +17,13 @@ dependencies = [
     "langchain-chroma>=0.2.0",
     # Reranking
     "flashrank>=0.2.0",
+    # Chinese NLP
+    "jieba>=0.42.1",
+    # Multilingual embeddings & reranking
+    "FlagEmbedding>=1.3.0",
+    "langchain-huggingface>=0.1.0",
+    # Font decryption (51job salary obfuscation)
+    "fonttools>=4.0.0",
     # Agent graph
     "langgraph>=0.2.0",
     # Database

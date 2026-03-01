@@ -46,6 +46,14 @@ def _config_to_response(config: UserConfig) -> PreferencesResponse:
         workday_urls=config.workday_urls,
         anthropic_base_url=settings.anthropic_base_url,
         excluded_locations=config.excluded_locations,
+        ats_mode=config.ats_mode,
+        reranker_mode=config.reranker_mode,
+        embedding_model_choice=config.embedding_model_choice,
+        recruitment_type=config.recruitment_type,
+        graduation_year=config.graduation_year,
+        mokahr_org_ids=config.mokahr_org_ids,
+        alibaba_app_key=config.alibaba_app_key,
+        boss_zhipin_cookie=config.boss_zhipin_cookie,
     )
 
 

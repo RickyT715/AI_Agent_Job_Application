@@ -1,0 +1,26 @@
+{
+  "code": 200,
+  "data": {
+    "total": 2,
+    "records": [
+      {
+        "id": "2001",
+        "name": "游戏服务端开发工程师",
+        "postTypeFullName": "技术/服务端开发",
+        "description": "负责大型多人在线游戏服务端架构设计和开发",
+        "requirement": "精通C++或Java，3年以上服务端开发经验",
+        "firstDepName": "网易游戏",
+        "workPlaceNameList": ["广州", "杭州"]
+      },
+      {
+        "id": "2002",
+        "name": "数据分析师",
+        "postTypeFullName": "数据/数据分析",
+        "description": "负责游戏运营数据分析，用户行为建模",
+        "requirement": "精通SQL和Python，熟悉数据分析工具",
+        "firstDepName": "网易互娱",
+        "workPlaceNameList": ["杭州"]
+      }
+    ]
+  }
+}

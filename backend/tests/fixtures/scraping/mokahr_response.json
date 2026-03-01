@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "id": "3001",
+      "title": "全栈开发工程师",
+      "description": "负责公司核心产品的前后端开发",
+      "requirement": "精通React和Node.js，3年以上全栈开发经验",
+      "department": "工程部",
+      "city": "上海",
+      "company": "DiDi"
+    },
+    {
+      "id": "3002",
+      "title": "DevOps工程师",
+      "description": "负责CI/CD流水线搭建和运维自动化",
+      "requirement": "精通Docker、Kubernetes，熟悉Jenkins",
+      "department": "基础架构部",
+      "city": "北京",
+      "company": "DiDi"
+    }
+  ]
+}

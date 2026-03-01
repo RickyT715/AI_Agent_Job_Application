@@ -11,6 +11,7 @@ Usage:
 from enum import StrEnum
 
 from langchain_anthropic import ChatAnthropic
+from langchain_core.embeddings import Embeddings
 from langchain_core.language_models import BaseChatModel
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
@@ -75,16 +76,30 @@ def get_llm(task: LLMTask, temperature: float = 0.0) -> BaseChatModel:
         raise ValueError(msg)
 
 
-def get_embeddings(task_type: str = "retrieval_document") -> GoogleGenerativeAIEmbeddings:
-    """Get Gemini embedding model.
+def get_embeddings(
+    task_type: str = "retrieval_document",
+    model: str = "gemini",
+) -> Embeddings:
+    """Get an embedding model.
 
     Args:
-        task_type: Either "retrieval_document" for indexing or
-                   "retrieval_query" for search queries.
+        task_type: Either ``"retrieval_document"`` for indexing or
+                   ``"retrieval_query"`` for search queries.
+        model: ``"gemini"`` (default, recommended) or ``"bge-m3"``
+               (local HuggingFace model, 8192 token context, offline-capable).
 
     Returns:
-        Configured GoogleGenerativeAIEmbeddings instance.
+        Configured embeddings instance.
     """
+    if model == "bge-m3":
+        from langchain_huggingface import HuggingFaceEmbeddings
+
+        return HuggingFaceEmbeddings(
+            model_name="BAAI/bge-m3",
+            model_kwargs={"device": "cpu", "trust_remote_code": True},
+            encode_kwargs={"normalize_embeddings": True},
+        )
+
     settings = get_settings()
     return GoogleGenerativeAIEmbeddings(
         model=settings.embedding_model,

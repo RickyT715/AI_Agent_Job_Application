@@ -66,3 +66,21 @@ def remoteok_response() -> list:
 def weworkremotely_feed() -> str:
     """Load WeWorkRemotely RSS feed fixture."""
     return (SCRAPING_FIXTURES / "weworkremotely_feed.xml").read_text()
+
+
+@pytest.fixture
+def tencent_response() -> dict:
+    """Load Tencent Careers API response fixture."""
+    return json.loads((SCRAPING_FIXTURES / "tencent_response.json").read_text(encoding="utf-8"))
+
+
+@pytest.fixture
+def netease_response() -> dict:
+    """Load NetEase Careers API response fixture."""
+    return json.loads((SCRAPING_FIXTURES / "netease_response.json").read_text(encoding="utf-8"))
+
+
+@pytest.fixture
+def mokahr_response() -> dict:
+    """Load MokaHR API response fixture."""
+    return json.loads((SCRAPING_FIXTURES / "mokahr_response.json").read_text(encoding="utf-8"))

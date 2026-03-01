@@ -180,6 +180,15 @@ class PreferencesResponse(BaseModel):
     workday_urls: list[str] = []
     anthropic_base_url: str = ""
     excluded_locations: list[str] = []
+    # Chinese pipeline settings
+    ats_mode: str = "auto"
+    reranker_mode: str = "auto"
+    embedding_model_choice: str = "gemini"
+    recruitment_type: str = "social"
+    graduation_year: int | None = None
+    mokahr_org_ids: list[str] = []
+    alibaba_app_key: str = ""
+    boss_zhipin_cookie: str = ""
 
 
 class PreferencesUpdateRequest(BaseModel):
@@ -203,6 +212,15 @@ class PreferencesUpdateRequest(BaseModel):
     workday_urls: list[str] | None = None
     anthropic_base_url: str | None = None
     excluded_locations: list[str] | None = None
+    # Chinese pipeline settings
+    ats_mode: str | None = None
+    reranker_mode: str | None = None
+    embedding_model_choice: str | None = None
+    recruitment_type: str | None = None
+    graduation_year: int | None = None
+    mokahr_org_ids: list[str] | None = None
+    alibaba_app_key: str | None = None
+    boss_zhipin_cookie: str | None = None
 
 
 class ResumeUploadResponse(BaseModel):

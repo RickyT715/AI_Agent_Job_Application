@@ -117,7 +117,11 @@ class UserConfig(BaseModel):
     )
     enabled_sources: list[str] = Field(
         default_factory=lambda: ["jsearch"],
-        description="Which scrapers to use: jsearch, greenhouse, lever, workday, adzuna, arbeitnow, remoteok, weworkremotely",
+        description=(
+            "Which scrapers to use: jsearch, greenhouse, lever, workday, adzuna, "
+            "arbeitnow, remoteok, weworkremotely, tencent, netease, mokahr, alibaba, "
+            "jd_campus, boss_zhipin, zhaopin, job51, lagou, bytedance"
+        ),
     )
 
     # Company-specific scraper config
@@ -154,6 +158,42 @@ class UserConfig(BaseModel):
         description="Enable multi-query retrieval for broader coverage",
     )
 
+    # --- Chinese pipeline settings ---
+    ats_mode: str = Field(
+        default="auto",
+        description="ATS scoring mode: 'auto' (jieba for zh, regex for en), 'skip', 'llm'",
+    )
+    reranker_mode: str = Field(
+        default="auto",
+        description="Reranker: 'auto' (bge for zh, flashrank for en), 'bge', 'flashrank', 'flashrank-multilingual'",
+    )
+    embedding_model_choice: str = Field(
+        default="gemini",
+        description="Embedding model: 'gemini' (recommended) or 'bge-m3' (local, 8192 token context)",
+    )
+    recruitment_type: str = Field(
+        default="social",
+        description="Recruitment type: 'social' (社招), 'campus' (校招), 'both'",
+    )
+    graduation_year: int | None = Field(
+        default=None,
+        description="Graduation year for campus recruitment (e.g., 2026)",
+    )
+
+    # --- Chinese scraper-specific config ---
+    mokahr_org_ids: list[str] = Field(
+        default_factory=list,
+        description="MokaHR organization IDs for company career pages",
+    )
+    alibaba_app_key: str = Field(
+        default="",
+        description="Alibaba Open Platform app key (free registration)",
+    )
+    boss_zhipin_cookie: str = Field(
+        default="",
+        description="BOSS直聘 session cookie (from browser DevTools)",
+    )
+
     @field_validator("experience_level")
     @classmethod
     def validate_experience_level(cls, v: str) -> str:
@@ -169,6 +209,42 @@ class UserConfig(BaseModel):
         allowed = {"today", "3days", "week", "month", "all"}
         if v not in allowed:
             msg = f"date_posted must be one of {allowed}, got '{v}'"
+            raise ValueError(msg)
+        return v
+
+    @field_validator("ats_mode")
+    @classmethod
+    def validate_ats_mode(cls, v: str) -> str:
+        allowed = {"auto", "skip", "llm"}
+        if v not in allowed:
+            msg = f"ats_mode must be one of {allowed}, got '{v}'"
+            raise ValueError(msg)
+        return v
+
+    @field_validator("reranker_mode")
+    @classmethod
+    def validate_reranker_mode(cls, v: str) -> str:
+        allowed = {"auto", "bge", "flashrank", "flashrank-multilingual"}
+        if v not in allowed:
+            msg = f"reranker_mode must be one of {allowed}, got '{v}'"
+            raise ValueError(msg)
+        return v
+
+    @field_validator("embedding_model_choice")
+    @classmethod
+    def validate_embedding_model_choice(cls, v: str) -> str:
+        allowed = {"gemini", "bge-m3"}
+        if v not in allowed:
+            msg = f"embedding_model_choice must be one of {allowed}, got '{v}'"
+            raise ValueError(msg)
+        return v
+
+    @field_validator("recruitment_type")
+    @classmethod
+    def validate_recruitment_type(cls, v: str) -> str:
+        allowed = {"social", "campus", "both"}
+        if v not in allowed:
+            msg = f"recruitment_type must be one of {allowed}, got '{v}'"
             raise ValueError(msg)
         return v
 

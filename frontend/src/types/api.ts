@@ -95,6 +95,15 @@ export interface PreferencesResponse {
   workday_urls: string[];
   anthropic_base_url: string;
   excluded_locations: string[];
+  // Chinese pipeline settings
+  ats_mode: 'auto' | 'skip' | 'llm';
+  reranker_mode: 'auto' | 'bge' | 'flashrank' | 'flashrank-multilingual';
+  embedding_model_choice: 'gemini' | 'bge-m3';
+  recruitment_type: 'social' | 'campus' | 'both';
+  graduation_year: number | null;
+  mokahr_org_ids: string[];
+  alibaba_app_key: string;
+  boss_zhipin_cookie: string;
 }
 
 export interface ResumeUploadResponse {

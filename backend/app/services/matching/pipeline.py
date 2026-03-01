@@ -12,7 +12,8 @@ from langchain_core.documents import Document
 from app.config import MatchingWeights, UserConfig
 from app.schemas.matching import JobPosting, ScoredMatch
 from app.services.llm_factory import LLMTask, get_embeddings, get_llm
-from app.services.matching.ats_scorer import compute_ats_score
+from app.services.matching.ats_scorer import compute_ats_score, compute_ats_score_llm
+from app.services.matching.language_detect import detect_language
 from app.services.matching.embedder import JobEmbedder
 from app.services.matching.multi_query import MultiQueryRetriever
 from app.services.matching.pre_filter import JobPreFilter
@@ -34,14 +35,28 @@ def _doc_metadata_to_job(doc: Document, jobs_by_id: dict[str, JobPosting]) -> Jo
 
 
 def _extract_skills_section(resume_text: str) -> str:
-    """Extract a skills section from resume text if present."""
-    # Look for common skills section headers
+    """Extract a skills section from resume text if present.
+
+    Supports both English and Chinese section headers.
+    """
+    # English patterns
     patterns = [
         r"(?i)(?:SKILLS|TECHNICAL SKILLS|TECHNOLOGIES|TECH STACK)[:\s]*\n(.*?)(?:\n\n|\n[A-Z])",
         r"(?i)(?:Languages|Technologies|AI/ML|Backend)[:\s]*(.*?)(?:\n\n|\n[A-Z])",
     ]
+    # Chinese patterns
+    patterns_zh = [
+        r"(?:\u6280\u672f\u6280\u80fd|\u4e13\u4e1a\u6280\u80fd|\u6280\u672f\u680f|\u6280\u80fd)"
+        r"[\uff1a:\s]*\n(.*?)(?:\n\n|\n[\u4e00-\u9fffA-Z])",
+        # 技术技能|专业技能|技术栈|技能
+        r"(?:\u7f16\u7a0b\u8bed\u8a00|\u5f00\u53d1\u5de5\u5177|\u6280\u672f\u80fd\u529b)"
+        r"[\uff1a:\s]*(.*?)(?:\n\n|\n[\u4e00-\u9fffA-Z])",
+        # 编程语言|开发工具|技术能力
+    ]
+    all_patterns = patterns + patterns_zh
+
     sections = []
-    for pattern in patterns:
+    for pattern in all_patterns:
         matches = re.findall(pattern, resume_text, re.DOTALL)
         sections.extend(matches)
 
@@ -210,10 +225,22 @@ class MatchingPipeline:
                 _, final_k = compute_dynamic_k(collection_size)
 
         query = self._build_retrieval_query(resume_text, target_title)
+
+        # Determine reranker mode — auto-detect language when set to "auto"
+        reranker_mode = "flashrank"
+        if self._user_config:
+            cfg_mode = getattr(self._user_config, "reranker_mode", "auto")
+            if cfg_mode == "auto":
+                lang = detect_language(resume_text)
+                reranker_mode = "bge" if lang == "zh" else "flashrank"
+            else:
+                reranker_mode = cfg_mode
+
         retriever = TwoStageRetriever(
             vectorstore=self._embedder.vectorstore,
             initial_k=initial_k,
             final_k=final_k,
+            reranker_mode=reranker_mode,
         )
 
         # Multi-query retrieval if enabled
@@ -364,19 +391,44 @@ class MatchingPipeline:
         scored_matches = [m for m in results if m is not None]
 
         # Step 4.5: Compute ATS scores and integrated scores
+        ats_mode = getattr(self._user_config, "ats_mode", "auto") if self._user_config else "auto"
+
         for match in scored_matches:
             try:
-                ats = compute_ats_score(
-                    resume_text=resume_text,
-                    job_description=match.job.description,
-                    job_requirements=match.job.requirements,
-                )
+                if ats_mode == "llm":
+                    ats = await compute_ats_score_llm(
+                        resume_text=resume_text,
+                        job_description=match.job.description,
+                        llm=get_llm(LLMTask.CLASSIFY),
+                        job_requirements=match.job.requirements,
+                    )
+                else:
+                    ats = compute_ats_score(
+                        resume_text=resume_text,
+                        job_description=match.job.description,
+                        job_requirements=match.job.requirements,
+                        ats_mode=ats_mode,
+                    )
+
                 match.ats_score = ats
-                match.integrated_score = _compute_integrated_score(
-                    llm_score=match.score.overall_score,
-                    ats_score=ats.score,
-                    requirements_met_ratio=match.score.requirements_met_ratio,
-                )
+
+                if ats is not None:
+                    match.integrated_score = _compute_integrated_score(
+                        llm_score=match.score.overall_score,
+                        ats_score=ats.score,
+                        requirements_met_ratio=match.score.requirements_met_ratio,
+                    )
+                else:
+                    # ATS skipped — use LLM score + requirements ratio only
+                    req_ratio = match.score.requirements_met_ratio
+                    if req_ratio is not None:
+                        match.integrated_score = round(
+                            match.score.overall_score * 0.80
+                            + (1.0 + req_ratio * 9.0) * 0.20,
+                            2,
+                        )
+                    else:
+                        match.integrated_score = match.score.overall_score
             except Exception as e:
                 logger.warning(f"ATS scoring failed for '{match.job.title}': {e}")
                 match.integrated_score = match.score.overall_score

@@ -17,6 +17,11 @@ _COMPANY_SUFFIXES = re.compile(
     re.IGNORECASE,
 )
 
+# Chinese company suffixes (applied separately since they don't use word boundaries)
+_COMPANY_SUFFIXES_ZH = re.compile(
+    r"(有限公司|股份有限公司|集团|科技|网络|信息技术)\s*$",
+)
+
 
 def normalize_company(name: str) -> str:
     """Normalize a company name for deduplication.
@@ -25,6 +30,7 @@ def normalize_company(name: str) -> str:
     and collapses whitespace.
     """
     name = name.strip()
+    name = _COMPANY_SUFFIXES_ZH.sub("", name)
     name = _COMPANY_SUFFIXES.sub("", name)
     name = re.sub(r"\s+", " ", name).strip().lower()
     return name

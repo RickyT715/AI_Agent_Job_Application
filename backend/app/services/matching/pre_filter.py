@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 _SENIORITY_KEYWORDS: list[tuple[str, int, bool]] = [
     # (keyword, level, word_boundary) — word_boundary=True requires the keyword
     # to appear as a whole word (not a substring of another word)
+    # English
     ("internship", 0, False),
     ("intern", 0, True),
     ("junior", 1, False),
@@ -35,6 +36,16 @@ _SENIORITY_KEYWORDS: list[tuple[str, int, bool]] = [
     ("chief", 8, True),
     (" cto", 8, False),
     (" cio", 8, False),
+    # Chinese
+    ("\u5b9e\u4e60", 0, False),   # 实习
+    ("\u521d\u7ea7", 1, False),   # 初级
+    ("\u52a9\u7406", 1, False),   # 助理
+    ("\u9ad8\u7ea7", 3, False),   # 高级
+    ("\u8d44\u6df1", 3, False),   # 资深
+    ("\u4e13\u5bb6", 3, False),   # 专家
+    ("\u4e3b\u7ba1", 4, False),   # 主管
+    ("\u7ecf\u7406", 6, False),   # 经理
+    ("\u603b\u76d1", 6, False),   # 总监
 ]
 
 # Maps user experience_level to the acceptable seniority range (min_level, max_level)
@@ -61,6 +72,12 @@ _EMPLOYMENT_ALIASES: dict[str, str] = {
     "internship": "INTERNSHIP",
     "temporary": "TEMPORARY",
     "temp": "TEMPORARY",
+    # Chinese
+    "\u5168\u804c": "FULLTIME",     # 全职
+    "\u517c\u804c": "PARTTIME",     # 兼职
+    "\u5408\u540c": "CONTRACT",     # 合同
+    "\u5b9e\u4e60": "INTERNSHIP",   # 实习
+    "\u4e34\u65f6": "TEMPORARY",    # 临时
 }
 
 
@@ -101,7 +118,12 @@ def _location_matches(job_location: str | None, user_locations: list[str]) -> bo
     loc_lower = job_location.lower()
 
     # Remote jobs always pass
-    remote_keywords = ["remote", "anywhere", "distributed", "work from home"]
+    remote_keywords = [
+        "remote", "anywhere", "distributed", "work from home",
+        "\u8fdc\u7a0b", "\u5c45\u5bb6\u529e\u516c", "\u5728\u5bb6\u529e\u516c",
+        "\u8fdc\u7a0b\u529e\u516c", "\u7ebf\u4e0a\u529e\u516c",
+        # 远程, 居家办公, 在家办公, 远程办公, 线上办公
+    ]
     if any(kw in loc_lower for kw in remote_keywords):
         return True
 

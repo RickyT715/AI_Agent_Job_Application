@@ -156,3 +156,51 @@ class TestUserConfig:
         config = load_user_config(path)
         assert config.job_titles == ["Software Engineer"]
         path.unlink()
+
+    def test_excluded_locations_default_empty(self):
+        config = UserConfig()
+        assert config.excluded_locations == []
+
+    def test_excluded_locations_from_yaml(self):
+        data = {
+            "excluded_locations": ["China", "India", "Russia"],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+            yaml.dump(data, f)
+            path = Path(f.name)
+
+        config = load_user_config(path)
+        assert config.excluded_locations == ["China", "India", "Russia"]
+        path.unlink()
+
+    def test_retrieval_config_defaults(self):
+        config = UserConfig()
+        assert config.retrieval_initial_k is None
+        assert config.retrieval_final_k is None
+        assert config.enable_multi_query is True
+
+    def test_retrieval_config_override(self):
+        config = UserConfig(
+            retrieval_initial_k=50,
+            retrieval_final_k=20,
+            enable_multi_query=False,
+        )
+        assert config.retrieval_initial_k == 50
+        assert config.retrieval_final_k == 20
+        assert config.enable_multi_query is False
+
+    def test_retrieval_config_from_yaml(self):
+        data = {
+            "retrieval_initial_k": 100,
+            "retrieval_final_k": 25,
+            "enable_multi_query": False,
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+            yaml.dump(data, f)
+            path = Path(f.name)
+
+        config = load_user_config(path)
+        assert config.retrieval_initial_k == 100
+        assert config.retrieval_final_k == 25
+        assert config.enable_multi_query is False
+        path.unlink()

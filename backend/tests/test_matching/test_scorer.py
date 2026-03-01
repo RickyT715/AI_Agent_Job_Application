@@ -223,3 +223,27 @@ class TestQuickScore:
         )
         # Verify it didn't error — the truncation happens inside
         assert 1 <= relevance <= 10
+
+
+class TestRequirementExtraction:
+    """Tests for requirement_matches and requirements_met_ratio fields."""
+
+    async def test_requirement_matches_default_empty(self, scorer_with_high_match):
+        result = await scorer_with_high_match.score(
+            resume_text="Test resume",
+            job_title="Backend Engineer",
+            job_company="TestCo",
+            job_description="Build APIs",
+        )
+        # Default is empty list (mock doesn't populate it)
+        assert isinstance(result.requirement_matches, list)
+
+    async def test_requirements_met_ratio_default_none(self, scorer_with_high_match):
+        result = await scorer_with_high_match.score(
+            resume_text="Test resume",
+            job_title="Backend Engineer",
+            job_company="TestCo",
+            job_description="Build APIs",
+        )
+        # Default is None (mock doesn't populate it)
+        assert result.requirements_met_ratio is None

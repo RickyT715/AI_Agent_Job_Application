@@ -82,6 +82,11 @@ class MatchResponse(BaseModel):
     strengths: list[str]
     missing_skills: list[str]
     interview_talking_points: list[str] = []
+    ats_score: float | None = None
+    ats_details: dict | None = None
+    requirement_matches: list | None = None
+    requirements_met_ratio: float | None = None
+    integrated_score: float | None = None
     job: JobResponse | None = None
     created_at: datetime | None = None
 
@@ -174,6 +179,7 @@ class PreferencesResponse(BaseModel):
     lever_companies: list[str] = []
     workday_urls: list[str] = []
     anthropic_base_url: str = ""
+    excluded_locations: list[str] = []
 
 
 class PreferencesUpdateRequest(BaseModel):
@@ -196,6 +202,7 @@ class PreferencesUpdateRequest(BaseModel):
     lever_companies: list[str] | None = None
     workday_urls: list[str] | None = None
     anthropic_base_url: str | None = None
+    excluded_locations: list[str] | None = None
 
 
 class ResumeUploadResponse(BaseModel):

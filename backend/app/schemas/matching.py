@@ -33,6 +33,27 @@ class ScoreBreakdown(BaseModel):
     salary: int = Field(ge=1, le=10)
 
 
+class RequirementMatch(BaseModel):
+    """Point-by-point matching of a single job requirement."""
+
+    requirement: str
+    category: str  # technical_skill, soft_skill, experience, education, certification, other
+    met: bool
+    evidence: str  # Brief evidence from resume or "Not found"
+    confidence: float = Field(ge=0.0, le=1.0)
+
+
+class ATSKeywordScore(BaseModel):
+    """Programmatic keyword overlap scoring (no LLM calls)."""
+
+    score: float = Field(ge=0.0, le=100.0)
+    matched_keywords: list[str]
+    missing_keywords: list[str]
+    total_job_keywords: int
+    technical_match_pct: float = Field(ge=0.0, le=100.0)
+    soft_skill_match_pct: float = Field(ge=0.0, le=100.0)
+
+
 class JobMatchScore(BaseModel):
     """Structured output from Claude LLM-as-Judge scoring."""
 
@@ -42,6 +63,8 @@ class JobMatchScore(BaseModel):
     strengths: list[str]
     missing_skills: list[str]
     interview_talking_points: list[str] = Field(default_factory=list)
+    requirement_matches: list[RequirementMatch] = Field(default_factory=list)
+    requirements_met_ratio: float | None = None
 
 
 class ScoredMatch(BaseModel):
@@ -49,3 +72,5 @@ class ScoredMatch(BaseModel):
 
     job: JobPosting
     score: JobMatchScore
+    ats_score: ATSKeywordScore | None = None
+    integrated_score: float | None = None

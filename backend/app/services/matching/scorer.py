@@ -43,7 +43,29 @@ Salary Range: {job_salary}
 Preferred Locations: {preferred_locations}
 Salary Range: {salary_range}
 
-## Scoring Weights (use these exact weights for overall_score)
+## Step 1: Requirement Extraction & Matching
+Extract every distinct requirement from the job posting (from both description and \
+requirements sections). For each requirement, determine if the candidate meets it.
+
+Categorize each requirement as one of:
+- "technical_skill" — specific language, framework, tool, or technology
+- "soft_skill" — communication, leadership, collaboration, etc.
+- "experience" — years of experience or domain-specific experience
+- "education" — degree requirements
+- "certification" — specific certifications (AWS, PMP, etc.)
+- "other" — anything else
+
+For each, provide:
+- requirement: the requirement text
+- category: one of the categories above
+- met: true/false
+- evidence: brief evidence from the resume, or "Not found"
+- confidence: 0.0-1.0 how confident you are
+
+Also compute requirements_met_ratio as the fraction of requirements met (0.0-1.0).
+
+## Step 2: Dimension Scoring
+Use these exact weights for overall_score:
 - skills ({skills_weight}%): How well do the candidate's skills match the requirements?
 - experience ({experience_weight}%): Does the experience level and years match?
 - education ({education_weight}%): Does education background align?
@@ -55,6 +77,7 @@ Calculate overall_score as:
 education × {education_weight} + location × {location_weight} +
 salary × {salary_weight}) / 100
 
+## Step 3: Analysis
 Also provide:
 - reasoning: 2-3 sentence explanation of the match quality
 - strengths: List of matching strengths

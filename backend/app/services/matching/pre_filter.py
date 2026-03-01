@@ -155,6 +155,8 @@ class JobPreFilter:
         seniority_dropped = 0
         location_dropped = 0
         employment_dropped = 0
+        salary_dropped = 0
+        exclusion_dropped = 0
 
         result: list[JobPosting] = []
         for job in jobs:
@@ -175,6 +177,16 @@ class JobPreFilter:
                 employment_dropped += 1
                 continue
 
+            # Salary range filter
+            if not self._passes_salary_range(job):
+                salary_dropped += 1
+                continue
+
+            # Location exclusion filter
+            if not self._passes_location_exclusion(job.location):
+                exclusion_dropped += 1
+                continue
+
             result.append(job)
 
         dropped = initial_count - len(result)
@@ -183,7 +195,9 @@ class JobPreFilter:
                 f"Pre-filtered: {initial_count} → {len(result)} "
                 f"(dropped {seniority_dropped} seniority, "
                 f"{location_dropped} location, "
-                f"{employment_dropped} employment type)"
+                f"{employment_dropped} employment type, "
+                f"{salary_dropped} salary, "
+                f"{exclusion_dropped} excluded location)"
             )
         else:
             logger.info(
@@ -213,3 +227,52 @@ class JobPreFilter:
 
         normalized = _normalize_employment_type(job_type)
         return normalized in self._config.employment_types
+
+    def _passes_salary_range(self, job: JobPosting) -> bool:
+        """Check if job salary overlaps with user's salary expectations.
+
+        Passes if:
+        - User has no salary_min/salary_max configured
+        - Job has no salary data
+        - Salary ranges overlap
+        """
+        user_min = self._config.salary_min
+        user_max = self._config.salary_max
+
+        if user_min is None and user_max is None:
+            return True
+        if job.salary_min is None and job.salary_max is None:
+            return True
+
+        # If job pays too little: job's max < user's min
+        if user_min is not None and job.salary_max is not None:
+            if job.salary_max < user_min:
+                return False
+
+        # If job pays too much: job's min > user's max
+        if user_max is not None and job.salary_min is not None:
+            if job.salary_min > user_max:
+                return False
+
+        return True
+
+    def _passes_location_exclusion(self, job_location: str | None) -> bool:
+        """Check if job location is NOT in the excluded locations list.
+
+        Passes if:
+        - No excluded_locations configured
+        - Job has no location
+        - Job location doesn't contain any excluded keyword
+        """
+        excluded = self._config.excluded_locations
+        if not excluded:
+            return True
+        if not job_location:
+            return True
+
+        loc_lower = job_location.lower()
+        for excl in excluded:
+            if excl.lower() in loc_lower:
+                return False
+
+        return True

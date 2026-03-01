@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from langchain_core.documents import Document
 
-from app.services.matching.retriever import TwoStageRetriever
+from app.services.matching.retriever import TwoStageRetriever, compute_dynamic_k
 
 
 def _make_docs(n: int) -> list[Document]:
@@ -81,3 +81,27 @@ class TestTwoStageRetriever:
         results = retriever.retrieve("query")
 
         assert results == expected_docs
+
+
+class TestDynamicK:
+    """Tests for dynamic k computation."""
+
+    def test_small_collection(self):
+        initial_k, final_k = compute_dynamic_k(20)
+        assert initial_k == 20  # min_initial_k
+        assert final_k == 5  # min_final_k
+
+    def test_medium_collection(self):
+        initial_k, final_k = compute_dynamic_k(100)
+        assert initial_k == 30  # 100 * 0.3
+        assert final_k == 10  # 100 * 0.1
+
+    def test_large_collection(self):
+        initial_k, final_k = compute_dynamic_k(500)
+        assert initial_k == 150  # 500 * 0.3
+        assert final_k == 50  # 500 * 0.1 = 50 (at max)
+
+    def test_very_large_collection_capped(self):
+        initial_k, final_k = compute_dynamic_k(2000)
+        assert initial_k == 200  # max_initial_k
+        assert final_k == 50  # max_final_k

@@ -1,0 +1,39 @@
+[
+  {"legal": "https://remoteok.com/api/legal"},
+  {
+    "id": "12345",
+    "slug": "remote-senior-python-engineer-acme-corp",
+    "position": "Senior Python Engineer",
+    "company": "Acme Corp",
+    "description": "We are looking for a senior Python engineer to join our team. You will work on building scalable APIs using FastAPI and PostgreSQL.",
+    "location": "Worldwide",
+    "tags": ["python", "fastapi", "postgresql", "backend"],
+    "url": "https://remoteok.com/remote-jobs/12345",
+    "salary_min": 120000,
+    "salary_max": 180000
+  },
+  {
+    "id": "12346",
+    "slug": "remote-data-engineer-dataflow-inc",
+    "position": "Data Engineer",
+    "company": "DataFlow Inc",
+    "description": "Looking for a data engineer with experience in Apache Spark and data pipelines. SQL and Python experience required.",
+    "location": "US Only",
+    "tags": ["python", "sql", "spark", "data"],
+    "url": "https://remoteok.com/remote-jobs/12346",
+    "salary_min": null,
+    "salary_max": null
+  },
+  {
+    "id": "12347",
+    "slug": "remote-marketing-manager-brandco",
+    "position": "Marketing Manager",
+    "company": "BrandCo",
+    "description": "Lead marketing campaigns for a growing SaaS company. Experience with digital marketing required.",
+    "location": "Remote",
+    "tags": ["marketing", "saas", "growth"],
+    "url": "https://remoteok.com/remote-jobs/12347",
+    "salary_min": null,
+    "salary_max": null
+  }
+]

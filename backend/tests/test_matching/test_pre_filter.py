@@ -9,6 +9,8 @@ def _make_job(
     title: str = "Software Engineer",
     location: str | None = None,
     employment_type: str | None = None,
+    salary_min: int | None = None,
+    salary_max: int | None = None,
 ) -> JobPosting:
     return JobPosting(
         external_id="test-001",
@@ -18,6 +20,8 @@ def _make_job(
         description="A test job posting.",
         location=location,
         employment_type=employment_type,
+        salary_min=salary_min,
+        salary_max=salary_max,
     )
 
 
@@ -206,3 +210,104 @@ class TestJobPreFilter:
         ]
         result = pf.filter(jobs)
         assert len(result) == 2
+
+
+class TestSalaryFilter:
+    """Tests for salary range pre-filtering."""
+
+    def test_no_user_salary_passes_all(self):
+        config = UserConfig(salary_min=None, salary_max=None)
+        pf = JobPreFilter(config)
+        jobs = [_make_job(salary_min=50000, salary_max=80000)]
+        assert len(pf.filter(jobs)) == 1
+
+    def test_no_job_salary_passes(self):
+        config = UserConfig(salary_min=100000, salary_max=200000)
+        pf = JobPreFilter(config)
+        jobs = [_make_job(salary_min=None, salary_max=None)]
+        assert len(pf.filter(jobs)) == 1
+
+    def test_job_pays_too_little(self):
+        config = UserConfig(salary_min=150000, salary_max=250000)
+        pf = JobPreFilter(config)
+        jobs = [_make_job(salary_min=50000, salary_max=80000)]
+        assert len(pf.filter(jobs)) == 0
+
+    def test_job_pays_too_much(self):
+        config = UserConfig(salary_min=50000, salary_max=80000)
+        pf = JobPreFilter(config)
+        jobs = [_make_job(salary_min=200000, salary_max=300000)]
+        assert len(pf.filter(jobs)) == 0
+
+    def test_overlapping_ranges_pass(self):
+        config = UserConfig(salary_min=100000, salary_max=200000)
+        pf = JobPreFilter(config)
+        jobs = [_make_job(salary_min=150000, salary_max=250000)]
+        assert len(pf.filter(jobs)) == 1
+
+    def test_user_min_only(self):
+        config = UserConfig(salary_min=100000, salary_max=None)
+        pf = JobPreFilter(config)
+        jobs = [
+            _make_job(salary_min=50000, salary_max=80000),   # pays too little
+            _make_job(salary_min=120000, salary_max=180000),  # overlaps
+        ]
+        result = pf.filter(jobs)
+        assert len(result) == 1
+
+    def test_user_max_only(self):
+        config = UserConfig(salary_min=None, salary_max=100000)
+        pf = JobPreFilter(config)
+        jobs = [
+            _make_job(salary_min=50000, salary_max=80000),   # fits
+            _make_job(salary_min=150000, salary_max=200000),  # too much
+        ]
+        result = pf.filter(jobs)
+        assert len(result) == 1
+
+    def test_exact_boundary_passes(self):
+        config = UserConfig(salary_min=100000, salary_max=200000)
+        pf = JobPreFilter(config)
+        # Job max exactly equals user min — passes
+        jobs = [_make_job(salary_min=80000, salary_max=100000)]
+        assert len(pf.filter(jobs)) == 1
+
+
+class TestLocationExclusion:
+    """Tests for location exclusion pre-filtering."""
+
+    def test_no_exclusions_passes_all(self):
+        config = UserConfig(excluded_locations=[])
+        pf = JobPreFilter(config)
+        jobs = [_make_job(location="Beijing, China")]
+        assert len(pf.filter(jobs)) == 1
+
+    def test_excludes_matching_location(self):
+        config = UserConfig(excluded_locations=["China", "India"])
+        pf = JobPreFilter(config)
+        jobs = [
+            _make_job(location="Beijing, China"),
+            _make_job(location="Mumbai, India"),
+            _make_job(location="Remote"),
+        ]
+        result = pf.filter(jobs)
+        assert len(result) == 1
+        assert result[0].location == "Remote"
+
+    def test_case_insensitive(self):
+        config = UserConfig(excluded_locations=["china"])
+        pf = JobPreFilter(config)
+        jobs = [_make_job(location="Beijing, CHINA")]
+        assert len(pf.filter(jobs)) == 0
+
+    def test_no_location_passes(self):
+        config = UserConfig(excluded_locations=["China"])
+        pf = JobPreFilter(config)
+        jobs = [_make_job(location=None)]
+        assert len(pf.filter(jobs)) == 1
+
+    def test_partial_match_excludes(self):
+        config = UserConfig(excluded_locations=["India"])
+        pf = JobPreFilter(config)
+        jobs = [_make_job(location="Bangalore, India - Remote")]
+        assert len(pf.filter(jobs)) == 0

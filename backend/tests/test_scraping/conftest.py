@@ -54,3 +54,15 @@ def adzuna_response() -> dict:
 def arbeitnow_response() -> dict:
     """Load Arbeitnow API response fixture."""
     return json.loads((SCRAPING_FIXTURES / "arbeitnow_response.json").read_text())
+
+
+@pytest.fixture
+def remoteok_response() -> list:
+    """Load RemoteOK API response fixture."""
+    return json.loads((SCRAPING_FIXTURES / "remoteok_response.json").read_text())
+
+
+@pytest.fixture
+def weworkremotely_feed() -> str:
+    """Load WeWorkRemotely RSS feed fixture."""
+    return (SCRAPING_FIXTURES / "weworkremotely_feed.xml").read_text()

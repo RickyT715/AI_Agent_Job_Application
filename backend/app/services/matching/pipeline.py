@@ -12,9 +12,11 @@ from langchain_core.documents import Document
 from app.config import MatchingWeights, UserConfig
 from app.schemas.matching import JobPosting, ScoredMatch
 from app.services.llm_factory import LLMTask, get_embeddings, get_llm
+from app.services.matching.ats_scorer import compute_ats_score
 from app.services.matching.embedder import JobEmbedder
+from app.services.matching.multi_query import MultiQueryRetriever
 from app.services.matching.pre_filter import JobPreFilter
-from app.services.matching.retriever import TwoStageRetriever
+from app.services.matching.retriever import TwoStageRetriever, compute_dynamic_k
 from app.services.matching.scorer import JobScorer
 
 logger = logging.getLogger(__name__)
@@ -59,6 +61,37 @@ def _weights_to_percentages(weights: MatchingWeights) -> dict[str, int]:
         "location": round(weights.location * 100),
         "salary": round(weights.salary * 100),
     }
+
+
+def _compute_integrated_score(
+    llm_score: float,
+    ats_score: float,
+    requirements_met_ratio: float | None = None,
+    llm_weight: float = 0.60,
+    ats_weight: float = 0.25,
+    req_weight: float = 0.15,
+) -> float:
+    """Combine LLM overall_score (1-10), ATS score (0-100→1-10), and requirements ratio (0-1→1-10).
+
+    Returns a score on a 1-10 scale.
+    """
+    # Normalize ATS score from 0-100 to 1-10
+    ats_normalized = 1.0 + (ats_score / 100.0) * 9.0
+
+    if requirements_met_ratio is not None:
+        req_normalized = 1.0 + requirements_met_ratio * 9.0
+        return round(
+            llm_score * llm_weight + ats_normalized * ats_weight + req_normalized * req_weight,
+            2,
+        )
+
+    # No requirements ratio — redistribute weight to LLM and ATS
+    adjusted_llm = llm_weight + req_weight * 0.6
+    adjusted_ats = ats_weight + req_weight * 0.4
+    return round(
+        llm_score * adjusted_llm + ats_normalized * adjusted_ats,
+        2,
+    )
 
 
 class MatchingPipeline:
@@ -160,13 +193,45 @@ class MatchingPipeline:
             return []
 
         # Step 2: Two-stage retrieval with focused query
+        # Use dynamic k based on collection size, unless explicitly overridden
+        collection_size = self._embedder.get_collection_count()
+        initial_k = self._initial_k
+        final_k = self._final_k
+
+        if self._user_config:
+            cfg = self._user_config
+            if cfg.retrieval_initial_k is not None:
+                initial_k = cfg.retrieval_initial_k
+            elif initial_k == 30:  # default — use dynamic
+                initial_k, _ = compute_dynamic_k(collection_size)
+            if cfg.retrieval_final_k is not None:
+                final_k = cfg.retrieval_final_k
+            elif final_k == 10:  # default — use dynamic
+                _, final_k = compute_dynamic_k(collection_size)
+
         query = self._build_retrieval_query(resume_text, target_title)
         retriever = TwoStageRetriever(
             vectorstore=self._embedder.vectorstore,
-            initial_k=self._initial_k,
-            final_k=self._final_k,
+            initial_k=initial_k,
+            final_k=final_k,
         )
-        retrieved_docs = retriever.retrieve(query)
+
+        # Multi-query retrieval if enabled
+        enable_multi_query = (
+            self._user_config.enable_multi_query if self._user_config else False
+        )
+        if enable_multi_query:
+            try:
+                llm = get_llm(LLMTask.CLASSIFY)  # Gemini (cheap)
+                mq = MultiQueryRetriever(retriever=retriever, llm=llm)
+                alt_queries = await mq.generate_queries(query)
+                retrieved_docs = mq.retrieve(query, alternative_queries=alt_queries)
+            except Exception as e:
+                logger.warning(f"Multi-query retrieval failed, falling back: {e}")
+                retrieved_docs = retriever.retrieve(query)
+        else:
+            retrieved_docs = retriever.retrieve(query)
+
         logger.info(f"Retrieved {len(retrieved_docs)} candidates after reranking")
 
         # Build lookup from indexed jobs
@@ -298,7 +363,28 @@ class MatchingPipeline:
         results = await asyncio.gather(*[_score_one(j) for j in candidates])
         scored_matches = [m for m in results if m is not None]
 
-        # Step 5: Sort by overall score descending
-        scored_matches.sort(key=lambda m: m.score.overall_score, reverse=True)
+        # Step 4.5: Compute ATS scores and integrated scores
+        for match in scored_matches:
+            try:
+                ats = compute_ats_score(
+                    resume_text=resume_text,
+                    job_description=match.job.description,
+                    job_requirements=match.job.requirements,
+                )
+                match.ats_score = ats
+                match.integrated_score = _compute_integrated_score(
+                    llm_score=match.score.overall_score,
+                    ats_score=ats.score,
+                    requirements_met_ratio=match.score.requirements_met_ratio,
+                )
+            except Exception as e:
+                logger.warning(f"ATS scoring failed for '{match.job.title}': {e}")
+                match.integrated_score = match.score.overall_score
+
+        # Step 5: Sort by integrated score (fallback to overall_score)
+        scored_matches.sort(
+            key=lambda m: m.integrated_score if m.integrated_score is not None else m.score.overall_score,
+            reverse=True,
+        )
 
         return scored_matches

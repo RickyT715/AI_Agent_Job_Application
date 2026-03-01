@@ -67,6 +67,14 @@ def _build_scrapers(config: UserConfig) -> list:
         from app.services.scraping.api.lever import LeverScraper
         scrapers.append(LeverScraper(companies=config.lever_companies))
 
+    if "remoteok" in config.enabled_sources:
+        from app.services.scraping.api.remoteok import RemoteOKScraper
+        scrapers.append(RemoteOKScraper())
+
+    if "weworkremotely" in config.enabled_sources:
+        from app.services.scraping.api.weworkremotely import WeWorkRemotelyScraper
+        scrapers.append(WeWorkRemotelyScraper())
+
     # Default to JSearch if no scrapers configured
     if not scrapers:
         scrapers.append(JSearchScraper())
@@ -178,7 +186,24 @@ async def run_matching(ctx: dict, user_id: int = 1):
         logger.warning("No jobs in database to match against")
         return {"status": "complete", "matches": 0}
 
-    postings = [_job_model_to_posting(j) for j in db_jobs]
+    # Skip already-scored jobs for this user
+    async with get_db_session_ctx() as db:
+        scored_result = await db.execute(
+            select(MatchResult.job_id).where(MatchResult.user_id == user_id)
+        )
+        scored_job_ids = {row for row in scored_result.scalars().all()}
+
+    unscored_jobs = [j for j in db_jobs if j.id not in scored_job_ids]
+    if not unscored_jobs:
+        logger.info(f"All {len(db_jobs)} jobs already scored for user {user_id}")
+        return {"status": "complete", "matches": 0, "skipped": len(db_jobs)}
+
+    logger.info(
+        f"Matching {len(unscored_jobs)} unscored jobs "
+        f"(skipped {len(db_jobs) - len(unscored_jobs)} already scored)"
+    )
+
+    postings = [_job_model_to_posting(j) for j in unscored_jobs]
 
     config = load_user_config(get_settings().user_config_path)
     pipeline = MatchingPipeline(final_k=config.final_results_count, user_config=config)
@@ -217,6 +242,15 @@ async def run_matching(ctx: dict, user_id: int = 1):
                 strengths=m.score.strengths,
                 missing_skills=m.score.missing_skills,
                 interview_talking_points=getattr(m.score, "interview_talking_points", []),
+                ats_score=m.ats_score.score if m.ats_score else None,
+                ats_details=m.ats_score.model_dump() if m.ats_score else None,
+                requirement_matches=(
+                    [rm.model_dump() for rm in m.score.requirement_matches]
+                    if m.score.requirement_matches
+                    else None
+                ),
+                requirements_met_ratio=m.score.requirements_met_ratio,
+                integrated_score=m.integrated_score,
             )
             db.add(match_result)
 

@@ -26,6 +26,23 @@ export interface JobResponse {
   created_at: string | null;
 }
 
+export interface RequirementMatch {
+  requirement: string;
+  category: string;
+  met: boolean;
+  evidence: string;
+  confidence: number;
+}
+
+export interface ATSKeywordScore {
+  score: number;
+  matched_keywords: string[];
+  missing_keywords: string[];
+  total_job_keywords: number;
+  technical_match_pct: number;
+  soft_skill_match_pct: number;
+}
+
 export interface MatchResponse {
   id: number;
   job_id: number;
@@ -35,6 +52,11 @@ export interface MatchResponse {
   strengths: string[];
   missing_skills: string[];
   interview_talking_points: string[];
+  ats_score: number | null;
+  ats_details: ATSKeywordScore | null;
+  requirement_matches: RequirementMatch[] | null;
+  requirements_met_ratio: number | null;
+  integrated_score: number | null;
   job: JobResponse | null;
   created_at: string | null;
 }
@@ -72,6 +94,7 @@ export interface PreferencesResponse {
   lever_companies: string[];
   workday_urls: string[];
   anthropic_base_url: string;
+  excluded_locations: string[];
 }
 
 export interface ResumeUploadResponse {

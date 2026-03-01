@@ -1,13 +1,37 @@
 """Two-stage retrieval: vector similarity + FlashRank reranking.
 
-Stage 1: ChromaDB cosine similarity → top-30 candidates
-Stage 2: FlashRank cross-encoder reranking → top-10 final candidates
+Stage 1: ChromaDB cosine similarity → top-k candidates
+Stage 2: FlashRank cross-encoder reranking → top-n final candidates
 """
 
 from langchain_classic.retrievers import ContextualCompressionRetriever
 from langchain_community.document_compressors import FlashrankRerank
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStore
+
+
+def compute_dynamic_k(
+    collection_size: int,
+    initial_k_ratio: float = 0.3,
+    final_k_ratio: float = 0.1,
+    min_initial_k: int = 20,
+    max_initial_k: int = 200,
+    min_final_k: int = 5,
+    max_final_k: int = 50,
+) -> tuple[int, int]:
+    """Scale retrieval k proportionally to collection size.
+
+    Examples:
+        20 jobs → (20, 5)
+        100 jobs → (30, 10)
+        500 jobs → (150, 50)
+        1000+ jobs → (200, 50)
+    """
+    initial_k = max(min_initial_k, min(max_initial_k, int(collection_size * initial_k_ratio)))
+    final_k = max(min_final_k, min(max_final_k, int(collection_size * final_k_ratio)))
+    # final_k can't exceed initial_k
+    final_k = min(final_k, initial_k)
+    return initial_k, final_k
 
 
 class TwoStageRetriever:

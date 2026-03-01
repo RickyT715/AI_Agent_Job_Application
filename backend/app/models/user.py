@@ -1,6 +1,6 @@
 """User database model."""
 
-from sqlalchemy import String, Text
+from sqlalchemy import JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
@@ -17,6 +17,12 @@ class User(Base, TimestampMixin):
     resume_text: Mapped[str | None] = mapped_column(Text)
     phone: Mapped[str | None] = mapped_column(String(50))
     linkedin_url: Mapped[str | None] = mapped_column(String(500))
+
+    # Structured profile data (populated from LinkedIn PDF or manual entry)
+    skills_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    experience_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    education_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    certifications_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
 
     # Relationships
     match_results: Mapped[list["MatchResult"]] = relationship(back_populates="user")

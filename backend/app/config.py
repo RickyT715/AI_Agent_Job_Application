@@ -117,7 +117,7 @@ class UserConfig(BaseModel):
     )
     enabled_sources: list[str] = Field(
         default_factory=lambda: ["jsearch"],
-        description="Which scrapers to use: jsearch, greenhouse, lever, workday, adzuna, arbeitnow",
+        description="Which scrapers to use: jsearch, greenhouse, lever, workday, adzuna, arbeitnow, remoteok, weworkremotely",
     )
 
     # Company-specific scraper config
@@ -132,6 +132,26 @@ class UserConfig(BaseModel):
     workday_urls: list[str] = Field(
         default_factory=list,
         description="Workday base URLs",
+    )
+
+    # Location exclusion
+    excluded_locations: list[str] = Field(
+        default_factory=list,
+        description="Locations to strictly exclude (e.g., ['China', 'India'])",
+    )
+
+    # Retrieval configuration
+    retrieval_initial_k: int | None = Field(
+        default=None,
+        description="Override dynamic initial_k (None = auto based on collection size)",
+    )
+    retrieval_final_k: int | None = Field(
+        default=None,
+        description="Override dynamic final_k (None = auto based on collection size)",
+    )
+    enable_multi_query: bool = Field(
+        default=True,
+        description="Enable multi-query retrieval for broader coverage",
     )
 
     @field_validator("experience_level")

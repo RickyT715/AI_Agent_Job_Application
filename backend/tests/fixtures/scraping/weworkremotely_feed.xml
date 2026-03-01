@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>We Work Remotely - Remote Programming Jobs</title>
+    <link>https://weworkremotely.com</link>
+    <item>
+      <title>Acme Corp: Senior Software Engineer</title>
+      <link>https://weworkremotely.com/remote-jobs/acme-corp-senior-software-engineer</link>
+      <guid>https://weworkremotely.com/remote-jobs/acme-corp-senior-software-engineer</guid>
+      <description>Looking for a senior software engineer with Python and React experience. Must have 5+ years of experience building web applications.</description>
+      <pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>DataFlow Inc: Data Engineer</title>
+      <link>https://weworkremotely.com/remote-jobs/dataflow-data-engineer</link>
+      <guid>https://weworkremotely.com/remote-jobs/dataflow-data-engineer</guid>
+      <description>Join our data team. Experience with SQL, Python, and data pipelines required.</description>
+      <pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>BrandCo: Marketing Coordinator</title>
+      <link>https://weworkremotely.com/remote-jobs/brandco-marketing-coordinator</link>
+      <guid>https://weworkremotely.com/remote-jobs/brandco-marketing-coordinator</guid>
+      <description>Manage social media and email marketing campaigns for our growing brand.</description>
+      <pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>

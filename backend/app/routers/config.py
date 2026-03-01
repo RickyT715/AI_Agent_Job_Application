@@ -45,6 +45,7 @@ def _config_to_response(config: UserConfig) -> PreferencesResponse:
         lever_companies=config.lever_companies,
         workday_urls=config.workday_urls,
         anthropic_base_url=settings.anthropic_base_url,
+        excluded_locations=config.excluded_locations,
     )
 
 
@@ -128,4 +129,56 @@ async def upload_resume(
     return ResumeUploadResponse(
         message="Resume uploaded successfully",
         character_count=len(text),
+    )
+
+
+@router.post("/linkedin-profile", response_model=ResumeUploadResponse)
+async def upload_linkedin_profile(
+    file: UploadFile,
+    db: AsyncSession = Depends(get_db_session),
+):
+    """Upload a LinkedIn PDF export to extract profile data.
+
+    Parses the PDF, extracts structured profile data, and stores
+    the text as resume_text along with user fields.
+    """
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Please upload a PDF file")
+
+    content = await file.read()
+
+    try:
+        from app.services.profile.linkedin_parser import parse_linkedin_pdf, profile_to_resume_text
+
+        profile = parse_linkedin_pdf(content)
+        resume_text = profile_to_resume_text(profile)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to parse LinkedIn PDF: {e}")
+
+    # Store in first user record (single-user mode)
+    result = await db.execute(select(User).limit(1))
+    user = result.scalar_one_or_none()
+    if user:
+        user.resume_text = resume_text
+        if profile.full_name:
+            user.full_name = profile.full_name
+        if profile.email:
+            user.email = profile.email
+        if profile.phone:
+            user.phone = profile.phone
+        if profile.linkedin_url:
+            user.linkedin_url = profile.linkedin_url
+    else:
+        user = User(
+            email=profile.email or "user@example.com",
+            full_name=profile.full_name or "Default User",
+            resume_text=resume_text,
+            phone=profile.phone or None,
+            linkedin_url=profile.linkedin_url or None,
+        )
+        db.add(user)
+
+    return ResumeUploadResponse(
+        message="LinkedIn profile uploaded and parsed successfully",
+        character_count=len(resume_text),
     )

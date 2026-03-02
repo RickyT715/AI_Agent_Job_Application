@@ -1,0 +1,550 @@
+{
+  "软件工程师": {
+    "scraped_count": 10,
+    "scored_count": 5,
+    "sources_used": [
+      "tencent"
+    ],
+    "duration_sec": 439.9,
+    "matches": [
+      {
+        "title": "元宝-后台开发工程师",
+        "company": "Tencent",
+        "location": "深圳",
+        "description": "Title: 元宝-后台开发工程师\nCompany: Tencent\nLocation: 深圳\nDescription: 1.负责元宝AIGC应用（如文本生成、图像生成、音视频对话）的后台系统架构设计与开发，支撑高并发、低延迟的AI应用服务；\r\n2.基于LLM大模型能力场景，推进建设AIGC平台研发落地，支持插件接入&管理、数据飞轮pipeline等平台能力，为AI Agent的研发上线提升效率和质量；\r\n3.负责解决平台和服务在高并发场景下的性能优化，问题定位&解决，保障服务SLA。\nRequirements: Category: 技术\nBusiness Group: CSIG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 6.7,
+        "breakdown": {
+          "skills": 7,
+          "experience": 5,
+          "education": 9,
+          "location": 8,
+          "salary": 5
+        },
+        "reasoning": "田瑞琦在AI/LLM后台开发方向具备较强的技术基础，尤其是RAG系统、LangChain/LangGraph、FastAPI等与岗位高度相关的技术栈，与腾讯元宝AIGC平台的核心需求有较好的契合度。然而，候选人目前仍处于实习/在读阶段，缺乏高并发、大规模分布式后台系统的生产级工程经验，且对Kafka、微服务治理、服务SLA保障等企业级后台能力的实践深度不足。教育背景优秀（清华硕士+浙大本科），深圳地点与候选人偏好匹配，但薪资期望（30-60万美元）远超国内市场水平，存在较大落差。",
+        "strengths": [
+          "具备生产级RAG系统开发经验，使用LangChain LCEL、混合检索（BM25+BGE-M3）、Milvus、FlashRank重排序，检索精度提升35%，与元宝AIGC平台核心需求高度吻合",
+          "熟悉LLM大模型应用开发，有LangGraph多Agent流水线设计经验，支持质量门控路由，契合AI Agent研发上线需求",
+          "后端技术栈完整：FastAPI、Docker、PostgreSQL、Redis、WebSocket、REST API，具备构建高性能后���服务的基础能力",
+          "有AIGC评估流水线（RAGAS）和自动化测试（80%+覆盖率）经验，有助于数据飞轮pipeline建设",
+          "清华大学计算机科学硕士（GPA 3.9）+ 浙江大学计算机工程学士（GPA 3.7），顶尖学历背景",
+          "深圳在候选人偏好城市列表中，地点完全匹配",
+          "有AWS、Azure云平台经验，以及Kafka技术栈，具备云原生后台开发基础",
+          "发表ACM MM '23论文，具备AI研究与工程结合的能力"
+        ],
+        "missing_skills": [
+          "高并发分布式后台系统设计与优化经验（如百万级QPS、微服务治理、服务网格）",
+          "生产级服务SLA保障与故障定位经验（监控告警、链路追踪、容量规划）",
+          "大规模数据飞轮pipeline工程实践（特征工程、数据标注平台、在线学习）",
+          "插件接入与管理平台开发经验（Plugin系统架构设计）",
+          "音视频对话后台系统开发经验（流媒体、实时通信协议如WebRTC/RTMP）",
+          "腾讯系技术栈（如tRPC、TDW、TDSQL等）或同等大厂后台中间件经验",
+          "Go语言（腾讯后台开发主流语言）"
+        ],
+        "interview_talking_points": [
+          "重点介绍第三科技研究院的生产级RAG系统项目：强调混合检索架构设计决策（BM25+BGE-M3）、35%精度提升的量化成果、Docker Compose部署与Redis语义缓存的工程实践，体现后台系统设计能力",
+          "展示AI Agent LangGraph项目中的多Agent协作架构设计，说明质量门控路由机制如何提升Agent研发质量，与元宝AI Agent平台建设需求直接对标",
+          "强调RAGAS自动化评估流水线的设计思路，阐述如何将其扩展为数据飞轮pipeline，体现对AIGC平台工程化的理解",
+          "主动承认高并发分布式系统经验不足，但可结合Redis缓存、SSE流式传输、FastAPI异步处理等实践，说明对低延迟服务设计的理解，并表达快速学习意愿",
+          "提及Kafka技术栈经验，结合AIGC平台的消息队列需求，说明对事件驱动架构的理解",
+          "清华+浙大顶尖学历背景，以及ACM MM '23论文发表经历，体现AI工程与研究的双重能力，适合腾讯CSIG的技术氛围"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "微信视频号直播-后台开发工程师",
+        "company": "Tencent",
+        "location": "广州",
+        "description": "Title: 微信视频号直播-后台开发工程师\nCompany: Tencent\nLocation: 广州\nDescription: 1.负责视频号直播基础功能的开发和维护，包括但不限于直播广场、直播流处理、弹幕系统、礼物互动等；\n2.负责视频号直播推荐系统相关功能的开发和维护，包括但不限于直播多场景feed推荐、推荐数据流、实时特征等；\n3.负责视频号直播运营需求的开发和维护，实现运营活动快速迭代上线，包括但不限于主播任务系统、榜单系统、主播激励平台等；\n4.对现有架构进行分析和优化，确保系统的稳定性、可扩展性和安全性。\nRequirements: Category: 技术\nBusiness Group: WXG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 4.3,
+        "breakdown": {
+          "skills": 4,
+          "experience": 5,
+          "education": 8,
+          "location": 3,
+          "salary": 2
+        },
+        "reasoning": "田瑞琦的技术背景以AI/ML、RAG系统和全栈开发为主，与腾讯视频号直播后台开发岗位所需的核心技能（直播流处理、弹幕/礼物系统、推荐系统后台、高并发C++/Go后台服务）存在较大差距。候选人缺乏直播基础设施、实时流媒体协议（RTMP/HLS）、大规模推荐系统及腾讯技术栈（如Tars、TDW）的实际经验，且偏好工作地点（北京/上海/深圳/杭州/远程）与岗位所在地广州不匹配。教育背景优秀（清华大学硕士），但整体岗位匹配度偏低。",
+        "strengths": [
+          "清华大学计算机科学硕士 + 浙江大学计算机工程学士，学历背景强，GPA优秀（3.9/3.7）",
+          "具备Python、C++、SQL、Java等多语言编程能力，C++是后台开发的核心语言之一",
+          "有FastAPI、PostgreSQL、Redis、Docker、Kafka等后台技术栈经验，具备一定后台开发基础",
+          "有AWS、Azure云平台使用经验，理解分布式系统部署",
+          "RAG系统中使用Redis语义缓存和Docker Compose部署，体现了对高性能后台架构的理���",
+          "有WebSocket实时通信经验，与弹幕/实时互动系统有一定相关性",
+          "发表ACM MM '23论文，具备较强的技术研究能力"
+        ],
+        "missing_skills": [
+          "直播流处理技术（RTMP、HLS、WebRTC、FFmpeg等流媒体协议与处理）",
+          "弹幕系统、礼物互动等高并发实时消息系统开发经验",
+          "大规模推荐系统后台开发（多场景Feed推荐、实时特征工程、召回/排序链路）",
+          "高并发、高可用后台服务设计与优化（QPS万级以上）",
+          "Go语言（腾讯后台主流语言之一）",
+          "腾讯内部技术栈（Tars框架、TDW数据仓库、TDMQ等）",
+          "主播任务系统、榜单系统等运营平台后台开发经验",
+          "微服务架构与服务治理（限流、熔断、降级）实战经验",
+          "实时数据流处理（Flink/Spark Streaming等）"
+        ],
+        "interview_talking_points": [
+          "强调WebSocket实时通信经验（AI Agent项目中使用WebSocket），与弹幕/实时互动系统的技术相关性，说明可快速迁移到直播实时消息场景",
+          "突出Redis语义缓存和Kafka的使用经验，体现对高性能、高并发后台架构的理解，与直播系统的高并发需求相关联",
+          "强调清华大学硕士背景和ACM MM '23论文发表，体现快速学习和技术深度，说明能够快速掌握直播推荐系统相关技术",
+          "展示生产级RAG系统中端到端系统设计能力（从数据流水线到API服务到部署），类比直播后台的全链路开发思维",
+          "主动表达对广州工作地点的灵活性，或说明可接受异地/混合办公安排",
+          "提及C++编程能力，这是腾讯后台开发的核心语言，可作为技术基础的加分项"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "《元梦之星》-游戏客户端开发工程师-Gameplay方向",
+        "company": "Tencent",
+        "location": "上海",
+        "description": "Title: 《元梦之星》-游戏客户端开发工程师-Gameplay方向\nCompany: Tencent\nLocation: 上海\nDescription: 1.负责UGC方向Gameplay，Editor开发工作，包括但不限于逻辑功能的实现与优化；\n2.根据需求制定合理的技术方案并能有效地进行开发落地；\n3.优化游戏性能，提升用户体验，对游戏功能和体验提出优化建议；\n4.对已经上线的模块进行维护，确保游戏运行的稳定性和流畅性；\n5.与团队成员紧密合作，共同推进项目进度，确保游戏按时高质量上线。\nRequirements: Category: 技术\nBusiness Group: IEG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 3.5,
+        "breakdown": {
+          "skills": 2,
+          "experience": 3,
+          "education": 7,
+          "location": 8,
+          "salary": 4
+        },
+        "reasoning": "该候选人的技术背景主要集中在AI/ML、RAG系统、全栈Web开发和计算机视觉领域，与腾讯《元梦之星》游戏客户端Gameplay开发岗位的核心要求（UGC Gameplay/Editor开发、游戏引擎、C++游戏开发）存在显著差距。候选人虽然具备C++和Lua的编程经验，但缺乏游戏引擎（Unity/Unreal）实战经验、游戏客户端开发经验以及UGC系统开发经验，这些是该岗位的核心技能。教育背景优秀（清华大学硕士），地理位置偏好与上海匹配，但薪资期望（30-60万美元）远超国内游戏行业标准，存在较大落差。",
+        "strengths": [
+          "清华大学计算机科学硕士，GPA 3.9，教育背景扎实",
+          "具备C++编程能力，是游戏开发的基础语言",
+          "掌握Lua语言，与游戏脚本开发相关",
+          "有计算机图形学研究方向，与游戏渲染有一定关联",
+          "具备React前端开发经验，可迁移至Editor工具开发",
+          "有Docker、PostgreSQL等工程化部署经验，工程能力较强",
+          "上海在候选人偏好城市列表中，地理位置��配"
+        ],
+        "missing_skills": [
+          "游戏引擎开发经验（Unity / Unreal Engine）",
+          "UGC系统与游戏Editor开发经验",
+          "游戏Gameplay逻辑开发经验",
+          "游戏性能优化（渲染管线、内存管理、帧率优化）",
+          "游戏客户端架构设计经验",
+          "游戏物理引擎或动画系统经验",
+          "移动端游戏开发经验（iOS/Android游戏客户端）",
+          "游戏网络同步与状态管理经验"
+        ],
+        "interview_talking_points": [
+          "强调C++编程能力和Lua脚本经验，说明具备游戏开发语言基础，并表达快速学习游戏引擎的意愿",
+          "突出计算机图形学研究背景，��游戏渲染和视觉效果开发建立关联",
+          "介绍无人机搜索系统中React前端开发经验，迁移至游戏Editor工具开发场景",
+          "强调在RAG系统和AI Agent项目中体现的系统架构设计与工程落地能力，说明具备复杂系统开发经验",
+          "提及ACM MM '23论文发表经历，展示技术深度和团队协作能力",
+          "表达对游戏行业的热情，并说明愿意通过自学Unity/Unreal Engine快速补齐游戏开发技能缺口"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "《穿越火线手游》服务器开发工程师",
+        "company": "Tencent",
+        "location": "深圳",
+        "description": "Title: 《穿越火线手游》服务器开发工程师\nCompany: Tencent\nLocation: 深圳\nDescription: 1.负责服务端的程序设计和实现，包括但不限于架构设计、性能优化和安全防护；\n2.与项目团队（包括客户端开发、策划、项目经理等）保持良好沟通，确保编码任务的顺利推进和及时上线；\n3.利用数据平台和可观测性工具保障业务的稳定运行，并能够熟练处理和解决线上运营中的问题和故障。\nRequirements: Category: 技术\nBusiness Group: IEG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 4.3,
+        "breakdown": {
+          "skills": 3,
+          "experience": 5,
+          "education": 8,
+          "location": 8,
+          "salary": 4
+        },
+        "reasoning": "田瑞琦的技术背景以AI/ML、全栈开发和RAG系统为核心，与腾讯《穿越火线手游》服务器开发岗位所需的游戏服务端架构、高并发网络编程、性能优化等专项能力存在显著差距。尽管候选人具备Python、C++、FastAPI、Docker等基础技能，但缺乏游戏服务器开发、实时网络通信（如TCP/UDP游戏协议）、游戏引擎服务端框架等核心经验。教育背景优秀（清华大学硕士），地理位置偏好覆盖深圳，但薪资期望（30-60万美元）远超国内游戏行业中级工程师的市场水平，存在较大落差。",
+        "strengths": [
+          "清华大学计算机科学硕士，GPA 3.9，教育背景扎实",
+          "具备C++编程能力，是游戏服务器开发的核心语言",
+          "有FastAPI、Docker、PostgreSQL、Redis等后端基础设施经验，具备服务端开发基础",
+          "熟悉WebSocket实时通信协议，与游戏实时通信有一定关联",
+          "有Docker Compose部署和生产级系统搭建经验，具备一定的工程化能力",
+          "深圳在候选人偏好城市列表中，地理位置匹配",
+          "有团队协作与跨职能沟通经验（与客户端、策划等协作类似）"
+        ],
+        "missing_skills": [
+          "游戏服务器开发经验（如Skynet、Erlang、Golang游戏框架）",
+          "高并发网络编程（TCP/UDP协议栈、IOCP/epoll等）",
+          "游戏实时同步与状态管理（帧同步、状态同步）",
+          "游戏安全防护（反作弊、防外挂机制）",
+          "游戏性能优化（内存管理、低延迟优化）",
+          "可观测性工具与游戏运维监控经验",
+          "分布式游戏服务器架构设计经验",
+          "Lua脚本在游戏服务端的实际应用经验（虽列出Lua但无游戏场景证明）"
+        ],
+        "interview_talking_points": [
+          "强调C++技能储备，并说明愿意将其应用于游戏服务器开发场景，可��合具体学习计划展示转型意愿",
+          "突出生产级系统搭建经验：RAG系统的FastAPI + Redis + Docker Compose部署，体现工程化思维和服务稳定性保障能力",
+          "WebSocket实时通信经验可与游戏实时数据同步需求关联，说明对低延迟通信的理解",
+          "提及Lua技能（游戏服务端脚本常用语言），并表达快速上手游戏业务逻辑脚本的能力",
+          "清华大学背景和ACM MM论文发表体现学习能力和技术深度，强调快速掌握新技术领域的能力",
+          "如有意向，建议提前补充游戏服务器相关项目经验（如开源游戏服务器框架贡献）以增强竞争力"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "微信公众号-客户端开发工程师",
+        "company": "Tencent",
+        "location": "广州",
+        "description": "Title: 微信公众号-客户端开发工程师\nCompany: Tencent\nLocation: 广州\nDescription: 1.负责微信客户端公众号的开发维护工作，包括新方向探索、性能调优、技术难点攻坚等；\n2.负责新平台、新技术框架的探索。\nRequirements: Category: 技术\nBusiness Group: WXG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 4.1,
+        "breakdown": {
+          "skills": 3,
+          "experience": 5,
+          "education": 8,
+          "location": 3,
+          "salary": 2
+        },
+        "reasoning": "该职位是腾讯微信公众号的**客户端开发工程师**，核心要求是移动端/客户端开发（iOS/Android/跨平台），而候选人田瑞琦的技术栈主要集中在AI/ML（RAG、LLM、LangChain）、后端（FastAPI、Python）和全栈Web开发（React、Node.js），与客户端开发方向存在明显错位。候选人虽在学士阶段有移动端开发经历（Android Studio），但缺乏微信公众号开发、iOS/Android原生开发、C++客户端性能调优等核心技能的实际项目证明。此外，候选人偏好城市（北京、上海、深圳、杭州、远程）不包含广州，且期望薪资（$300K-$600K USD）与国内腾讯薪资体系差距悬殊，综合匹配度较低。",
+        "strengths": [
+          "计算机科学硕士学历来自清华大学（GPA 3.9），教育背景顶尖，符合腾讯对高学历人才的偏好",
+          "本科阶段有移动端开发（Android Studio）学习经历，具备一定客户端开发基础",
+          "熟悉C++，与微信客户端底层开发语言有一定契合",
+          "有实际工程项目经验（RAG系统、��标检测系统），展现出较强的工程落地能力",
+          "有ACM MM '23论文发表经历，体现研究与工程结合的能力",
+          "熟悉Docker、Git等DevOps工具，有助于客户端CI/CD流程"
+        ],
+        "missing_skills": [
+          "iOS/Android原生客户端开发经验（Objective-C / Swift / Kotlin）",
+          "微信公众号平台开发经验（JSSDK、网页授权、消息推送等）",
+          "客户端性能调优经验（内存优化、渲染性能、启动速度等）",
+          "跨平台框架经验（Flutter、React Native、小程序框架等）",
+          "C++客户端开发实战经验（非嵌入式方向）",
+          "新平台/新技术框架探索经验（如鸿蒙OS等）",
+          "腾讯WXG业务线相关技术栈了解"
+        ],
+        "interview_talking_points": [
+          "强调C++技能与微信客户端底层开发的关联性，并表达快速学习客户端开发的意愿和计划",
+          "突出清华大学顶尖学历背景和持续学习新技术的能力（从深度学习到LLM/RAG的技术演进）",
+          "提及本科阶段的移动端开发学习经历（Android Studio），以及对客户端开发方向的兴趣",
+          "展示工程落地能力：生产级RAG系统（Docker部署、性能优化）体现了系统工程思维，可迁移至客户端工程",
+          "如有意向，建议提前补充微信JSSDK、小程序���发或Android原生开发的项目经验再投递此岗位"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      }
+    ]
+  },
+  "AI工程师": {
+    "scraped_count": 12,
+    "scored_count": 6,
+    "sources_used": [
+      "tencent"
+    ],
+    "duration_sec": 182.5,
+    "matches": [
+      {
+        "title": "AI Engineer",
+        "company": "Cloudflare",
+        "location": "Hybrid",
+        "description": "Title: AI Engineer\nCompany: Cloudflare\nLocation: Hybrid\nDescription: &lt;div class=&quot;content-intro&quot;&gt;&lt;div&gt;&lt;strong&gt;About Us&lt;/strong&gt;&lt;/div&gt; &lt;div&gt; &lt;p&gt;At Cloudflare, we are on a mission to help build a better Internet. Today the company runs one of the world’s largest networks that powers millions of websites and other Internet properties for customers ranging from individual bloggers to SMBs to Fortune 500 companies. Cloudflare protects and accelerates any Internet application online without adding hardware, installing software, or changing a line of code. Internet properties powered by Cloudflare all have web traffic routed through its intelligent global network, which gets smarter with every request. As a result, they see significant improvement in performance and a decrease in spam and other attacks. Cloudflare was named to Entrepreneur Magazine’s Top Company Cultures list and ranked among the World’s Most Innovative Companies by Fast Company.&amp;nbsp;&lt;/p&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We realize people do not fit into neat boxes. We are looking for curious and empathetic individuals who are committed to developing themselves and learning new skills, and we are ready to help you do that. We cannot complete our mission without building a diverse and inclusive team. We hire the best people based on an evaluation of their potential and support them throughout their time at Cloudflare. Come join us!&amp;nbsp;&lt;/span&gt;&lt;/p&gt; &lt;/div&gt;&lt;/div&gt;&lt;h3&gt;&lt;strong&gt;Available Locations: Austin, TX&amp;nbsp;&lt;/strong&gt;&lt;/h3&gt; &lt;h3&gt;&lt;strong&gt;About the Department&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;Emerging Technologies &amp;amp; Incubation (ETI) is where new and bold products are built and released within Cloudflare. Rather than being constrained by the structures which make Cloudflare a massively successful business, we are able to leverage them to deliver entirely new tools and products to our customers. Cloudflare’s edge and network make it possible to solve problems at massive scale and efficiency which would be impossible for almost any other organization.&lt;/p&gt; &lt;h3&gt;&lt;strong&gt;What you&#39;ll do&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;In this role you will design, build, and ship AI-powered product features. You will often collaborate across disciplines by partnering with engineers, data scientists, designers, and stakeholders to integrate AI seamlessly into existing systems and workflows. As the landscape for AI continues to change you will be expected to stay current on emerging AI techniques and tooling, experiment rapidly, and bring forward ideas that are practical, maintainable, and impactful. Applying AI to existing products as well as new products will be an important part of this role and your ability to ship production-grade systems will be an expected requisite. On any given day you might be benchmarking various AI models, writing evals, collaborating with other AI teams on novel solutions, or developing a net-new product to release to Cloudflare customers.&lt;/p&gt; &lt;h3&gt;&lt;strong&gt;Examples of desirable skills, knowledge and experience&lt;/strong&gt;&lt;/h3&gt; &lt;ul&gt; &lt;li&gt;5+ years of experience working with distributed systems.&lt;/li&gt; &lt;li&gt;Experience designing and building frontend applications.&lt;/li&gt; &lt;li&gt;Solid understanding of cloud primitives and how they work together to build distributed systems.&lt;/li&gt; &lt;li&gt;Knowledge of at least one modern strongly-typed programming language: we primarily use TypeScript.&lt;/li&gt; &lt;li&gt;Experience debugging, optimizing and identifying failure modes in large-scale frontend applications.&lt;/li&gt; &lt;li&gt;Experience developing and deploying AI solutions&lt;/li&gt; &lt;/ul&gt; &lt;h3 id=&quot;SeniorSystemsEngineerWorkersRuntime-AbouttheDepartment&quot;&gt;&lt;/h3&gt;&lt;div class=&quot;content-conclusion&quot;&gt;&lt;p&gt;&lt;strong&gt;What Makes Cloudflare Special?&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We’re not just a highly ambitious, large-scale technology company. We’re a highly ambitious, large-scale technology company with a soul. Fundamental to our mission to help build a better Internet is protecting the free and open Internet.&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;a href=&quot;https://blog.cloudflare.com/protecting-free-expression-online/&quot;&gt;&lt;strong&gt;Project Galileo&lt;/strong&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;: Since 2014, we&#39;ve equipped more than 2,400 journalism and civil society organizations in 111 countries with powerful tools to defend themselves against attacks that would otherwise censor their work, technology already used by Cloudflare’s enterprise customers--at no cost.&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://www.cloudflare.com/athenian/&quot;&gt;Athenian Project&lt;/a&gt;&lt;/strong&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;: In 2017, we created the Athenian Project to ensure that state and local governments have the highest level of protection and reliability for free, so that their constituents have access to election information and voter registration. Since the project, we&#39;ve provided services to more than 425 local government election websites in 33 states.&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;a href=&quot;https://1.1.1.1/&quot;&gt;&lt;strong&gt;1.1.1.1&lt;/strong&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;: We released&lt;/span&gt;&lt;a href=&quot;https://1.1.1.1/&quot;&gt; &lt;span style=&quot;font-weight: 400;&quot;&gt;1.1.1.1&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; to help fix the foundation of the Internet by building a faster, more secure and privacy-centric public DNS resolver. This is available publicly for everyone to use - it is the first consumer-focused service Cloudflare has ever released. Here’s the deal - we don’t store client IP addresses never, ever. We will continue to abide by our&lt;/span&gt;&lt;a href=&quot;https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver&quot;&gt; privacy commitment&lt;/a&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; and ensure that no user data is sold to advertisers or used to target consumers.&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Sound like something you’d like to be a part of? We’d love to hear from you!&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;This position may require access to information protected under U.S. export control laws, including the U.S. Export Administration Regulations. Please note that any offer of employment may be conditioned on your authorization to receive software or technology controlled under these U.S. export laws without sponsorship for an export license.&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Cloudflare is proud to be an equal opportunity employer. &amp;nbsp;We are committed to providing equal employment opportunity for all people and place great value in both diversity and inclusiveness. &amp;nbsp;All qualified applicants will be considered for employment without regard to their, or any other person&#39;s, perceived or actual&lt;/span&gt; &lt;span style=&quot;font-weight: 400;&quot;&gt;race, color, religion, sex, gender, gender identity, gender expression, sexual orientation, national origin, ancestry, citizenship, age, physical or mental disability, medical condition, family care status, or any other basis protected by law. &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;We are an AA/Veterans/Disabled Employer.&lt;/span&gt;&lt;/p&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Cloudflare provides reasonable accommodations to qualified individuals with disabilities. &amp;nbsp;Please tell us if you require a reasonable accommodation to apply for a job. Examples of reasonable accommodations include, but are not limited to, changing the application process, providing documents in an alternate format, using a sign language interpreter, or using specialized equipment. &amp;nbsp;If you require a reasonable accommodation to apply for a job, please contact us via e-mail at &lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;hr@cloudflare.com&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt; or via mail at 101 Townsend St. San Francisco, CA 94107.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 5.6,
+        "breakdown": {
+          "skills": 7,
+          "experience": 4,
+          "education": 8,
+          "location": 4,
+          "salary": 2
+        },
+        "reasoning": "田瑞琦在AI/ML技术栈（RAG、LLM、LangChain、LangGraph）和全栈开发（React、FastAPI、TypeScript）方面与职位要求高度契合，展现出扎实的AI工程能力。然而，Cloudflare要求5年以上分布式系统经验，而候选人目前仍是在读硕士生，实际工作经验仅约1年，存在显著差距。此外，职位位于美国德克萨斯州奥斯汀（混合办公），与候选人偏好的中国城市或远程工作存在地理和签证方面的重大障碍，且候选人期望薪资（$300K-$600K）远超该职位的市场水平。",
+        "strengths": [
+          "扎实的RAG系统开发经验：在第三科技研究院构建了生产级RAG系统，检索精度提升35%，上下文召回率0.84，直接对应职位核心需求",
+          "LLM与AI Agent工程能力：使用LangGraph设计4-Agent流水线，熟练掌握LangChain、ChromaDB、BGE-M3等主流AI工具链",
+          "全栈开发能力：具备React/TypeScript前端 + FastAPI后端 + Docker部署的完整技术栈，符合职位对前端应用开发���要求",
+          "TypeScript使用经验：项目中使用React/TypeScript，与Cloudflare主要编程语言要求匹配",
+          "计算机视觉与深度学习背景：YOLOv8模型训练（91% mAP@50）、ACM MM '23论文发表，体现扎实的AI研究与工程能力",
+          "云服务经验：简历中列出AWS、Azure云平台经验，与Cloudflare云基础设施背景相关",
+          "顶尖院校背景：清华大学硕士（GPA 3.9）+ 浙江大学学士（GPA 3.7），学术背景优秀",
+          "生产级系统部署经验：使用Docker Compose、Redis、PostgreSQL等构建并部署完整系统，具备工程化思维"
+        ],
+        "missing_skills": [
+          "5年以上分布式系统工作经验（候选人实际工作经验约1年，仍在读研）",
+          "大规模前端应用的调试、优化与故障模式识别经验",
+          "Cloudflare特有技术栈（Workers、Edge Computing、CDN架构）相关经验",
+          "AI模型基准测试（Benchmarking）与系统性评估（Evals）的实战经验",
+          "大规模分布式系统设计与架构经验",
+          "美国工作授权/签证（职位要求在奥斯汀混合办公，可能涉及出口管制合规）"
+        ],
+        "interview_talking_points": [
+          "重点介绍第三科技研究院RAG系统项目：强调生产级部署经验（Docker Compose、Redis缓存、FastAPI+SSE）、混合检索架构设计（BM25+BGE-M3+Milvus）以及可量化的性能提升（检索精度+35%，召回率0.84），这与Cloudflare对AI解决方案开发和部署的核心要求高度吻合",
+          "展示AI Agent LangGraph项目的系统设计能力：4-Agent流水线的质量门控路由设计、WebSocket实时通信、80%+测试覆盖率，体现生产级工程思维和TypeScript全栈能力",
+          "针对经验年限差距，主动说明：虽然正式工作年限较短，但通过清华/浙大的研究项目、多段实习和个人项目积累了密集的实战经验，并可展示具体的技术深度和交付成果",
+          "强调对Cloudflare技术生态的理解和兴趣：可结合Cloudflare Workers、Edge AI等产品方向，说明自己的RAG/LLM工程经验如何与Cloudflare的ETI（新兴技术孵化）部门使命契合",
+          "主动说明地理位置和工作授权问题：如有意向赴美工作，需提前准备签证方案（如OPT/H1B）并在面试中主动澄清，避免流程后期出现障碍"
+        ],
+        "apply_url": null,
+        "source": "greenhouse"
+      },
+      {
+        "title": "腾讯云CodeBuddy-智能体后台开发工程师",
+        "company": "Tencent",
+        "location": "深圳",
+        "description": "Title: 腾讯云CodeBuddy-智能体后台开发工程师\nCompany: Tencent\nLocation: 深圳\nDescription: 1.负责大语言模型后台服务架构设计、开发和维护工作；\n2.参与新技术调研及实际业务场落地，不断提升业务指标；\n3.负责后台系统的性能优化、稳定性、流程建设和研效提升。\nRequirements: Category: 技术\nBusiness Group: CSIG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 7.1,
+        "breakdown": {
+          "skills": 8,
+          "experience": 6,
+          "education": 9,
+          "location": 8,
+          "salary": 5
+        },
+        "reasoning": "田瑞琦在LLM后台开发、RAG系统构建和AI Agent工程方面具备较强的实践经验，与腾讯云CodeBuddy智能体后台开发岗位的核心需求高度契合。其在第三科技研究院的生产级RAG系统项目（FastAPI、Docker、Redis、流式输出）直接对应岗位描述中的后台服务架构设计与维护职责。然而，候选人目前仍处于实习/研究助理阶段，缺乏大厂后台系统性能优化和高并发稳定性的完整工程经验，且薪资期望（30-60万美元）远超国内腾讯同类岗位的市场水平，存在较大落差。",
+        "strengths": [
+          "生产级RAG系统全栈落地经验：使用LangChain、Milvus、BM25+BGE-M3混合检索、FlashRank重排序，检索精度提升35%，直接匹配LLM后台服务开发需求",
+          "LLM Agent工程实践：设计4-Agent LangGraph流水线，含质量门控路由，与CodeBuddy智能体方向高度吻合",
+          "后台技术栈完整：FastAPI + SSE流式传输 + Redis语义缓存 + Docker Compose部署，具备后台服务架���设计能力",
+          "顶尖院校教育背景：清华大学计算机科学硕士（GPA 3.9）+ 浙江大学计算机工程学士（GPA 3.7），学术实力强",
+          "多模态与计算机视觉经验：ACM MM '23论文发表，YOLOv8工业缺陷检测（91% mAP@50），技术广度突出",
+          "深圳在候选人偏好城市列表中，地理位置匹配"
+        ],
+        "missing_skills": [
+          "高并发/高可用后台系统性能优化经验（大规模流量、稳定性保障）",
+          "腾讯云或主流云原生技术栈深度经验（如微服务治理、服务网格、K8s生产运维）",
+          "Go语言（腾讯后台开发主流语言，简历中未体现）",
+          "大规模分布式系统设计与研效提升经验",
+          "业务指标驱动的新技术调研与落地完整闭环经验（缺乏大厂业务场景验证）"
+        ],
+        "interview_talking_points": [
+          "重点介绍第三科技研究院RAG系统项目：强调生产级规模（500+页文档）、混合检索架构设计决策、35%精度提升的量化成果，以及RAGAS自动化评估体系的建立，展示从0到1的后台服务架构能力",
+          "展示LangGraph 4-Agent流水线项目：详细说明智能体间的路由逻辑、质量门控机制设计，与CodeBuddy智能体方向直接对标，突出对Agent工程化落地的深度理解",
+          "主动提及对Go语言的学习意愿或已有基础（若有），或强调Python后台服务的高性能实践（FastAPI异步、Redis缓存、SSE流式），弥补Go语言经验的潜在短板",
+          "结合清华大学研究背景，强调对LLM前沿技术（如RAG优化、Agent框架）的持续跟踪能力，契合岗位'新技术调研'职责",
+          "针对薪资期望，建议在面试前了解腾讯同级别（T3-T4）国内薪资体系，将期望调整至市场合理区间（如40-80万人民币），避免因薪资差距过大影响录用"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "游戏AI-LLM大模型算法研究员",
+        "company": "Tencent",
+        "location": "深圳",
+        "description": "Title: 游戏AI-LLM大模型算法研究员\nCompany: Tencent\nLocation: 深圳\nDescription: 1.负责LLM在游戏领域的应用落地，包括但不限于游戏智能NPC的对话、决策交互、陪玩等；\r\n2.负责大模型开发的相关工作，包括但不限于：数据合成、微调（SFT、蒸馏）、强化（DPO、GRPO）、RAG、多模态LLM（涉及游戏盘面状态）等；\r\n3.负责探索与跟进AIGC前沿技术，结合未来实际应用场景，提供技术解决方案。\nRequirements: Category: 技术\nBusiness Group: TEG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 7.1,
+        "breakdown": {
+          "skills": 7,
+          "experience": 6,
+          "education": 9,
+          "location": 9,
+          "salary": 5
+        },
+        "reasoning": "田瑞琦在LLM应用、RAG系统构建和AI工程方面具备扎实的实践基础，与腾讯该职位的核心技术方向高度契合，尤其是RAG、LangChain/LangGraph、多模态理解等方面有直接项目经验。然而，候选人缺乏游戏AI领域的专项经验，以及SFT/DPO/GRPO等大模型微调与强化学习对齐的实际落地经验，这是该岗位的核心要求之一。教育背景优秀（清华硕士+浙大本科），地理位置偏好覆盖深圳，整体匹配度良好但需补强游戏AI与模型训练方向。",
+        "strengths": [
+          "扎实的RAG系统工程经验：生产级RAG系统（BM25+BGE-M3混合检索、Milvus、FlashRank重排序），检索精度提升35%，上下文召回率0.84，与职位RAG要求直接匹配",
+          "LangChain/LangGraph实战经验：设计4-Agent LangGraph流水线，具备LLM应用编排与Agent系统开发能力",
+          "多模态理解背景：参与ACM MM '23多模态视频问答论文（DBVM），具备视频-语言模型研究经验，与多模态LLM要求相关",
+          "顶尖院校教育背景：清华大学计算机科学硕士（GPA 3.9）+ 浙江大学计算机工程学士（GPA 3.7），研究方向涵盖强化学习与大语言模型",
+          "计算机视觉与深度学习实践：YOLOv8工业缺陷检测（91% mAP@50）、无人机目标检测系统，展示AI工程落地能力",
+          "全栈工程能力：FastAPI、React、Docker、PostgreSQL、Redis等完整技术栈，具备独立交付AI产品的能力",
+          "地理位置偏好覆盖深圳，与腾讯岗位地点完全匹配"
+        ],
+        "missing_skills": [
+          "游戏AI领域经验：缺乏智能NPC对话、决策交互、游戏陪玩等游戏AI应用的实际项目经验",
+          "大模型微调经验：无SFT（监督微调）、知识蒸馏的实际操作经验",
+          "RLHF/强化对齐经验：缺乏DPO、GRPO等偏好优化与强化学习对齐的实践经验",
+          "数据合成经验：未提及大模型训练数据合成、数据标注流程设计等经验",
+          "AIGC前沿技术研究：缺乏系统性跟进AIGC前沿（如扩散模型、生成式游戏内容）的研究经历"
+        ],
+        "interview_talking_points": [
+          "重点介绍生产级RAG系统的完整工程实践：从混合检索设计（BM25+BGE-M3）、Milvus向量存储、FlashRank重排序到RAGAS自动化评估，强调35%检索精度提升和0.84上下文召回率的量化成果，与职位RAG要求直接对应",
+          "结合ACM MM '23多模态视频问答研究经历，阐述对多模态LLM的理解，并主动表达将该能力迁移至游戏盘面状态理解（如棋盘、地图状态的视觉-语言建模）的学习意愿与技术路径",
+          "以4-Agent LangGraph流水线项目为例，展示对LLM Agent决策与路由机制的深入理解，类比游戏NPC的对话决策交互场景，说明技术迁移的可行性",
+          "主动提及教育背景中的强化学习研究方向，表达对DPO/GRPO等强化对齐技���的学习计划，并展示快速上手新技术的能力（如从零构建RAG系统的经历）",
+          "强调清华+浙大的顶尖学术背景与持续的研究产出（ACM MM论文），体现研究型工程师的潜力，契合腾讯TEG研究员岗位对技术深度的要求"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "元宝-后台开发工程师",
+        "company": "Tencent",
+        "location": "深圳",
+        "description": "Title: 元宝-后台开发工程师\nCompany: Tencent\nLocation: 深圳\nDescription: 1.负责元宝AIGC应用（如文本生成、图像生成、音视频对话）的后台系统架构设计与开发，支撑高并发、低延迟的AI应用服务；\r\n2.基于LLM大模型能力场景，推进建设AIGC平台研发落地，支持插件接入&管理、数据飞轮pipeline等平台能力，为AI Agent的研发上线提升效率和质量；\r\n3.负责解决平台和服务在高并发场景下的性能优化，问题定位&解决，保障服务SLA。\nRequirements: Category: 技术\nBusiness Group: CSIG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 6.2,
+        "breakdown": {
+          "skills": 7,
+          "experience": 5,
+          "education": 9,
+          "location": 8,
+          "salary": 5
+        },
+        "reasoning": "田瑞琦在AI/LLM应用层（RAG、LangChain、LangGraph、Agent）具备较强的实践经验，与腾讯元宝AIGC平台的业务方向高度契合。然而，该职位核心要求是**后台系统架构设计与开发**，强调高并发、低延迟、服务SLA保障等后端工程能力，而候选人的工作经历以AI应用开发和算法实习为主，缺乏大规模分布式后台系统的设计与运维经验。候选人目前仍在读研（预计2025年10月毕业），实际工作经验较为有限，与mid-level岗位的期望存在一定差距。",
+        "strengths": [
+          "具备生产级RAG系统搭建经验（LangChain、Milvus、BM25+BGE-M3混合检索），与元宝AIGC平台能力高度相关",
+          "熟悉LLM大模型应用开发，包括AI Agent（LangGraph 4-Agent流水线）、插件化架构设计",
+          "掌握FastAPI、Docker、Redis、PostgreSQL、WebSocket等后台开发核心技术栈",
+          "有AIGC数据飞轮pipeline相关实践（RAGAS自动化评估流水线，上下文召回率0.84）",
+          "清华大学计算机���学硕士在读，GPA 3.9，学术背景顶尖",
+          "有ACM MM '23论文发表经历，具备多模态视频理解研究背景",
+          "深圳在候选人偏好城市列表中，地理位置匹配"
+        ],
+        "missing_skills": [
+          "高并发后台系统架构设计经验（如微服务、服务网格、负载均衡）",
+          "大规模分布式系统开发经验（缺乏Tencent级别的QPS/TPS优化案例）",
+          "服务SLA保障与可观测性工具（如Prometheus、Grafana、链路追踪）",
+          "消息队列深度应用经验（Kafka虽列出但无具体项目证明）",
+          "C++后台服务开发经验（腾讯后台常用语言，简历中C++未体现在后台场景）",
+          "图像生成/音视频对话等AIGC多模态后台服务开发经验",
+          "插件接入与管理平台的系统设计经验"
+        ],
+        "interview_talking_points": [
+          "重点介绍第三科技研究院RAG系统项目：生产级部署（Docker Compose）、FastAPI+SSE流式传输、Redis语义缓存，强调这是真实的后台服务工程实践，而非仅算法原型",
+          "展示LangGraph 4-Agent流水线项目中的系统设计思路：质量门控路由机制、WebSocket实时通信、PostgreSQL数据持久化，体现后台架构设计能力",
+          "结合RAGAS自动化评估流水线，阐述对'数据飞轮'概念的理解，以及如何通过持续评估驱动模型/系统迭代",
+          "主动承认高并发系统经验不足，但可以展示对Redis缓存、异步流式处理等性能优化手段的理解，并表达快速学习意愿",
+          "提及ACM MM '23多模态论文，展示对音视频多模态AI的研究背景，与元宝音视频对话场景相关",
+          "强调清华大学顶尖学术背景（GPA 3.9）和浙大院长荣誉名单，体现学习能力和技术潜力"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "元宝-大模型后训练算法工程师",
+        "company": "Tencent",
+        "location": "北京",
+        "description": "Title: 元宝-大模型后训练算法工程师\nCompany: Tencent\nLocation: 北京\nDescription: 1.面向AI应用场景的大模型微调，优化PostTraining (SFT/RM/RL) 算法的训练效率和实际用户体验效果；\r\n2.研究各领域高质量数据的自动化合成方法，建设高效的线上数据飞轮链路；\r\n3.配合产品和工程，探索LLM在创作、教育、金融、代码等场景下的创新应用。\nRequirements: Category: 技术\nBusiness Group: CSIG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 5.5,
+        "breakdown": {
+          "skills": 5,
+          "experience": 5,
+          "education": 8,
+          "location": 9,
+          "salary": 3
+        },
+        "reasoning": "田瑞琦在LLM应用层（RAG、LangChain、LangGraph）有扎实的工程实践，但腾讯元宝该岗位核心聚焦于大模型后训练算法（SFT/RM/RLHF）、数据飞轮与训练效率优化，属于算法研究型岗位，候选人在这一方向几乎没有直接经验。教育背景优秀（清华硕士+浙大本科），北京地点完全匹配，但薪资期望（30-60万美元）远超国内大厂同等级别薪资水平，存在较大落差。整体来看，候选人是一位有潜力的LLM应用工程师，但与该后训练算法研究岗位的核心要求匹配度中等偏低。",
+        "strengths": [
+          "清华大学计算机科学硕士在读，GPA 3.9，学术背景强劲，符合腾讯对顶尖高校的偏好",
+          "有生产级RAG系统落地经验（LangChain、Milvus、BM25+BGE-M3混合检索），LLM工程能力扎实",
+          "熟悉LLM相关技术栈（LangChain、LangGraph、ChromaDB、FastAPI），与大模型应用探索方向契合",
+          "有ACM MM '23论文发表经历，具备一定学术研究能力",
+          "北京地点与岗位完全匹配，无需异地",
+          "有计算机视觉（YOLOv8）和深度学习实际项目经验，AI基础扎实",
+          "全栈工程能力（FastAPI、React、Docker、PostgreSQL）有助于配合产品和工程团队协作"
+        ],
+        "missing_skills": [
+          "大模型后训练核心算法经验：SFT（监督微调）、RM（奖励模型训练）、RLHF/PPO/DPO等强化学习对齐算法",
+          "大规模分布式训练框架经验（DeepSpeed、Megatron-LM、FSDP等）",
+          "高质量训练数据合成与自动化数据飞轮构建经验",
+          "大模型训练效率优化经验（混合精度、梯度检查点、显存优化等）",
+          "对创作、教育、金融、代码等垂直领域LLM能力评估与优化的实践经验",
+          "模型评估体系设计（超越RAGAS，面向后训练效果的人工/自动评估）"
+        ],
+        "interview_talking_points": [
+          "重点介绍RAG系统中的检索优化经验（BM25+BGE-M3混合检索提升35%精度），类比说明对模型效果优化的系统性思维，与���训练效果优化的方法论相通",
+          "强调清华硕士研究方向涵盖强化学习与大语言模型，可主动提及正在或计划深入学习RLHF/DPO等后训练算法，展示学习意愿",
+          "以ACM MM '23论文为切入点，展示具备从工程到研究的跨界能力，适合腾讯算法研究型岗位的成长路径",
+          "介绍RAGAS自动化评估流水线经验，引申至对大模型评估体系的理解，与岗位中'实际用户体验效果'优化目标对齐",
+          "提及LangGraph多Agent项目中的质量门控路由设计，体现对LLM系统可靠性和效果把控的工程意识",
+          "坦诚说明当前薪资期望，了解腾讯国内薪资体系（通常为年薪人民币计），避免因薪资预期差距过大影响推进"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      },
+      {
+        "title": "微信视频号-多模态大模型高级算法工程师-（北京）",
+        "company": "Tencent",
+        "location": "广州",
+        "description": "Title: 微信视频号-多模态大模型高级算法工程师-（北京）\nCompany: Tencent\nLocation: 广州\nDescription: 1.负责多模态大模型（图文、视频）在红点推送、本地生活推荐等业务场景中的技术探索与落地应用，提升内容生成精准度和用户转化效率；\r\n2.结合业务数据特点，优化多模态模型的后训练、领域微调、生成控制等技术，实现文案创意生成、个性化推荐、分发策略联动的闭环优化；\r\n3.深入理解用户行为和场景需求，探索多模态生成模型与推荐系统的深度融合，提升内容触达的实时性和相关性。\nRequirements: Category: 技术\nBusiness Group: WXG",
+        "requirements": null,
+        "employment_type": null,
+        "salary_min": null,
+        "salary_max": null,
+        "salary_currency": null,
+        "score": 5.5,
+        "breakdown": {
+          "skills": 6,
+          "experience": 4,
+          "education": 8,
+          "location": 5,
+          "salary": 3
+        },
+        "reasoning": "田瑞琦在多模态理解、LLM应用和计算机视觉方面具备一定基础，与腾讯微信视频号多模态大模型岗位存在部分重叠，尤其是视频理解（DBVM项目、ACM MM论文）和RAG/LLM工程经验。然而，该岗位为\"高级算法工程师\"，聚焦于多模态大模型后训练、领域微调、推荐系统融合等深度研究方向，而候选人目前仍处于硕士在读阶段（2025年10月毕业），工作经验以短期实习为主，缺乏推荐系统、模型训练/微调及大规模工业落地的核心经验。此外，岗位地点为广州，而候选人偏好北京/上海/深圳/杭州/远程，存在一定地理错配。",
+        "strengths": [
+          "具备多模态视频理解研究经验，发表ACM MM '23论文《Deep Video Understanding with Video-Language Model》，与岗位视频多模态方向高度相关",
+          "拥有生产级RAG系统落地经验（LangChain、Milvus、BM25+BGE-M3混合检索），展示了LLM工程化能力",
+          "计算机视觉实战经验丰富：YOLOv8工��缺陷检测（91% mAP@50）、无人机目标检测系统",
+          "清华大学计算机科学硕士在读（GPA 3.9），浙江大学计算机工程学士（GPA 3.7），学术背景扎实",
+          "掌握LangGraph多Agent架构设计，具备AI Agent工程化开发能力",
+          "全栈工程能力强（FastAPI、React、Docker、PostgreSQL），有助于算法工程化落地"
+        ],
+        "missing_skills": [
+          "多模态大模型后训练（Post-training）与领域微调（Fine-tuning）经验，如SFT、RLHF、DPO等",
+          "推荐系统（Recommendation System）核心算法经验，包括召回、排序、红点推送等业务场景",
+          "内容生成控制技术（Controllable Generation），如文案创意生成、个性化内容生成",
+          "大规模分布式模型训练经验（如使用DeepSpeed、Megatron-LM等框架）",
+          "多模态模型架构深度研究经验（如LLaVA、InternVL、Qwen-VL等主流多模态LLM）",
+          "推荐系统与生成模型融合（GenRec）的工程实践",
+          "工业级高并发推荐/推送系统的设计与优化经验"
+        ],
+        "interview_talking_points": [
+          "重点介绍ACM MM '23论文《Deep Video Understanding with Video-Language Model》，强调视频多模态理解的研究深度，与岗���视频大模型方向直接对应",
+          "详细阐述生产级RAG系统的技术细节：混合检索（BM25+BGE-M3）、FlashRank重排序、RAGAS评估体系，展示LLM工程化落地能力和对检索精度优化的量化成果（+35%）",
+          "介绍LangGraph 4-Agent流水线项目，展示对多Agent协作架构和质量门控路由的理解，体现对LLM系统设计的前沿认知",
+          "强调清华大学硕士研究方向涵盖强化学习和大语言模型，表明具备快速学习模型后训练（RLHF/DPO）技术的理论基础",
+          "如有意向，可主动表达对广州工作地点的接受意愿，消除地理位置顾虑",
+          "坦诚说明当前经验层级，并强调学习能力和项目落地能力，争取以应届生/初级算法工程师身份切入"
+        ],
+        "apply_url": null,
+        "source": "tencent"
+      }
+    ]
+  },
+  "全栈开发工程师": {
+    "scraped_count": 0,
+    "scored_count": 0,
+    "sources_used": [],
+    "duration_sec": 5.8,
+    "matches": []
+  }
+}

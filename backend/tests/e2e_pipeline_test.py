@@ -1,13 +1,17 @@
 """End-to-end pipeline test: Scrape -> Match -> Score -> Report.
 
-Simulates a real user (Ruiqi Tian) searching for:
-  1. Software Engineer
-  2. AI Engineer
-  3. Full-stack Developer
+Runs two pipelines sequentially:
 
-Uses free public APIs (Arbeitnow, Greenhouse, Lever) for scraping
-and Claude (via claude-code-proxy at localhost:42069) for scoring.
-Outputs a detailed Markdown report with job descriptions.
+Phase A — English Pipeline:
+  Searches: Software Engineer, AI Engineer, Full-stack Developer
+  Sources: Arbeitnow, Greenhouse, Lever (free public APIs)
+
+Phase B — Chinese Pipeline (中文流水线):
+  Searches: 软件工程师, AI工程师, 全栈开发工程师
+  Sources: Tencent, NetEase (public career APIs)
+
+Scoring uses Claude (via claude-code-proxy at localhost:42069).
+Generates separate Markdown reports and JSON data for each pipeline.
 """
 
 import asyncio
@@ -57,6 +61,8 @@ from app.services.matching.scorer import JobScorer
 from app.services.scraping.api.arbeitnow import ArbeitnowScraper
 from app.services.scraping.api.greenhouse import GreenhouseScraper
 from app.services.scraping.api.lever import LeverScraper
+from app.services.scraping.api.netease import NetEaseScraper
+from app.services.scraping.api.tencent import TencentScraper
 from app.services.scraping.deduplicator import JobDeduplicator
 
 # -- Configuration --
@@ -160,6 +166,80 @@ SEARCH_TITLES = [
     "Full-stack Developer",
 ]
 
+# -- Chinese Pipeline Constants --
+
+RESUME_TEXT_ZH = """
+田瑞琦
+邮箱: ruiqitian@outlook.com | 手机: +86-188-1234-5678
+LinkedIn: https://www.linkedin.com/in/ruiqi-tian-a53159249/
+GitHub: https://github.com/RickyT715
+
+教育背景
+- 硕士，计算机科学与技术，GPA: 3.9
+  清华大学，北京 (2024年9月 - 2025年10月)
+  研究方向：软件工程、全栈开发、计算机图形学、计算机视觉、强化学习、大语言模型、DevOps
+
+- 学士，计算机工程，GPA: 3.7
+  浙江大学，杭州 (2020年9月 - 2024年5月)
+  研究方向：软件工程、全栈开发、移动端开发、计算机图形学、计算机视觉、深度学习、嵌入式开发
+  荣誉：2022、2023、2024年度院长荣誉名单
+
+工作经历
+- 软件工程师实习生，第三科技研究院 (2024年6月 - 2024年8月)
+  搭建了面向500+页中文文档的生产级RAG系统。
+  使用LangChain LCEL设计端到端RAG流水线，采用混合检索（BM25 + BGE-M3密集/稀疏向量，Milvus存储），
+  FlashRank重排序，流式输出。检索精度比纯向量基线提升35%。
+  使用RAGAS构建自动化评估流水线，上下文召回率达0.84。
+  通过Docker Compose部署，FastAPI + SSE流式传输，Redis语义缓存。
+
+- 研究助理，南京大学 (2023年6月 - 2023年8月)
+  参与开发Dual Branches Video Modeling (DBVM)多模态电影问答系统。
+  发表论文"Deep Video Understanding with Video-Language Model"于ACM MM '23。
+
+- 软件工程师实习生，国菱科技研究院 (2023年4月 - 2023年5月)
+  训练4个面部特定YOLOv8模型用于工业缺陷检测（91% mAP@50）。
+  构建端到端数据流水线处理5000+张图像。
+
+项目经历
+- AI Agent驱动的简历与求职信生成器 (2025年10月 - 2026年2月)
+  设计4-Agent LangGraph流水线，支持质量门控路由。
+  使用ChromaDB和BGE-M3嵌入构建RAG流水线。
+  全栈技术栈：FastAPI、React/TypeScript、WebSocket、PostgreSQL、Docker，测试覆盖率80%+。
+
+- 无人机航拍失踪人员搜索系统 (2023年9月 - 2024年4月)
+  基于YOLOv8和SAHI流水线的无人机航拍失踪人员检测系统。
+  React前端用于上传视频和查看检测结果。
+
+技能
+编程语言：Python、JavaScript、C++、SQL、Java、Verilog、VHDL、HTML、CSS、Lua
+技术栈：AWS、Azure、Kafka、React、Vue、Qt、Git、Android Studio
+AI/ML：RAG、LLM、LangChain、LangGraph、ChromaDB、计算机视觉、YOLO、深度学习
+后端：FastAPI、Node.js、REST API、WebSocket、Docker、PostgreSQL、MongoDB、Redis
+"""
+
+USER_CONFIG_ZH = UserConfig(
+    job_titles=["软件工程师", "AI工程师", "全栈开发工程师"],
+    locations=["北京", "上海", "深圳", "杭州", "远程"],
+    salary_min=300000,
+    salary_max=600000,
+    salary_currency="CNY",
+    workplace_types=["remote", "hybrid", "onsite"],
+    experience_level="mid",
+    employment_types=["FULLTIME"],
+    final_results_count=SCORE_PER_TITLE,
+    num_pages_per_source=5,
+    enabled_sources=["tencent", "netease"],
+    ats_mode="auto",
+    reranker_mode="flashrank-multilingual",
+    recruitment_type="social",
+)
+
+SEARCH_TITLES_ZH = [
+    "软件工程师",
+    "AI工程师",
+    "全栈开发工程师",
+]
+
 # -- Title matching helpers --
 
 _TITLE_VARIANTS: dict[str, list[str]] = {
@@ -184,6 +264,26 @@ def _is_relevant(job_title: str, title_lower: str) -> bool:
     variants = _TITLE_VARIANTS.get(title_lower, [])
     for variant in variants:
         if variant in normalized_jt:
+            return True
+    return False
+
+
+_TITLE_VARIANTS_ZH: dict[str, list[str]] = {
+    "软件工程师": ["软件开发", "后端开发", "后端工程师", "开发工程师", "软件研发"],
+    "ai工程师": ["人工智能", "机器学习", "深度学习", "算法工程师", "ai", "ml"],
+    "全栈开发工程师": ["全栈", "前后端", "全栈工程师"],
+}
+
+
+def _is_relevant_zh(job_title: str, query: str) -> bool:
+    """Check if a Chinese job title matches the search query."""
+    jt = job_title.lower()
+    q = query.lower()
+    if q in jt or jt in q:
+        return True
+    variants = _TITLE_VARIANTS_ZH.get(q, [])
+    for v in variants:
+        if v in jt:
             return True
     return False
 
@@ -264,6 +364,60 @@ async def scrape_all_sources(title: str) -> list[JobPosting]:
     return unique_jobs
 
 
+async def scrape_chinese_sources(title: str) -> list[JobPosting]:
+    """Scrape from Chinese sources for a given job title."""
+    all_jobs: list[JobPosting] = []
+
+    # 1. Tencent (public GET API)
+    logger.info(f"  [Tencent] Scraping for '{title}'...")
+    tencent = TencentScraper(recruitment_type="social")
+    try:
+        result = await tencent.scrape(title, num_pages=5)
+        relevant = [j for j in result.jobs if _is_relevant_zh(j.title, title)]
+        all_jobs.extend(relevant)
+        logger.info(
+            f"  [Tencent] Found {len(relevant)} relevant / "
+            f"{len(result.jobs)} total"
+        )
+    except Exception as e:
+        logger.error(f"  [Tencent] Failed: {e}")
+    finally:
+        await tencent.close()
+
+    # 2. NetEase (public POST API)
+    logger.info(f"  [NetEase] Scraping for '{title}'...")
+    netease = NetEaseScraper(recruitment_type="social")
+    try:
+        result = await netease.scrape(title, num_pages=5)
+        relevant = [j for j in result.jobs if _is_relevant_zh(j.title, title)]
+        all_jobs.extend(relevant)
+        logger.info(
+            f"  [NetEase] Found {len(relevant)} relevant / "
+            f"{len(result.jobs)} total"
+        )
+    except Exception as e:
+        logger.error(f"  [NetEase] Failed: {e}")
+    finally:
+        await netease.close()
+
+    # Deduplicate
+    dedup = JobDeduplicator()
+    unique_jobs = dedup.deduplicate(all_jobs)
+
+    if len(unique_jobs) > MAX_JOBS_PER_TITLE:
+        logger.info(
+            f"  Capping from {len(unique_jobs)} to {MAX_JOBS_PER_TITLE} jobs"
+        )
+        unique_jobs = unique_jobs[:MAX_JOBS_PER_TITLE]
+
+    logger.info(
+        f"  Total: {len(all_jobs)} raw -> {len(unique_jobs)} unique "
+        f"({len(all_jobs) - len(unique_jobs)} removed)"
+    )
+
+    return unique_jobs
+
+
 # -- Matching Phase --
 
 
@@ -297,6 +451,8 @@ async def match_jobs(
     jobs: list[JobPosting],
     embedder: JobEmbedder,
     scorer: JobScorer,
+    resume_text: str,
+    user_config: UserConfig,
     top_k: int = 70,
 ) -> list[ScoredMatch]:
     """Run matching pipeline for a job title search."""
@@ -307,7 +463,7 @@ async def match_jobs(
     pipeline = MatchingPipeline(
         embedder=embedder,
         scorer=scorer,
-        user_config=USER_CONFIG,
+        user_config=user_config,
         initial_k=min(top_k + 10, len(jobs)),  # Retrieve a bit more than needed
         final_k=min(top_k, len(jobs)),
         score_concurrency=3,
@@ -322,7 +478,9 @@ async def match_jobs(
         f"(retrieve top-{min(top_k + 10, len(jobs))} -> "
         f"rerank top-{min(top_k, len(jobs))} -> score)..."
     )
-    matches = await pipeline.match(resume_text=RESUME_TEXT, jobs=jobs, target_title=title)
+    matches = await pipeline.match(
+        resume_text=resume_text, jobs=jobs, target_title=title,
+    )
     logger.info(f"  Scored {len(matches)} matches")
 
     return matches[:top_k]
@@ -335,21 +493,45 @@ def generate_report(
     all_results: dict[str, dict],
     output_path: Path,
     scoring_model: str = "Claude Sonnet 4.6 (via proxy)",
+    *,
+    report_title: str = "AI Job Application Agent -- End-to-End Pipeline Test Report",
+    user_label: str = "Ruiqi Tian (Master of Engineering, U of Waterloo)",
+    search_titles: list[str] | None = None,
+    config: UserConfig | None = None,
+    sources_section_lines: list[str] | None = None,
+    embedding_label: str = "Gemini embedding-001",
+    retrieval_label: str = "ChromaDB vector search -> FlashRank rerank",
 ) -> None:
     """Generate comprehensive Markdown report with job descriptions."""
+    if search_titles is None:
+        search_titles = SEARCH_TITLES
+    if config is None:
+        config = USER_CONFIG
+    if sources_section_lines is None:
+        sources_section_lines = [
+            f"**Greenhouse Boards ({len(GREENHOUSE_BOARDS)}):** "
+            f"{', '.join(GREENHOUSE_BOARDS)}",
+            f"**Lever Companies ({len(LEVER_COMPANIES)}):** "
+            f"{', '.join(LEVER_COMPANIES)}",
+            "**Arbeitnow:** 5 pages per search query",
+        ]
+
+    currency = config.salary_currency or "USD"
+    symbol = "\u00a5" if currency == "CNY" else "$"
+    salary_label = (
+        f"{symbol}{config.salary_min:,} - {symbol}{config.salary_max:,} {currency}"
+    )
+
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     lines: list[str] = []
-    lines.append("# AI Job Application Agent -- End-to-End Pipeline Test Report")
+    lines.append(f"# {report_title}")
     lines.append(f"\n**Generated:** {now}")
-    lines.append("**User:** Ruiqi Tian (Master of Engineering, U of Waterloo)")
-    lines.append(f"**Search Titles:** {', '.join(SEARCH_TITLES)}")
-    lines.append(f"**Target Locations:** {', '.join(USER_CONFIG.locations)}")
-    lines.append(
-        f"**Salary Range:** ${USER_CONFIG.salary_min:,} - "
-        f"${USER_CONFIG.salary_max:,} USD"
-    )
-    lines.append(f"**Workplace:** {', '.join(USER_CONFIG.workplace_types)}")
+    lines.append(f"**User:** {user_label}")
+    lines.append(f"**Search Titles:** {', '.join(search_titles)}")
+    lines.append(f"**Target Locations:** {', '.join(config.locations)}")
+    lines.append(f"**Salary Range:** {salary_label}")
+    lines.append(f"**Workplace:** {', '.join(config.workplace_types)}")
     lines.append(f"**Scoring Model:** {scoring_model}")
     lines.append("")
 
@@ -370,8 +552,8 @@ def generate_report(
     lines.append(f"| Search Queries | {len(all_results)} |")
     lines.append(f"| Scraping Sources | {', '.join(sorted(sources_used))} |")
     lines.append(f"| Scoring Model | {scoring_model} |")
-    lines.append("| Embedding Model | Gemini embedding-001 |")
-    lines.append("| Retrieval | ChromaDB vector search -> FlashRank rerank |")
+    lines.append(f"| Embedding Model | {embedding_label} |")
+    lines.append(f"| Retrieval | {retrieval_label} |")
     lines.append("")
 
     # Per-title summary table
@@ -397,11 +579,8 @@ def generate_report(
     lines.append("---")
     lines.append("## Scraping Sources")
     lines.append("")
-    lines.append(f"**Greenhouse Boards ({len(GREENHOUSE_BOARDS)}):** "
-                 f"{', '.join(GREENHOUSE_BOARDS)}")
-    lines.append(f"**Lever Companies ({len(LEVER_COMPANIES)}):** "
-                 f"{', '.join(LEVER_COMPANIES)}")
-    lines.append("**Arbeitnow:** 5 pages per search query")
+    for src_line in sources_section_lines:
+        lines.append(src_line)
     lines.append("")
 
     # Per-title detailed results
@@ -523,96 +702,10 @@ def generate_report(
 # -- Main --
 
 
-async def main():
-    """Run the full end-to-end pipeline test."""
-    logger.info("=" * 70)
-    logger.info("AI Job Application Agent -- End-to-End Pipeline Test")
-    logger.info("  Scoring model: Claude Sonnet 4.6 via proxy")
-    logger.info(f"  Proxy URL: {CLAUDE_PROXY_URL}")
-    logger.info(f"  Target: {SCORE_PER_TITLE} scored jobs per title")
-    logger.info("=" * 70)
-
-    # Verify Google API key (for embeddings)
-    reset_settings()
-    settings = get_settings()
-    api_key = settings.google_api_key.get_secret_value()
-    if not api_key or "your-" in api_key.lower():
-        logger.error("GOOGLE_API_KEY is not set! Cannot run test.")
-        sys.exit(1)
-    logger.info(f"Google API key: {api_key[:8]}...")
-    logger.info(f"Embedding model: {settings.embedding_model}")
-
-    all_results: dict[str, dict] = {}
-
-    for title_idx, title in enumerate(SEARCH_TITLES):
-        if title_idx > 0:
-            wait = 10
-            logger.info(f"Waiting {wait}s between searches...")
-            await asyncio.sleep(wait)
-
-        logger.info("")
-        logger.info(f"{'=' * 60}")
-        logger.info(f"SEARCH: \"{title}\"")
-        logger.info(f"{'=' * 60}")
-
-        t0 = time.time()
-
-        # Phase 1: Scrape
-        logger.info(f"Phase 1: Scraping jobs for '{title}'...")
-        jobs = await scrape_all_sources(title)
-
-        sources_used = list(set(j.source for j in jobs))
-
-        if len(jobs) < 20:
-            logger.warning(
-                f"Only found {len(jobs)} jobs for '{title}'. "
-                f"Proceeding with what we have."
-            )
-
-        # Phase 2: Match & Score
-        logger.info(f"Phase 2: Matching & scoring {len(jobs)} jobs...")
-
-        embedder = create_embedder()
-        scorer = create_claude_scorer()
-
-        try:
-            matches = await match_jobs(
-                title=title,
-                jobs=jobs,
-                embedder=embedder,
-                scorer=scorer,
-                top_k=SCORE_PER_TITLE,
-            )
-        except Exception as e:
-            logger.error(f"Matching failed for '{title}': {e}", exc_info=True)
-            matches = []
-
-        duration = round(time.time() - t0, 1)
-        logger.info(
-            f"Completed '{title}': {len(jobs)} scraped, "
-            f"{len(matches)} scored in {duration}s"
-        )
-
-        all_results[title] = {
-            "scraped_count": len(jobs),
-            "matches": matches,
-            "sources_used": sources_used,
-            "duration_sec": duration,
-        }
-
-    # Phase 3: Generate report
-    logger.info("")
-    logger.info("=" * 60)
-    logger.info("Phase 3: Generating report...")
-    logger.info("=" * 60)
-
-    output_dir = Path(__file__).resolve().parent.parent.parent
-    output_path = output_dir / "E2E_Pipeline_Test_Report.md"
-
-    generate_report(all_results, output_path)
-
-    # JSON output with job descriptions
-    json_path = output_dir / "E2E_Pipeline_Test_Data.json"
+def write_json_data(
+    all_results: dict[str, dict], json_path: Path,
+) -> None:
+    """Write match results to a JSON file."""
     json_data = {}
     for title, result in all_results.items():
         json_data[title] = {
@@ -644,15 +737,13 @@ async def main():
             ],
         }
     json_path.write_text(
-        json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8",
     )
     logger.info(f"JSON data written to {json_path}")
 
-    # Final summary
-    logger.info("")
-    logger.info("=" * 70)
-    logger.info("FINAL SUMMARY")
-    logger.info("=" * 70)
+
+def log_summary(label: str, all_results: dict[str, dict]) -> int:
+    """Log a summary of pipeline results. Returns total scored count."""
     total_scored = 0
     for title, result in all_results.items():
         matches = result["matches"]
@@ -662,18 +753,188 @@ async def main():
         )
         total_scored += len(matches)
         logger.info(
-            f"  {title}: {result['scraped_count']} scraped, "
+            f"  [{label}] {title}: {result['scraped_count']} scraped, "
             f"{len(matches)} scored, avg score {avg_score:.1f}/10"
         )
-    logger.info(f"  TOTAL SCORED: {total_scored}")
-    logger.info(f"\nReport: {output_path}")
-    logger.info(f"JSON:   {json_path}")
+    return total_scored
+
+
+async def run_pipeline(
+    search_titles: list[str],
+    scrape_fn,
+    resume_text: str,
+    user_config: UserConfig,
+) -> dict[str, dict]:
+    """Run scrape -> match -> score for a list of search titles."""
+    all_results: dict[str, dict] = {}
+
+    for title_idx, title in enumerate(search_titles):
+        if title_idx > 0:
+            wait = 10
+            logger.info(f"Waiting {wait}s between searches...")
+            await asyncio.sleep(wait)
+
+        logger.info("")
+        logger.info(f"{'=' * 60}")
+        logger.info(f"SEARCH: \"{title}\"")
+        logger.info(f"{'=' * 60}")
+
+        t0 = time.time()
+
+        # Phase 1: Scrape
+        logger.info(f"Phase 1: Scraping jobs for '{title}'...")
+        jobs = await scrape_fn(title)
+
+        sources_used = list(set(j.source for j in jobs))
+
+        if len(jobs) < 5:
+            logger.warning(
+                f"Only found {len(jobs)} jobs for '{title}'. "
+                f"Proceeding with what we have."
+            )
+
+        if not jobs:
+            all_results[title] = {
+                "scraped_count": 0,
+                "matches": [],
+                "sources_used": sources_used,
+                "duration_sec": round(time.time() - t0, 1),
+            }
+            continue
+
+        # Phase 2: Match & Score
+        logger.info(f"Phase 2: Matching & scoring {len(jobs)} jobs...")
+
+        embedder = create_embedder()
+        scorer = create_claude_scorer()
+
+        try:
+            matches = await match_jobs(
+                title=title,
+                jobs=jobs,
+                embedder=embedder,
+                scorer=scorer,
+                resume_text=resume_text,
+                user_config=user_config,
+                top_k=SCORE_PER_TITLE,
+            )
+        except Exception as e:
+            logger.error(f"Matching failed for '{title}': {e}", exc_info=True)
+            matches = []
+
+        duration = round(time.time() - t0, 1)
+        logger.info(
+            f"Completed '{title}': {len(jobs)} scraped, "
+            f"{len(matches)} scored in {duration}s"
+        )
+
+        all_results[title] = {
+            "scraped_count": len(jobs),
+            "matches": matches,
+            "sources_used": sources_used,
+            "duration_sec": duration,
+        }
+
+    return all_results
+
+
+async def main():
+    """Run the full end-to-end pipeline test (English + Chinese)."""
+    logger.info("=" * 70)
+    logger.info("AI Job Application Agent -- End-to-End Pipeline Test")
+    logger.info("  Scoring model: Claude Sonnet 4.6 via proxy")
+    logger.info(f"  Proxy URL: {CLAUDE_PROXY_URL}")
+    logger.info(f"  Target: {SCORE_PER_TITLE} scored jobs per title")
+    logger.info("=" * 70)
+
+    # Verify Google API key (for embeddings)
+    reset_settings()
+    settings = get_settings()
+    api_key = settings.google_api_key.get_secret_value()
+    if not api_key or "your-" in api_key.lower():
+        logger.error("GOOGLE_API_KEY is not set! Cannot run test.")
+        sys.exit(1)
+    logger.info(f"Google API key: {api_key[:8]}...")
+    logger.info(f"Embedding model: {settings.embedding_model}")
+
+    output_dir = Path(__file__).resolve().parent.parent.parent
+
+    # ── Phase A: English Pipeline ──────────────────────────────────────
+
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("PHASE A: ENGLISH PIPELINE")
+    logger.info("=" * 70)
+
+    en_results = await run_pipeline(
+        search_titles=SEARCH_TITLES,
+        scrape_fn=scrape_all_sources,
+        resume_text=RESUME_TEXT,
+        user_config=USER_CONFIG,
+    )
+
+    logger.info("")
+    logger.info("Generating English report...")
+    en_report_path = output_dir / "E2E_Pipeline_Test_Report.md"
+    generate_report(en_results, en_report_path)
+
+    en_json_path = output_dir / "E2E_Pipeline_Test_Data.json"
+    write_json_data(en_results, en_json_path)
+
+    # ── Phase B: Chinese Pipeline ──────────────────────────────────────
+
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("PHASE B: CHINESE PIPELINE (中文流水线)")
+    logger.info("=" * 70)
+
+    zh_results = await run_pipeline(
+        search_titles=SEARCH_TITLES_ZH,
+        scrape_fn=scrape_chinese_sources,
+        resume_text=RESUME_TEXT_ZH,
+        user_config=USER_CONFIG_ZH,
+    )
+
+    logger.info("")
+    logger.info("Generating Chinese report...")
+    zh_report_path = output_dir / "E2E_Pipeline_Test_Report_ZH.md"
+    generate_report(
+        zh_results,
+        zh_report_path,
+        report_title=(
+            "AI Job Application Agent -- E2E Pipeline Test Report (中文版)"
+        ),
+        user_label="田瑞琦 (清华大学 计算机科学与技术硕士)",
+        search_titles=SEARCH_TITLES_ZH,
+        config=USER_CONFIG_ZH,
+        sources_section_lines=[
+            "**Tencent (腾讯):** Public careers API, social recruitment",
+            "**NetEase (网易):** Public careers API, social recruitment",
+        ],
+        retrieval_label=(
+            "ChromaDB vector search -> FlashRank multilingual rerank"
+        ),
+    )
+
+    zh_json_path = output_dir / "E2E_Pipeline_Test_Data_ZH.json"
+    write_json_data(zh_results, zh_json_path)
+
+    # ── Final Summary ──────────────────────────────────────────────────
+
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("FINAL SUMMARY")
+    logger.info("=" * 70)
+
+    en_scored = log_summary("EN", en_results)
+    zh_scored = log_summary("ZH", zh_results)
+    logger.info(f"  TOTAL SCORED: {en_scored + zh_scored} (EN={en_scored}, ZH={zh_scored})")
+
+    logger.info(f"\nEnglish Report: {en_report_path}")
+    logger.info(f"English JSON:   {en_json_path}")
+    logger.info(f"Chinese Report: {zh_report_path}")
+    logger.info(f"Chinese JSON:   {zh_json_path}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        # Single title mode
-        title_arg = " ".join(sys.argv[1:])
-        asyncio.run(main())  # Always run full for 200+ job requirement
-    else:
-        asyncio.run(main())
+    asyncio.run(main())

@@ -1,6 +1,6 @@
 # AI Job Application Agent
 
-An end-to-end AI-powered system that scrapes job boards, matches postings against your resume using a multi-stage pipeline, generates cover letters and reports, and auto-fills applications with human-in-the-loop approval.
+An end-to-end AI-powered system that scrapes job boards, matches postings against your resume using a multi-stage pipeline, generates cover letters and reports, and auto-fills applications with human-in-the-loop approval. Supports both **English** and **Chinese** job markets.
 
 Uses **Gemini 3.1 Pro** for cheap tasks (parsing, extraction) and **Claude Sonnet 4.6** for reasoning tasks (scoring, cover letters, browser agent). Embeddings via **Gemini embedding-001**. Matching pipeline includes heuristic pre-filtering, vector retrieval, cross-encoder reranking, LLM quick-scoring, and full multi-dimensional LLM-as-Judge evaluation.
 
@@ -9,11 +9,26 @@ Uses **Gemini 3.1 Pro** for cheap tasks (parsing, extraction) and **Claude Sonne
 ```
 Resume Upload ──► Scrape Jobs ──► Pre-Filter ──► Match & Score ──► Reports ──► Auto-Fill
                       │               │               │               │            │
-                  JSearch API     Seniority/       ChromaDB +      Jinja2 HTML   LangGraph
-                  Greenhouse     Location/Type    FlashRank +     + Claude       agent with
-                  Lever          heuristics       Quick-Score +   cover letters  interrupt()
-                  Adzuna                          Claude Full                    for human
-                  Arbeitnow                       LLM-as-Judge                   review
+             English Pipeline:    Seniority/       ChromaDB +      Jinja2 HTML   LangGraph
+               JSearch API       Location/Type    FlashRank +     + Claude       agent with
+               Greenhouse        heuristics       Quick-Score +   cover letters  interrupt()
+               Lever                              Claude Full                    for human
+               Adzuna                             LLM-as-Judge                   review
+               Arbeitnow
+               RemoteOK
+               WeWorkRemotely
+                      │
+             Chinese Pipeline (中文):
+               Tencent (腾讯)
+               NetEase (网易)          Auto-detect     jieba ATS +
+               MokaHR                 language →     FlashRank
+               Alibaba (阿里)                        multilingual /
+               JD Campus (京东)                      BGE reranker
+               BOSS直聘 (browser)
+               Zhaopin (browser)
+               51job (browser)
+               Lagou (browser)
+               ByteDance (字节)
 ```
 
 ### Model Routing
@@ -42,9 +57,11 @@ Raw Jobs ──► Pre-Filter ──► Embed & Index ──► Retrieve ──�
    - Location compatibility (country keyword overlap; remote always passes)
    - Employment type filtering (FULLTIME/PARTTIME/CONTRACT normalization)
 2. **Vector similarity** — Top-30 candidates from ChromaDB via cosine similarity using focused retrieval query (target title + skills + locations instead of raw resume)
-3. **Cross-encoder reranking** — FlashRank narrows to top-10 (local CPU, free)
+3. **Cross-encoder reranking** — FlashRank narrows to top-10 (local CPU, free). For Chinese resumes, auto-selects FlashRank multilingual or BGE reranker.
 4. **Quick-score** — Claude rates relevance 1-10 with a lightweight prompt (500-char job brief, JSON response). Jobs below threshold 4 are skipped.
 5. **Full LLM-as-Judge scoring** — Claude scores surviving candidates on skills/experience/education/location/salary (1-10 each) with explicit weight percentages from `MatchingWeights` config. Returns structured output with reasoning, strengths, missing skills, and interview talking points.
+
+**Chinese pipeline auto-detection:** When the resume is in Chinese, `ats_mode=auto` selects jieba-based ATS keyword scoring (vs regex for English), and `reranker_mode=auto` selects BGE reranker (vs FlashRank for English).
 
 ## Project Structure
 
@@ -75,8 +92,9 @@ AI_Agent_Job_Application/
 │   │   │   ├── matching/
 │   │   │   │   ├── pre_filter.py        # Seniority/location/type heuristics
 │   │   │   │   ├── embedder.py          # ChromaDB indexing + Gemini embeddings
-│   │   │   │   ├── retriever.py         # Vector search + FlashRank rerank
+│   │   │   │   ├── retriever.py         # Vector search + FlashRank/BGE rerank
 │   │   │   │   ├── scorer.py            # LLM-as-Judge (full + quick score)
+│   │   │   │   ├── ats_scorer.py        # ATS keyword scoring (regex + jieba)
 │   │   │   │   └── pipeline.py          # 5-stage orchestrator
 │   │   │   ├── scraping/
 │   │   │   │   ├── base.py              # Abstract BaseScraper interface
@@ -84,11 +102,23 @@ AI_Agent_Job_Application/
 │   │   │   │   ├── normalizer.py        # Raw data → JobPosting schema
 │   │   │   │   ├── deduplicator.py      # Cross-source duplicate removal
 │   │   │   │   ├── api/                 # API-based scrapers
-│   │   │   │   │   ├── jsearch.py       # RapidAPI JSearch
-│   │   │   │   │   ├── greenhouse.py    # Greenhouse boards API
-│   │   │   │   │   ├── lever.py         # Lever postings API
-│   │   │   │   │   ├── adzuna.py        # Adzuna job board API
-│   │   │   │   │   └── arbeitnow.py     # Arbeitnow public API
+│   │   │   │   │   ├── jsearch.py       # RapidAPI JSearch (requires API key)
+│   │   │   │   │   ├── greenhouse.py    # Greenhouse boards (requires board tokens)
+│   │   │   │   │   ├── lever.py         # Lever postings (requires company slugs)
+│   │   │   │   │   ├── adzuna.py        # Adzuna (requires app ID + key)
+│   │   │   │   │   ├── arbeitnow.py     # Arbeitnow (public, no auth)
+│   │   │   │   │   ├── remoteok.py      # RemoteOK (public, no auth)
+│   │   │   │   │   ├── weworkremotely.py# WeWorkRemotely (public, no auth)
+│   │   │   │   │   ├── tencent.py       # Tencent Careers (public, no auth)
+│   │   │   │   │   ├── netease.py       # NetEase Careers (public, no auth)
+│   │   │   │   │   ├── mokahrjob.py     # MokaHR (requires org IDs)
+│   │   │   │   │   ├── alibaba.py       # Alibaba (requires app key)
+│   │   │   │   │   ├── jd_campus.py     # JD Campus (public, no auth)
+│   │   │   │   │   ├── bytedance.py     # ByteDance (public, no auth)
+│   │   │   │   │   ├── zhaopin.py       # Zhaopin (session-based, fragile)
+│   │   │   │   │   ├── job51.py         # 51job (font obfuscation, fragile)
+│   │   │   │   │   ├── lagou.py         # Lagou (anti-scraping, fragile)
+│   │   │   │   │   └── boss_zhipin.py   # BOSS直聘 (requires cookie)
 │   │   │   │   └── browser/             # Browser-based scrapers
 │   │   │   │       ├── generic.py       # Playwright generic scraper
 │   │   │   │       └── workday.py       # Workday-specific automation
@@ -110,9 +140,9 @@ AI_Agent_Job_Application/
 │   │   │   └── server.py                # FastMCP server (tools + resources)
 │   │   └── worker/
 │   │       └── tasks.py                 # ARQ background tasks
-│   ├── tests/                           # 397+ tests across 65 files
-│   │   ├── test_matching/               # Pipeline, pre-filter, scorer, embedder, retriever
-│   │   ├── test_scraping/               # All 5 scrapers, dedup, normalizer, orchestrator
+│   ├── tests/                           # 625 backend + 36 frontend tests
+│   │   ├── test_matching/               # Pipeline, pre-filter, scorer, embedder, retriever, ATS
+│   │   ├── test_scraping/               # All 18 scrapers, dedup, normalizer, orchestrator
 │   │   ├── test_agent/                  # Graph, nodes, ATS handlers, interrupts
 │   │   ├── test_api/                    # All routers + WebSocket
 │   │   ├── test_db/                     # Model CRUD + constraints
@@ -122,7 +152,7 @@ AI_Agent_Job_Application/
 │   │   ├── test_docker/                 # Compose validation
 │   │   ├── test_config/                 # Settings + UserConfig validation
 │   │   ├── test_integration/            # Full user workflow (9-step)
-│   │   └── e2e_pipeline_test.py         # Live scrape + score E2E test
+│   │   └── e2e_pipeline_test.py         # Live E2E test (English + Chinese pipelines)
 │   ├── alembic/                         # Database migrations
 │   ├── Dockerfile                       # Multi-stage (api + worker targets)
 │   └── pyproject.toml                   # hatchling, ruff, mypy, pytest config
@@ -159,114 +189,171 @@ AI_Agent_Job_Application/
 └── .env.example                         # Template for API keys + config
 ```
 
-## Quick Start
+---
+
+## Setup Guide
 
 ### Prerequisites
 
-- Python 3.13+
-- Node.js 22+
-- [uv](https://docs.astral.sh/uv/) (Python package manager)
-- Docker & Docker Compose (for full deployment)
+| Tool | Version | Required for |
+|------|---------|--------------|
+| Python | 3.13+ | Backend |
+| [uv](https://docs.astral.sh/uv/) | latest | Python package manager |
+| Node.js | 22+ | Frontend |
+| Docker & Docker Compose | latest | Full deployment (or run Postgres/Redis manually) |
 
-### 1. Clone and Configure
+### Step 1: Clone and Configure Environment
 
 ```bash
 git clone <repo-url>
 cd AI_Agent_Job_Application
 cp .env.example .env
-# Edit .env with your API keys (GOOGLE_API_KEY and ANTHROPIC_API_KEY are required)
 ```
 
-### 2. Backend Setup
+Edit `.env` and fill in your API keys. See the [API Keys](#api-keys-env) section below for what each key does and where to get it.
+
+### Step 2: Backend Setup
 
 ```bash
 cd backend
 uv sync --dev
 ```
 
-### 3. Frontend Setup
+This installs all Python dependencies including jieba (Chinese NLP), FlagEmbedding (BGE reranker), Playwright, etc.
+
+**Install Playwright browsers** (required for browser-based scrapers and the application agent):
+
+```bash
+uv run playwright install chromium
+```
+
+### Step 3: Database Setup
+
+**Option A: Docker (recommended)**
+```bash
+# From project root — starts just Postgres + Redis
+docker compose up -d db redis
+```
+
+**Option B: Local install**
+- Install PostgreSQL 16 and create a database named `job_agent` with user `postgres`/`postgres`
+- Install Redis 7 on default port 6379
+
+**Run migrations:**
+```bash
+cd backend
+uv run alembic upgrade head
+```
+
+### Step 4: Frontend Setup
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 4. Run Tests
+### Step 5: Run the App (Development)
 
 ```bash
-# Backend (from backend/)
-uv run pytest -m "not integration and not docker" -q
-
-# Frontend (from frontend/)
-npx vitest run
-```
-
-### 5. Run the App (Development)
-
-```bash
-# Terminal 1: Backend
+# Terminal 1: Backend API
 cd backend
 uv run uvicorn app.main:app --reload --port 8000
 
-# Terminal 2: Frontend
+# Terminal 2: Frontend dev server
 cd frontend
 npm run dev
 ```
 
 Open http://localhost:5173 for the dashboard. API docs at http://localhost:8000/docs.
 
-### 6. Run with Docker
+### Step 6: Run with Docker (Full Stack)
 
 ```bash
 docker compose up -d
 ```
 
-Services:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- PostgreSQL: localhost:5432
-- Redis: localhost:6379
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| API Docs | http://localhost:8000/docs |
+| PostgreSQL | localhost:5432 |
+| Redis | localhost:6379 |
+
+### Step 7: Run Tests
+
+```bash
+# Backend unit tests (625 tests, no external APIs needed)
+cd backend
+uv run pytest --ignore=tests/e2e_pipeline_test.py --ignore=tests/test_integration/ -q
+
+# Frontend tests (36 tests)
+cd frontend
+npx vitest run
+```
+
+---
 
 ## Configuration
 
-### Tier 1: Infrastructure (`.env`)
+### API Keys (`.env`)
 
-Environment variables loaded via pydantic-settings:
+The table below shows every API key, whether it's required, where to get it, and what breaks without it.
+
+| Env Variable | Required? | Where to Get It | What It Enables |
+|---|---|---|---|
+| `GOOGLE_API_KEY` | **Yes** | [Google AI Studio](https://aistudio.google.com/apikey) | Gemini LLM (parsing, extraction) + embedding generation. **Nothing works without this.** |
+| `ANTHROPIC_API_KEY` | **Yes** (or use proxy) | [Anthropic Console](https://console.anthropic.com/) | Claude scoring, cover letters, browser agent. Set `ANTHROPIC_BASE_URL` instead if using a local proxy. |
+| `JSEARCH_API_KEY` | Optional | [RapidAPI JSearch](https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch) | JSearch scraper (aggregates LinkedIn, Indeed, Glassdoor). Free tier: 100 requests/month. |
+| `ADZUNA_APP_ID` | Optional | [Adzuna Developer](https://developer.adzuna.com/) | Adzuna job board scraper. Free tier available. |
+| `ADZUNA_APP_KEY` | Optional | Same as above | Used together with `ADZUNA_APP_ID`. |
+| `LANGSMITH_API_KEY` | Optional | [LangSmith](https://smith.langchain.com/) | LLM call tracing and debugging. Not needed for normal use. |
+
+**Using a Claude proxy** (e.g., [claude-code-proxy](https://github.com/nicobailon/claude-code-proxy)):
 
 ```env
-# Required API Keys
-GOOGLE_API_KEY=...              # Gemini API (parsing, embeddings)
-ANTHROPIC_API_KEY=...           # Claude API (scoring, cover letters, agent)
+ANTHROPIC_BASE_URL=http://localhost:42069
+ANTHROPIC_API_KEY=proxy-no-key-needed
+```
 
-# Optional API Keys
-JSEARCH_API_KEY=...             # RapidAPI JSearch (paid scraper source)
-ADZUNA_APP_ID=...               # Adzuna job board
-ADZUNA_APP_KEY=...
+### Full `.env` Reference
 
-# Database & Queue
+```env
+# ── Required ──────────────────────────────────────────────────────────
+GOOGLE_API_KEY=your-google-api-key-here
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
+
+# ── Database & Queue (defaults match docker-compose) ──────────────────
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/job_agent
 REDIS_URL=redis://localhost:6379/0
 
-# Model Configuration (defaults shown)
+# ── Optional API Keys ─────────────────────────────────────────────────
+JSEARCH_API_KEY=your-rapidapi-key-here
+ADZUNA_APP_ID=your-adzuna-app-id
+ADZUNA_APP_KEY=your-adzuna-app-key
+
+# ── Model Configuration (defaults shown) ──────────────────────────────
 GEMINI_MODEL=gemini-3.1-pro-preview
 CLAUDE_MODEL=claude-sonnet-4-6
 EMBEDDING_MODEL=gemini-embedding-001
 
-# Claude Proxy (optional — routes Claude calls through a local proxy like claude-code-proxy)
+# ── Claude Proxy (optional) ──────────────────────────────────────────
 # ANTHROPIC_BASE_URL=http://localhost:42069
 
-# Observability (optional)
+# ── Observability (optional) ──────────────────────────────────────────
 LANGSMITH_TRACING=false
-LANGSMITH_API_KEY=...
+LANGSMITH_API_KEY=your-langsmith-key-here
 LANGSMITH_PROJECT=job-application-agent
 ```
 
-### Tier 2: User Preferences (`backend/data/user_config.yaml`)
+### User Preferences (`backend/data/user_config.yaml`)
 
-Pydantic-validated preferences controlling job search, matching weights, and scraper config:
+Pydantic-validated preferences controlling job search, matching weights, and scraper config. Editable via `PUT /api/config/preferences` or by editing the YAML file directly.
+
+<details>
+<summary>English job search example</summary>
 
 ```yaml
-# Job search targets
 job_titles:
   - Software Engineer
   - AI Engineer
@@ -277,10 +364,11 @@ locations:
   - Canada
 salary_min: 100000
 salary_max: 200000
-workplace_types:
-  - remote
-  - hybrid
-experience_level: mid          # entry | mid | senior | lead | executive
+salary_currency: USD
+workplace_types: [remote, hybrid]
+experience_level: mid             # entry | mid | senior | lead | executive
+employment_types: [FULLTIME]      # FULLTIME | PARTTIME | CONTRACT | INTERNSHIP
+date_posted: month                # today | 3days | week | month | all
 
 # Scoring weights (must sum to 1.0)
 weights:
@@ -290,30 +378,122 @@ weights:
   location: 0.15
   salary: 0.10
 
-# Search settings
-employment_types:
-  - FULLTIME                   # FULLTIME | PARTTIME | CONTRACT | INTERNSHIP | TEMPORARY
-date_posted: month             # today | 3days | week | month | all
+# Scraper sources to use
+enabled_sources:
+  - arbeitnow
+  - greenhouse
+  - lever
 final_results_count: 10
 num_pages_per_source: 5
 
-# Scraper sources
-enabled_sources:
-  - jsearch
-  - greenhouse
-  - lever
-  - arbeitnow
-
-# ATS-specific boards
-greenhouse_board_tokens:
-  - stripe
-  - cloudflare
-  - figma
-  - airbnb
-lever_companies:
-  - netflix
+# Company-specific scraper config (see Scraper Setup Guide below)
+greenhouse_board_tokens: [stripe, cloudflare, figma, airbnb]
+lever_companies: [netflix, rippling]
 workday_urls: []
 ```
+</details>
+
+<details>
+<summary>Chinese job search example (中文求职)</summary>
+
+```yaml
+job_titles:
+  - 软件工程师
+  - AI工程师
+  - 全栈开发工程师
+locations: [北京, 上海, 深圳, 杭州, 远程]
+salary_min: 300000
+salary_max: 600000
+salary_currency: CNY
+workplace_types: [remote, hybrid, onsite]
+experience_level: mid
+
+# Chinese pipeline settings
+ats_mode: auto                    # auto = jieba for Chinese, regex for English
+reranker_mode: flashrank-multilingual  # or 'bge' (1GB download) or 'auto'
+recruitment_type: social          # social (社招) | campus (校招) | both
+
+# Chinese sources
+enabled_sources:
+  - tencent
+  - netease
+  - bytedance
+  - jd_campus
+
+# Sources that need manual setup (see Scraper Setup Guide)
+# mokahr_org_ids: [org-id-1, org-id-2]
+# alibaba_app_key: your-alibaba-key
+# boss_zhipin_cookie: your-session-cookie
+```
+</details>
+
+---
+
+## Scraper Setup Guide
+
+Not all scrapers work out-of-the-box. The table below shows exactly what each source needs.
+
+### Works Immediately (No Setup)
+
+These scrapers use fully public APIs and need zero configuration:
+
+| Source | Market | Config Key | Notes |
+|--------|--------|------------|-------|
+| `arbeitnow` | Global/EN | — | Public REST API, 5 pages per query |
+| `remoteok` | Global/EN | — | Public JSON API, remote jobs only |
+| `weworkremotely` | Global/EN | — | RSS feed parsing |
+| `tencent` | China | — | Public GET API (腾讯招聘) |
+| `netease` | China | — | Public POST API (网易招聘) |
+| `jd_campus` | China | — | Public GET API (京东校招), campus/intern only |
+| `bytedance` | China | — | Public POST API (字节跳动) |
+
+### Needs API Key (`.env` file)
+
+| Source | Config | Where to Get It | Free Tier? |
+|--------|--------|-----------------|------------|
+| `jsearch` | `JSEARCH_API_KEY` in `.env` | [RapidAPI JSearch](https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch) — sign up, subscribe to free plan, copy API key | Yes (100 req/month) |
+| `adzuna` | `ADZUNA_APP_ID` + `ADZUNA_APP_KEY` in `.env` | [Adzuna Developer](https://developer.adzuna.com/) — register for free API access | Yes |
+
+### Needs Company List (`user_config.yaml`)
+
+These scrape from specific company career pages. You must provide the company identifiers.
+
+| Source | Config Key | How to Find Values |
+|--------|------------|--------------------|
+| `greenhouse` | `greenhouse_board_tokens` | Visit `boards.greenhouse.io/{token}` — the `{token}` is the board slug. Example: `stripe`, `cloudflare`, `figma` |
+| `lever` | `lever_companies` | Visit `jobs.lever.co/{company}` — the `{company}` is the slug. Example: `netflix`, `rippling` |
+| `workday` | `workday_urls` | Find the company's Workday careers page URL. Example: `https://company.wd5.myworkdayjobs.com/en-US/External` |
+| `mokahr` | `mokahr_org_ids` | MokaHR career pages use org IDs in their URL. Inspect the network requests on the company's career page to find the org ID. |
+
+### Needs Manual Credentials (`user_config.yaml`)
+
+These require credentials that must be obtained manually through a browser:
+
+| Source | Config Key | How to Set Up |
+|--------|------------|---------------|
+| `alibaba` | `alibaba_app_key` | Register on [Alibaba Open Platform](https://open.alibaba.com/), create an app, and copy the app key into `user_config.yaml`. |
+| `boss_zhipin` | `boss_zhipin_cookie` | 1. Open [BOSS直聘](https://www.zhipin.com/) in your browser and log in. 2. Open DevTools (F12) → Network tab → copy the `Cookie` header from any request. 3. Paste the full cookie string into `user_config.yaml`. **Expires periodically — must be refreshed.** |
+
+### Fragile / Anti-Scraping (Use With Caution)
+
+These work without auth but may break due to anti-scraping measures:
+
+| Source | Issue | Workaround |
+|--------|-------|------------|
+| `zhaopin` | Session-based internal API (`fe-api.zhaopin.com`), may require valid cookies | May need browser cookie injection; reliability varies |
+| `job51` | Salary text uses font obfuscation (custom TTF fonts) | Built-in `fonttools` decoder handles this, but may break if 51job changes fonts |
+| `lagou` | Aggressive anti-scraping (rate limiting, CAPTCHA) | Has built-in session management, but may hit blocks on heavy use |
+
+### Browser-Based Scrapers (Playwright)
+
+These use Playwright to control a real browser. Requires `uv run playwright install chromium` first.
+
+| Source | When It's Used |
+|--------|----------------|
+| `generic` | Fallback for any career page without a dedicated scraper |
+| `workday` | Workday-hosted career pages (requires `workday_urls` config) |
+
+---
 
 ## API Endpoints
 
@@ -358,6 +538,7 @@ workday_urls: []
 | `GET` | `/api/config/preferences` | Load current user preferences |
 | `PUT` | `/api/config/preferences` | Update preferences (validates weight sum) |
 | `POST` | `/api/config/resume` | Upload resume (multipart file) |
+| `POST` | `/api/config/linkedin-profile` | Upload LinkedIn PDF export for parsing |
 
 ### System
 
@@ -403,8 +584,6 @@ The project includes a [Model Context Protocol](https://modelcontextprotocol.io/
 | `fill_application` | Preview or submit job application (dry_run default) |
 | `generate_cover_letter` | Generate personalized cover letter |
 | `generate_report` | Generate HTML match report |
-| `get_preferences` | Load user configuration |
-| `update_preferences` | Update job search preferences |
 
 ### Resources
 
@@ -455,26 +634,27 @@ Poll `GET /api/jobs/scrape/{task_id}/status` for progress, or connect to WebSock
 
 | Suite | Tests | Description |
 |-------|------:|-------------|
-| Matching (Phase 1) | 73 | Pre-filter, embedder, retriever, scorer (full + quick), pipeline, LLM factory |
-| Scraping (Phase 2) | 56 | JSearch, Greenhouse, Lever, Adzuna, Arbeitnow, normalizer, dedup, orchestrator |
+| Matching (Phase 1) | 73 | Pre-filter, embedder, retriever, scorer, ATS scorer, pipeline, LLM factory |
+| Scraping (Phase 2) | 56 | All 18 scrapers, normalizer, dedup, orchestrator |
 | DB & API (Phase 3) | 47 | Models, routers (jobs/matches/agent/config), WebSocket, ARQ tasks |
 | Agent (Phase 4) | 71 | State, graph routing, field mapper, ATS strategies, interrupt/resume |
 | Reports (Phase 6) | 52 | PDF generator, cover letter, templates, evaluation metrics |
 | MCP (Phase 7) | 22 | Tools, resources, prompts |
 | Docker (Phase 7) | 21 | Compose validation, image builds |
 | Config | 16 | Settings, UserConfig, MatchingWeights validation |
+| Chinese Pipeline | 256 | Chinese NLP, jieba ATS, BGE/multilingual reranker, 10 Chinese scrapers |
 | Integration | 31 | Full user workflow (9-step), E2E scraping/matching |
 | Frontend | 36 | Components, stores (Vitest + React Testing Library + MSW) |
-| **Total** | **~425** | |
+| **Total** | **661** | **625 backend + 36 frontend** |
 
 ### Running Tests
 
 ```bash
-# All backend unit tests (excludes integration + docker tests)
+# All backend unit tests (no external APIs needed)
 cd backend
-uv run pytest -m "not integration and not docker" -q
+uv run pytest --ignore=tests/e2e_pipeline_test.py --ignore=tests/test_integration/ -q
 
-# Full backend suite
+# Full backend suite (includes integration tests that need DB/APIs)
 uv run pytest -v
 
 # Specific modules
@@ -489,31 +669,23 @@ uv run pytest tests/test_config/ -v          # Configuration
 # User workflow integration test (9-step end-to-end)
 uv run pytest tests/test_integration/test_user_workflow.py -v
 
-# E2E pipeline test (requires running Claude proxy + Google API key)
-cd backend && python tests/e2e_pipeline_test.py
-
 # Frontend
 cd frontend
 npx vitest run
 ```
 
-### User Workflow Integration Test
-
-`test_user_workflow.py` simulates the complete user journey with mocked external APIs but real internal code paths:
-
-1. **Resume & Config** — Upload resume, configure preferences
-2. **Job Scraping** — Orchestrate scrapers, deduplicate across sources
-3. **Job Storage** — Store in DB, verify API retrieval with pagination + filters
-4. **Matching** — Pre-filter → retrieve → quick-score → full-score, verify sorted results
-5. **Reports** — Generate HTML reports (high/low scores), cover letters
-6. **Evaluation** — F1 skill matching, score accuracy metrics
-7. **Browser Agent** — Full LangGraph cycle: detect ATS → fill → interrupt → approve/reject
-8. **MCP Server** — Tools, resources, dry-run application
-9. **Docker** — Compose validation, CI workflow
-
 ### E2E Pipeline Test
 
-`e2e_pipeline_test.py` runs the full pipeline against live APIs (Arbeitnow, Greenhouse, Lever) for 3 search titles (Software Engineer, AI Engineer, Full-stack Developer). Requires a running Claude proxy at `localhost:42069` and a valid Google API key. Outputs a detailed Markdown report and JSON data file with all scored matches.
+`e2e_pipeline_test.py` runs the full pipeline against live APIs for both English and Chinese job markets. Requires a running Claude proxy at `localhost:42069` and a valid Google API key.
+
+```bash
+cd backend
+uv run python tests/e2e_pipeline_test.py
+```
+
+**Phase A (English):** Scrapes Arbeitnow, Greenhouse (20 boards), and Lever (4 companies) for 3 titles (Software Engineer, AI Engineer, Full-stack Developer). Scores with Claude, outputs `E2E_Pipeline_Test_Report.md` and `E2E_Pipeline_Test_Data.json`.
+
+**Phase B (Chinese):** Scrapes Tencent and NetEase for 3 titles (软件工程师, AI工程师, 全栈开发工程师). Auto-detects Chinese resume, uses jieba ATS scoring and FlashRank multilingual reranker. Outputs `E2E_Pipeline_Test_Report_ZH.md` and `E2E_Pipeline_Test_Data_ZH.json`.
 
 ## Docker Deployment
 
@@ -549,7 +721,9 @@ GitHub Actions runs a 3-stage pipeline on every push:
 - **FastAPI** + uvicorn (async web framework)
 - **SQLAlchemy 2.0** + asyncpg/aiosqlite (async ORM with Alembic migrations)
 - **LangChain** + **LangGraph** (AI orchestration + agent state machine)
-- **ChromaDB** (vector store) + **FlashRank** (cross-encoder reranking)
+- **ChromaDB** (vector store) + **FlashRank** / **BGE** (cross-encoder reranking)
+- **jieba** (Chinese word segmentation for ATS scoring)
+- **FlagEmbedding** (BGE-M3 multilingual embeddings + BGE reranker)
 - **ARQ** (async Redis task queue)
 - **Jinja2** + **WeasyPrint** (HTML/PDF report generation)
 - **Playwright** + **browser-use** (browser automation)

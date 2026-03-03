@@ -32,9 +32,10 @@ class TestComposeStructure:
         assert "frontend" in services
         assert "db" in services
         assert "redis" in services
+        assert "resume-generator" in services
 
-    def test_exactly_five_services(self, compose_config):
-        assert len(compose_config["services"]) == 5
+    def test_expected_service_count(self, compose_config):
+        assert len(compose_config["services"]) == 6
 
     def test_volumes_defined(self, compose_config):
         assert "volumes" in compose_config

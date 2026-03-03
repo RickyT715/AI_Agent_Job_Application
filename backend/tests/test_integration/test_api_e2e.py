@@ -1,10 +1,10 @@
 """End-to-end API integration test.
 
-Tests the complete API workflow: upload resume → scrape → match → retrieve.
+Tests the complete API workflow: upload resume → scrape → match → retrieve → generate resume.
 Uses real DB (SQLite for testing) but mocked external services.
 """
 
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -163,3 +163,116 @@ class TestAPIWorkflow:
         data = resp.json()
         assert "job_titles" in data
         assert "weights" in data
+
+
+class TestResumeGenerationE2E:
+    """E2E test for resume generation workflow."""
+
+    async def test_full_resume_generation_flow(self, e2e_client: AsyncClient, e2e_engine):
+        """Seed match → generate resume → poll status → list by match."""
+        factory = async_sessionmaker(e2e_engine, class_=AsyncSession, expire_on_commit=False)
+
+        # Seed data
+        async with factory() as session:
+            user = User(
+                email="e2e-resume@test.com",
+                full_name="E2E Resume User",
+                resume_text="Python developer with 5 years experience",
+            )
+            session.add(user)
+            await session.flush()
+
+            job = Job(
+                external_id="e2e-resume-job",
+                source="test",
+                title="Python Engineer",
+                company="E2E Corp",
+                description="Build Python services with FastAPI",
+                location="Remote",
+                workplace_type="remote",
+            )
+            session.add(job)
+            await session.flush()
+
+            match = MatchResult(
+                user_id=user.id,
+                job_id=job.id,
+                overall_score=8.0,
+                score_breakdown={"skills": 8, "experience": 7},
+                reasoning="Good Python match",
+                strengths=["Python", "FastAPI"],
+                missing_skills=["Go"],
+            )
+            session.add(match)
+            await session.commit()
+            match_id = match.id
+
+        # Step 1: Check health (not configured → unavailable)
+        with patch("app.routers.resumes.get_settings") as mock_settings:
+            mock_settings.return_value.resume_generator_url = ""
+            resp = await e2e_client.get("/api/resumes/health")
+        assert resp.status_code == 200
+        assert resp.json()["available"] is False
+
+        # Step 2: Generate resume (mocked external service)
+        task_resp = {"id": "e2e-ext-1", "status": "running"}
+        with (
+            patch("app.routers.resumes.get_settings") as mock_settings,
+            patch("app.routers.resumes.ResumeGeneratorClient") as mock_cls,
+        ):
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            mock_instance = AsyncMock()
+            mock_instance.sync_user_info.return_value = {"status": "ok"}
+            mock_instance.create_and_start.return_value = task_resp
+            mock_cls.return_value = mock_instance
+
+            resp = await e2e_client.post(
+                "/api/resumes/generate",
+                json={"match_id": match_id},
+            )
+        assert resp.status_code == 200
+        gen_data = resp.json()
+        assert gen_data["status"] == "running"
+        resume_id = gen_data["id"]
+
+        # Step 3: Poll status (still running)
+        with (
+            patch("app.routers.resumes.get_settings") as mock_settings,
+            patch("app.routers.resumes.ResumeGeneratorClient") as mock_cls,
+        ):
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            mock_instance = AsyncMock()
+            mock_instance.get_task_status.return_value = {"status": "running"}
+            mock_cls.return_value = mock_instance
+
+            resp = await e2e_client.get(f"/api/resumes/{resume_id}/status")
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "running"
+
+        # Step 4: List by match
+        resp = await e2e_client.get(f"/api/resumes/by-match/{match_id}")
+        assert resp.status_code == 200
+        records = resp.json()
+        assert len(records) == 1
+        assert records[0]["match_id"] == match_id
+
+    async def test_resume_health_endpoint(self, e2e_client: AsyncClient):
+        """Health endpoint works with mocked available service."""
+        with (
+            patch("app.routers.resumes.get_settings") as mock_settings,
+            patch("app.routers.resumes.ResumeGeneratorClient") as mock_cls,
+        ):
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            mock_instance = AsyncMock()
+            mock_instance.health_check.return_value = {"status": "healthy"}
+            mock_cls.return_value = mock_instance
+            resp = await e2e_client.get("/api/resumes/health")
+        assert resp.status_code == 200
+        assert resp.json()["available"] is True
+        assert resp.json()["detail"] == "Service healthy"
+
+    async def test_resume_empty_by_match(self, e2e_client: AsyncClient):
+        """by-match returns empty list for match with no generated resumes."""
+        resp = await e2e_client.get("/api/resumes/by-match/9999")
+        assert resp.status_code == 200
+        assert resp.json() == []

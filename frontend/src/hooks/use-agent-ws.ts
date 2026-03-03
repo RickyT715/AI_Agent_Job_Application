@@ -4,7 +4,8 @@ import useWebSocket from "react-use-websocket";
 import { useAgentStore } from "../stores/agent-store";
 import type { AgentStatusMessage } from "../types/api";
 
-const WS_URL = `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/api/agent/ws/agent-status`;
+const WS_BASE = import.meta.env.VITE_WS_URL ?? `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}`;
+const WS_URL = `${WS_BASE}/api/agent/ws/agent-status`;
 
 export function useAgentWebSocket(jobId: number | null) {
   const setStatus = useAgentStore((s) => s.setStatus);

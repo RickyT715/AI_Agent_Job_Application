@@ -55,6 +55,15 @@ class Settings(BaseSettings):
     chroma_db_dir: Path = Path("data/chroma_db")
     user_config_path: Path = Path("data/user_config.yaml")
 
+    # Authentication
+    api_key: SecretStr = SecretStr("")  # Empty = auth disabled
+
+    # CORS
+    cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+
+    # External services
+    resume_generator_url: str = ""
+
 
 # ---------------------------------------------------------------------------
 # Tier 2: User preferences from YAML

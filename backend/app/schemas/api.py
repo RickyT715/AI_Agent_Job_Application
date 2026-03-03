@@ -223,8 +223,128 @@ class PreferencesUpdateRequest(BaseModel):
     boss_zhipin_cookie: str | None = None
 
 
+# ---------------------------------------------------------------------------
+# Resume Generator (external microservice)
+# ---------------------------------------------------------------------------
+
+class ResumeGenerateRequest(BaseModel):
+    """Request to generate a tailored resume via the external service."""
+
+    match_id: int
+    generate_cover_letter: bool = True
+    template_id: str | None = None
+    language: str = "en"
+    experience_level: str = "mid"
+    provider: str = "anthropic"
+
+
+class ResumeGenerateResponse(BaseModel):
+    """Response after kicking off resume generation."""
+
+    id: int
+    match_id: int
+    external_task_id: str
+    status: str
+    created_at: datetime | None = None
+
+    model_config = {"from_attributes": True}
+
+
+class ResumeStatusResponse(BaseModel):
+    """Full status of a generated resume."""
+
+    id: int
+    match_id: int
+    external_task_id: str
+    status: str
+    resume_pdf_path: str | None = None
+    cover_letter_pdf_path: str | None = None
+    cover_letter_text: str | None = None
+    error_message: str | None = None
+    language: str = "en"
+    provider: str = "anthropic"
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+    model_config = {"from_attributes": True}
+
+
+class ResumeGeneratorHealthResponse(BaseModel):
+    """Health status of the resume generator service."""
+
+    available: bool
+    detail: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Resume Upload
+# ---------------------------------------------------------------------------
+
 class ResumeUploadResponse(BaseModel):
     """Response after resume upload."""
 
     message: str
     character_count: int
+
+
+# ---------------------------------------------------------------------------
+# Skill Market Analysis
+# ---------------------------------------------------------------------------
+
+class SkillFrequencyResponse(BaseModel):
+    """Single skill frequency entry."""
+
+    skill_name: str
+    category: str
+    count: int
+    percentage: float
+
+
+class SkillCoOccurrenceResponse(BaseModel):
+    """Co-occurrence pair."""
+
+    skill_a: str
+    skill_b: str
+    co_count: int
+    percentage: float
+
+
+class TitleGroupResponse(BaseModel):
+    """Available title group with job count."""
+
+    title: str
+    job_count: int
+
+
+class SkillMarketReportResponse(BaseModel):
+    """Full skill market analysis report."""
+
+    title_pattern: str
+    total_jobs: int
+    top_skills: list[SkillFrequencyResponse]
+    technical_skills: list[SkillFrequencyResponse]
+    soft_skills: list[SkillFrequencyResponse]
+    co_occurrences: list[SkillCoOccurrenceResponse]
+    category_breakdown: dict[str, int]
+
+
+class SkillAnalysisRequest(BaseModel):
+    """Request for skill frequency analysis."""
+
+    title_pattern: str = Field(min_length=1, max_length=500)
+    top_n: int = Field(default=20, ge=1, le=100)
+
+
+class SkillCoOccurrenceRequest(BaseModel):
+    """Request for skill co-occurrence analysis."""
+
+    title_pattern: str = Field(min_length=1, max_length=500)
+    skill_name: str = Field(min_length=1, max_length=255)
+    top_n: int = Field(default=10, ge=1, le=50)
+
+
+class BackfillSkillsResponse(BaseModel):
+    """Result of the backfill operation."""
+
+    jobs_processed: int
+    total_skills: int

@@ -1,24 +1,27 @@
 # AI Job Application Agent
 
-An end-to-end AI-powered system that scrapes job boards, matches postings against your resume using a multi-stage pipeline, generates cover letters and reports, and auto-fills applications with human-in-the-loop approval. Supports both **English** and **Chinese** job markets.
+[中文版 README](README_ZH.md)
+
+An end-to-end AI-powered system that scrapes job boards, matches postings against your resume using a multi-stage pipeline, generates tailored resumes and cover letters, produces skill market analysis reports, and auto-fills applications with human-in-the-loop approval. Supports both **English** and **Chinese** job markets.
 
 Uses **Gemini 3.1 Pro** for cheap tasks (parsing, extraction) and **Claude Sonnet 4.6** for reasoning tasks (scoring, cover letters, browser agent). Embeddings via **Gemini embedding-001**. Matching pipeline includes heuristic pre-filtering, vector retrieval, cross-encoder reranking, LLM quick-scoring, and full multi-dimensional LLM-as-Judge evaluation.
 
 ## Architecture
 
 ```
-Resume Upload ──► Scrape Jobs ──► Pre-Filter ──► Match & Score ──► Reports ──► Auto-Fill
-                      │               │               │               │            │
-             English Pipeline:    Seniority/       ChromaDB +      Jinja2 HTML   LangGraph
-               JSearch API       Location/Type    FlashRank +     + Claude       agent with
-               Greenhouse        heuristics       Quick-Score +   cover letters  interrupt()
-               Lever                              Claude Full                    for human
-               Adzuna                             LLM-as-Judge                   review
-               Arbeitnow
-               RemoteOK
-               WeWorkRemotely
-                      │
-             Chinese Pipeline (中文):
+                                                                                Tailored
+Resume Upload ──► Scrape Jobs ──► Pre-Filter ──► Match & Score ──► Reports ──► Resume Gen ──► Auto-Fill
+                      │               │               │               │            │              │
+             English Pipeline:    Seniority/       ChromaDB +      Jinja2 HTML   External       LangGraph
+               JSearch API       Location/Type    FlashRank +     + Claude       microservice   agent with
+               Greenhouse        heuristics       Quick-Score +   cover letters  (LangGraph     interrupt()
+               Lever                              Claude Full                    LaTeX→PDF)     for human
+               Adzuna                             LLM-as-Judge                                  review
+               Arbeitnow                                │
+               RemoteOK                         Skill Analysis
+               WeWorkRemotely                    (frequency,
+                      │                         co-occurrence,
+             Chinese Pipeline (中文):            PDF reports)
                Tencent (腾讯)
                NetEase (网易)          Auto-detect     jieba ATS +
                MokaHR                 language →     FlashRank
@@ -71,22 +74,32 @@ AI_Agent_Job_Application/
 │   ├── app/
 │   │   ├── main.py                      # FastAPI entry point + middleware
 │   │   ├── config.py                    # Two-tier config (env + YAML)
-│   │   ├── models/                      # SQLAlchemy ORM (6 tables)
+│   │   ├── core/
+│   │   │   ├── auth.py                  # API key authentication (X-API-Key header)
+│   │   │   ├── utils.py                 # Shared utilities (SQL LIKE escaping)
+│   │   │   └── rate_limit.py            # SlowAPI rate limiter
+│   │   ├── db/
+│   │   │   └── session.py               # Singleton async engine + session factory
+│   │   ├── models/                      # SQLAlchemy ORM (8 tables)
 │   │   │   ├── user.py                  # User profile + resume text
 │   │   │   ├── job.py                   # Normalized job postings
 │   │   │   ├── match_result.py          # Score breakdowns + reasoning
 │   │   │   ├── application.py           # Submitted application tracking
 │   │   │   ├── cover_letter.py          # Generated cover letters
+│   │   │   ├── generated_resume.py      # Resume generator tracking records
+│   │   │   ├── job_skill.py             # Extracted skills per job posting
 │   │   │   └── agent_log.py             # Browser agent step logs
 │   │   ├── schemas/
 │   │   │   ├── matching.py              # JobPosting, ScoreBreakdown, ScoredMatch
 │   │   │   └── api.py                   # Request/response models, pagination
 │   │   ├── routers/
 │   │   │   ├── jobs.py                  # CRUD + scrape trigger
-│   │   │   ├── matches.py               # Scoring results + pipeline trigger
+│   │   │   ├── matches.py               # Scoring results + pipeline trigger + rescore
 │   │   │   ├── agent.py                 # Browser agent start/resume + WebSocket
 │   │   │   ├── reports.py               # PDF/HTML report + cover letter
-│   │   │   └── config.py                # Preferences + resume upload
+│   │   │   ├── resumes.py               # Tailored resume generation (microservice)
+│   │   │   ├── skill_analysis.py        # Skill frequency, co-occurrence, market reports
+│   │   │   └── config.py                # Preferences + resume upload (file upload with size limit)
 │   │   ├── services/
 │   │   │   ├── llm_factory.py           # Gemini/Claude model routing
 │   │   │   ├── matching/
@@ -95,96 +108,90 @@ AI_Agent_Job_Application/
 │   │   │   │   ├── retriever.py         # Vector search + FlashRank/BGE rerank
 │   │   │   │   ├── scorer.py            # LLM-as-Judge (full + quick score)
 │   │   │   │   ├── ats_scorer.py        # ATS keyword scoring (regex + jieba)
+│   │   │   │   ├── skill_extractor.py   # Extract skills from job postings
+│   │   │   │   ├── skill_persistence.py # Persist skills to DB + backfill
 │   │   │   │   └── pipeline.py          # 5-stage orchestrator
 │   │   │   ├── scraping/
 │   │   │   │   ├── base.py              # Abstract BaseScraper interface
 │   │   │   │   ├── orchestrator.py      # Multi-source coordination + dedup
 │   │   │   │   ├── normalizer.py        # Raw data → JobPosting schema
 │   │   │   │   ├── deduplicator.py      # Cross-source duplicate removal
-│   │   │   │   ├── api/                 # API-based scrapers
-│   │   │   │   │   ├── jsearch.py       # RapidAPI JSearch (requires API key)
-│   │   │   │   │   ├── greenhouse.py    # Greenhouse boards (requires board tokens)
-│   │   │   │   │   ├── lever.py         # Lever postings (requires company slugs)
-│   │   │   │   │   ├── adzuna.py        # Adzuna (requires app ID + key)
-│   │   │   │   │   ├── arbeitnow.py     # Arbeitnow (public, no auth)
-│   │   │   │   │   ├── remoteok.py      # RemoteOK (public, no auth)
-│   │   │   │   │   ├── weworkremotely.py# WeWorkRemotely (public, no auth)
-│   │   │   │   │   ├── tencent.py       # Tencent Careers (public, no auth)
-│   │   │   │   │   ├── netease.py       # NetEase Careers (public, no auth)
-│   │   │   │   │   ├── mokahrjob.py     # MokaHR (requires org IDs)
-│   │   │   │   │   ├── alibaba.py       # Alibaba (requires app key)
-│   │   │   │   │   ├── jd_campus.py     # JD Campus (public, no auth)
-│   │   │   │   │   ├── bytedance.py     # ByteDance (public, no auth)
-│   │   │   │   │   ├── zhaopin.py       # Zhaopin (session-based, fragile)
-│   │   │   │   │   ├── job51.py         # 51job (font obfuscation, fragile)
-│   │   │   │   │   ├── lagou.py         # Lagou (anti-scraping, fragile)
-│   │   │   │   │   └── boss_zhipin.py   # BOSS直聘 (requires cookie)
-│   │   │   │   └── browser/             # Browser-based scrapers
-│   │   │   │       ├── generic.py       # Playwright generic scraper
-│   │   │   │       └── workday.py       # Workday-specific automation
+│   │   │   │   ├── api/                 # 18 API-based scrapers (EN + ZH)
+│   │   │   │   └── browser/             # Playwright-based scrapers
+│   │   │   ├── analysis/
+│   │   │   │   └── skill_market.py      # Frequencies, co-occurrences, reports
 │   │   │   ├── agent/
 │   │   │   │   ├── graph.py             # LangGraph state machine
 │   │   │   │   ├── state.py             # ApplicationState TypedDict
 │   │   │   │   ├── nodes.py             # navigate, fill, review, submit nodes
 │   │   │   │   ├── field_mapper.py      # Resume → form field mapping
 │   │   │   │   └── ats/                 # ATS-specific strategies
-│   │   │   │       ├── greenhouse.py    # Greenhouse API submit
-│   │   │   │       └── lever.py         # Lever API submit
-│   │   │   └── reports/
-│   │   │       ├── generator.py         # PDF/HTML report generation
-│   │   │       ├── cover_letter.py      # Claude-powered cover letters
-│   │   │       ├── evaluation.py        # Match quality metrics
-│   │   │       └── templates/
-│   │   │           └── report.html      # Jinja2 report template
+│   │   │   ├── reports/
+│   │   │   │   ├── generator.py         # PDF/HTML report generation
+│   │   │   │   ├── cover_letter.py      # Claude-powered cover letters
+│   │   │   │   ├── evaluation.py        # Match quality metrics
+│   │   │   │   ├── skill_report_generator.py # Skill analysis PDF/HTML reports
+│   │   │   │   └── templates/           # Jinja2 report templates
+│   │   │   └── resume_generator/
+│   │   │       └── client.py            # HTTP client for resume generator microservice
 │   │   ├── mcp/
 │   │   │   └── server.py                # FastMCP server (tools + resources)
 │   │   └── worker/
-│   │       └── tasks.py                 # ARQ background tasks
-│   ├── tests/                           # 625 backend + 36 frontend tests
+│   │       ├── tasks.py                 # ARQ background tasks (auto skill extraction)
+│   │       └── settings.py              # Worker config (retry, timeout)
+│   ├── tests/                           # 692 backend + 42 frontend = 734 total tests
 │   │   ├── test_matching/               # Pipeline, pre-filter, scorer, embedder, retriever, ATS
 │   │   ├── test_scraping/               # All 18 scrapers, dedup, normalizer, orchestrator
 │   │   ├── test_agent/                  # Graph, nodes, ATS handlers, interrupts
-│   │   ├── test_api/                    # All routers + WebSocket
-│   │   ├── test_db/                     # Model CRUD + constraints
-│   │   ├── test_reports/                # PDF, cover letter, evaluation
+│   │   ├── test_api/                    # All routers + WebSocket + auth + input validation
+│   │   ├── test_resume_generator/       # Client + router tests for resume microservice
+│   │   ├── test_analysis/               # Skill market analysis service tests
+│   │   ├── test_db/                     # Model CRUD + constraints + job skills
+│   │   ├── test_reports/                # PDF, cover letter, evaluation, skill reports
 │   │   ├── test_mcp/                    # Tools, resources, prompts
-│   │   ├── test_worker/                 # ARQ task tests
+│   │   ├── test_worker/                 # ARQ task tests + skill extraction
+│   │   ├── test_core/                   # Auth, utils, rate limiting
 │   │   ├── test_docker/                 # Compose validation
 │   │   ├── test_config/                 # Settings + UserConfig validation
-│   │   ├── test_integration/            # Full user workflow (9-step)
+│   │   ├── test_integration/            # Full user workflow (11-step, incl. resume gen)
 │   │   └── e2e_pipeline_test.py         # Live E2E test (English + Chinese pipelines)
-│   ├── alembic/                         # Database migrations
+│   ├── alembic/                         # Database migrations (3 versions)
 │   ├── Dockerfile                       # Multi-stage (api + worker targets)
 │   └── pyproject.toml                   # hatchling, ruff, mypy, pytest config
 ├── frontend/                            # React 19 + TypeScript + Vite 7
 │   ├── src/
-│   │   ├── App.tsx                      # Root with React Router v7
+│   │   ├── App.tsx                      # Root with React Router v7 + ErrorBoundary
 │   │   ├── pages/
 │   │   │   ├── DashboardPage.tsx        # Main job listing + matching
-│   │   │   └── SettingsPage.tsx         # Preferences + resume upload
+│   │   │   ├── SettingsPage.tsx         # Preferences + resume upload (wired to API)
+│   │   │   └── SkillAnalysisPage.tsx    # Skill market analysis dashboard
 │   │   ├── components/
 │   │   │   ├── JobCard.tsx              # Job card with score badge
 │   │   │   ├── JobList.tsx              # Paginated listing
 │   │   │   ├── JobFilters.tsx           # Search + location + type filters
-│   │   │   ├── MatchDetail.tsx          # Score breakdown + radar chart
-│   │   │   ├── PreferencesForm.tsx      # Settings form
+│   │   │   ├── MatchDetail.tsx          # Score breakdown + radar chart + resume gen
+│   │   │   ├── ResumeGenerator.tsx      # Tailored resume generation UI
+│   │   │   ├── PreferencesForm.tsx      # Settings form with file upload
 │   │   │   ├── ScoreRadarChart.tsx      # Recharts radar visualization
 │   │   │   ├── SkillGapAnalysis.tsx     # Skill comparison matrix
+│   │   │   ├── SkillFrequencyTable.tsx  # Skill frequency display table
+│   │   │   ├── ErrorBoundary.tsx        # React error boundary wrapper
 │   │   │   ├── AgentProgress.tsx        # Real-time agent status
 │   │   │   └── ReviewDialog.tsx         # Human-in-the-loop approval
 │   │   ├── stores/
 │   │   │   ├── app-store.ts             # Zustand (filters, selection)
 │   │   │   └── agent-store.ts           # Agent execution state
 │   │   ├── hooks/
-│   │   │   ├── use-jobs.ts              # TanStack Query for jobs
-│   │   │   ├── use-matches.ts           # TanStack Query for matches
-│   │   │   └── use-agent-ws.ts          # WebSocket agent updates
+│   │   │   ├── use-matches.ts           # TanStack Query for matches (with full filters)
+│   │   │   ├── use-resume-generation.ts # TanStack Query for resume generation
+│   │   │   ├── use-skill-analysis.ts    # TanStack Query for skill market data
+│   │   │   └── use-agent-ws.ts          # WebSocket agent updates (configurable URL)
 │   │   └── api/
-│   │       └── client.ts                # HTTP client config
-│   ├── __tests__/                       # 36 Vitest tests (components + stores)
+│   │       └── client.ts                # HTTP client with API key auth + delete method
+│   ├── __tests__/                       # 42 Vitest tests (components + stores + hooks)
 │   ├── Dockerfile                       # Build + Nginx
 │   └── package.json
-├── docker-compose.yml                   # 5 services (db, redis, backend, worker, frontend)
+├── docker-compose.yml                   # 6 services (db, redis, resume-generator, backend, worker, frontend)
 ├── .github/workflows/ci.yml            # 3-stage CI (lint+test → frontend → docker)
 └── .env.example                         # Template for API keys + config
 ```
@@ -245,6 +252,11 @@ cd backend
 uv run alembic upgrade head
 ```
 
+This runs 3 migration versions:
+1. Initial schema (users, jobs, match_results, applications, cover_letters, agent_logs)
+2. `generated_resumes` table for resume generator tracking
+3. `job_skills` table for skill market analysis
+
 ### Step 4: Frontend Setup
 
 ```bash
@@ -252,7 +264,31 @@ cd frontend
 npm install
 ```
 
-### Step 5: Run the App (Development)
+### Step 5: Resume Generator Setup (Optional)
+
+The tailored resume generation feature uses an external microservice that runs a LangGraph multi-agent pipeline to produce LaTeX-based PDFs. This is optional — all other features work without it.
+
+**Option A: Docker (automatic via `docker compose up`)**
+
+The `resume-generator` service is included in `docker-compose.yml`. It builds from the sibling project directory and starts automatically.
+
+**Option B: Run locally**
+
+```bash
+# Clone the resume generator project alongside this one
+cd ../Resume_and_Cover_Letter_Generator/self_use/resume-generator/backend
+uv sync
+uv run uvicorn main:app --port 48765
+```
+
+Then set in your `.env`:
+```env
+RESUME_GENERATOR_URL=http://localhost:48765
+```
+
+**Requirements:** The resume generator needs a LaTeX distribution (TeX Live or MiKTeX) installed for PDF compilation.
+
+### Step 6: Run the App (Development)
 
 ```bash
 # Terminal 1: Backend API
@@ -262,11 +298,16 @@ uv run uvicorn app.main:app --reload --port 8000
 # Terminal 2: Frontend dev server
 cd frontend
 npm run dev
+
+# Terminal 3 (optional): Resume generator
+# Only needed if not using Docker and you want tailored resume generation
+cd ../Resume_and_Cover_Letter_Generator/self_use/resume-generator/backend
+uv run uvicorn main:app --port 48765
 ```
 
 Open http://localhost:5173 for the dashboard. API docs at http://localhost:8000/docs.
 
-### Step 6: Run with Docker (Full Stack)
+### Step 7: Run with Docker (Full Stack)
 
 ```bash
 docker compose up -d
@@ -277,17 +318,18 @@ docker compose up -d
 | Frontend | http://localhost:3000 |
 | Backend API | http://localhost:8000 |
 | API Docs | http://localhost:8000/docs |
+| Resume Generator | http://localhost:48765 |
 | PostgreSQL | localhost:5432 |
 | Redis | localhost:6379 |
 
-### Step 7: Run Tests
+### Step 8: Run Tests
 
 ```bash
-# Backend unit tests (625 tests, no external APIs needed)
+# Backend unit tests (692 tests, no external APIs needed)
 cd backend
 uv run pytest --ignore=tests/e2e_pipeline_test.py --ignore=tests/test_integration/ -q
 
-# Frontend tests (36 tests)
+# Frontend tests (42 tests)
 cd frontend
 npx vitest run
 ```
@@ -316,6 +358,18 @@ ANTHROPIC_BASE_URL=http://localhost:42069
 ANTHROPIC_API_KEY=proxy-no-key-needed
 ```
 
+### Security Configuration (`.env`)
+
+| Env Variable | Default | Description |
+|---|---|---|
+| `API_KEY` | _(empty = auth disabled)_ | Set a secret string to require `X-API-Key` header on sensitive endpoints (agent, config, scrape, matching). Leave empty for development mode. |
+| `CORS_ORIGINS` | `["http://localhost:5173","http://localhost:3000"]` | Comma-separated list of allowed CORS origins. |
+
+When `API_KEY` is set, the frontend needs it too. Add to your frontend `.env`:
+```env
+VITE_API_KEY=your-secret-api-key-here
+```
+
 ### Full `.env` Reference
 
 ```env
@@ -340,10 +394,17 @@ EMBEDDING_MODEL=gemini-embedding-001
 # ── Claude Proxy (optional) ──────────────────────────────────────────
 # ANTHROPIC_BASE_URL=http://localhost:42069
 
+# ── Security ──────────────────────────────────────────────────────────
+# API_KEY=your-secret-api-key-here
+# CORS_ORIGINS=["http://localhost:5173","http://localhost:3000"]
+
 # ── Observability (optional) ──────────────────────────────────────────
 LANGSMITH_TRACING=false
 LANGSMITH_API_KEY=your-langsmith-key-here
 LANGSMITH_PROJECT=job-application-agent
+
+# ── Resume Generator (optional external microservice) ────────────────
+# RESUME_GENERATOR_URL=http://localhost:48765
 ```
 
 ### User Preferences (`backend/data/user_config.yaml`)
@@ -510,7 +571,7 @@ These use Playwright to control a real browser. Requires `uv run playwright inst
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/matches` | List scored matches (sorted by score descending) |
+| `GET` | `/api/matches` | List scored matches (filterable by q/location/workplace_type/min_score) |
 | `GET` | `/api/matches/{id}` | Match detail with breakdown, strengths, gaps |
 | `POST` | `/api/matches/run` | Trigger matching pipeline background task |
 | `POST` | `/api/matches/{id}/rescore` | Re-run scoring for a specific match |
@@ -528,23 +589,45 @@ These use Playwright to control a real browser. Requires `uv run playwright inst
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/api/reports/generate` | Generate PDF/HTML report for a match |
-| `GET` | `/api/reports/{id}/download` | Download generated report |
+| `GET` | `/api/reports/{id}/download` | Download generated report (path-traversal protected) |
 | `POST` | `/api/reports/cover-letter` | Generate personalized cover letter |
+
+### Resumes (Tailored Resume Generation)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/resumes/health` | Check resume generator service availability |
+| `POST` | `/api/resumes/generate` | Generate tailored resume + cover letter for a match |
+| `GET` | `/api/resumes/{id}/status` | Poll generation status (auto-downloads PDFs on completion) |
+| `GET` | `/api/resumes/{id}/download/resume` | Download generated resume PDF |
+| `GET` | `/api/resumes/{id}/download/cover-letter` | Download generated cover letter PDF |
+| `GET` | `/api/resumes/by-match/{match_id}` | List all generated resumes for a match |
+
+### Skill Market Analysis
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/skill-analysis/title-groups` | Get available job title groups with job counts |
+| `POST` | `/api/skill-analysis/frequencies` | Skill frequency analysis for a title pattern |
+| `POST` | `/api/skill-analysis/co-occurrences` | Skill co-occurrence analysis for a specific skill |
+| `POST` | `/api/skill-analysis/report` | Full skill market analysis report (JSON) |
+| `POST` | `/api/skill-analysis/report/pdf` | Generate PDF/HTML skill analysis report |
+| `POST` | `/api/skill-analysis/backfill` | Backfill skills for existing jobs without extraction |
 
 ### Config
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/config/preferences` | Load current user preferences |
+| `GET` | `/api/config/preferences` | Load current user preferences (sensitive fields masked) |
 | `PUT` | `/api/config/preferences` | Update preferences (validates weight sum) |
-| `POST` | `/api/config/resume` | Upload resume (multipart file) |
+| `POST` | `/api/config/resume` | Upload resume (multipart file, max 10 MB) |
 | `POST` | `/api/config/linkedin-profile` | Upload LinkedIn PDF export for parsing |
 
 ### System
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/health` | Health check (used by Docker HEALTHCHECK) |
+| `GET` | `/health` | Health check with DB + Redis status (used by Docker HEALTHCHECK) |
 
 ## Browser Agent
 
@@ -570,6 +653,17 @@ The agent pauses at `review_node` using LangGraph's `interrupt()`, saves state, 
 | Lever | Direct API | POST to Lever Application API |
 | Workday | Browser automation | Playwright fills Workday forms |
 | Generic | Browser automation | Playwright with field detection heuristics |
+
+## Skill Market Analysis
+
+The skill analysis module extracts skills from job postings and provides market insights:
+
+- **Automatic extraction** — Skills are extracted from new jobs during scraping (incremental, new jobs only)
+- **Backfill** — `POST /api/skill-analysis/backfill` processes existing jobs without skills
+- **Frequency analysis** — See which skills appear most often for a given job title
+- **Co-occurrence analysis** — Find which skills commonly appear together
+- **PDF reports** — Generate downloadable skill market reports with Jinja2 + WeasyPrint
+- **Frontend dashboard** — Interactive skill analysis page at `/skill-analysis` route
 
 ## MCP Server
 
@@ -609,15 +703,21 @@ ARQ (async Redis queue) handles long-running tasks so the API responds immediate
 
 | Task | Trigger | Description |
 |------|---------|-------------|
-| `run_scraping` | `POST /api/jobs/scrape` | Execute all enabled scrapers, deduplicate, index into ChromaDB |
+| `run_scraping` | `POST /api/jobs/scrape` | Execute all enabled scrapers, deduplicate, index into ChromaDB, auto-extract skills |
 | `run_matching` | `POST /api/matches/run` | Pre-filter → embed → retrieve → quick-score → full-score |
 | `run_agent` | `POST /api/agent/start` | Start LangGraph browser agent workflow |
+
+Worker configuration:
+- **max_tries**: 3 (retries failed tasks up to 3 times)
+- **retry_delay**: 30 seconds between retries
+- **job_timeout**: 600 seconds (10 minutes)
+- **max_jobs**: 5 concurrent tasks
 
 Poll `GET /api/jobs/scrape/{task_id}/status` for progress, or connect to WebSocket for real-time updates.
 
 ## Database Schema
 
-6 tables managed by SQLAlchemy 2.0 async ORM with Alembic migrations:
+8 tables managed by SQLAlchemy 2.0 async ORM with Alembic migrations:
 
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
@@ -626,6 +726,8 @@ Poll `GET /api/jobs/scrape/{task_id}/status` for progress, or connect to WebSock
 | `match_results` | Scoring results | user_id → jobs FK, overall_score, breakdown (JSON), reasoning, strengths, missing_skills |
 | `applications` | Submitted applications | match_id FK, status (pending/submitted/rejected), submitted_at |
 | `cover_letters` | Generated cover letters | match_id FK, content, model_used |
+| `generated_resumes` | Resume generator tracking | match_id FK, external_task_id, status, resume_pdf_path, cover_letter_pdf_path, language, provider |
+| `job_skills` | Extracted skills per job | job_id FK, skill_name, category (technical/soft_skill), unique constraint on (job_id, skill_name) |
 | `agent_logs` | Browser agent step logs | thread_id, step, action, screenshot_path, timestamp |
 
 ## Testing
@@ -642,10 +744,13 @@ Poll `GET /api/jobs/scrape/{task_id}/status` for progress, or connect to WebSock
 | MCP (Phase 7) | 22 | Tools, resources, prompts |
 | Docker (Phase 7) | 21 | Compose validation, image builds |
 | Config | 16 | Settings, UserConfig, MatchingWeights validation |
+| Resume Generator | 54 | Client (HTTP methods, error handling, PDF save), router (health, generate, status, download) |
 | Chinese Pipeline | 256 | Chinese NLP, jieba ATS, BGE/multilingual reranker, 10 Chinese scrapers |
-| Integration | 31 | Full user workflow (9-step), E2E scraping/matching |
-| Frontend | 36 | Components, stores (Vitest + React Testing Library + MSW) |
-| **Total** | **661** | **625 backend + 36 frontend** |
+| Skill Market Analysis | 40 | Extractor, persistence, frequency, co-occurrence, report generator, router, frontend |
+| Improvement Sprint | 137 | Auth, path traversal, upload limits, health check, filters, error boundary, DB session |
+| Integration | 44 | Full user workflow (11-step), E2E API + resume generation |
+| Frontend | 42 | Components, stores, hooks, ResumeGenerator (Vitest + React Testing Library + MSW) |
+| **Total** | **734** | **692 backend + 42 frontend** |
 
 ### Running Tests
 
@@ -664,9 +769,12 @@ uv run pytest tests/test_agent/ -v           # Browser agent
 uv run pytest tests/test_reports/ -v         # Reports + cover letters
 uv run pytest tests/test_mcp/ -v             # MCP server
 uv run pytest tests/test_api/ -v             # API routers
+uv run pytest tests/test_resume_generator/ -v # Resume generator client + router
+uv run pytest tests/test_analysis/ -v        # Skill market analysis
+uv run pytest tests/test_core/ -v            # Auth + utils
 uv run pytest tests/test_config/ -v          # Configuration
 
-# User workflow integration test (9-step end-to-end)
+# User workflow integration test (11-step end-to-end)
 uv run pytest tests/test_integration/test_user_workflow.py -v
 
 # Frontend
@@ -695,6 +803,7 @@ uv run python tests/e2e_pipeline_test.py
 |---------|-------|---------|------|
 | `db` | postgres:16-alpine | PostgreSQL database | 5432 |
 | `redis` | redis:7-alpine | ARQ task queue | 6379 |
+| `resume-generator` | Built from external project | LangGraph resume pipeline | 48765 |
 | `backend` | Built from ./backend | FastAPI + ChromaDB | 8000 |
 | `worker` | Built from ./backend | ARQ background worker | — |
 | `frontend` | Built from ./frontend | React (Nginx) | 3000 |
@@ -704,15 +813,43 @@ uv run python tests/e2e_pipeline_test.py
 - `postgres_data` — PostgreSQL data persistence
 - `redis_data` — Redis persistence
 - `chroma_data` — ChromaDB vector store persistence
+- `resume_output` — Resume generator output files
 - `./backend/data` — Mounted for user config and resume files
 
 ## CI/CD
 
 GitHub Actions runs a 3-stage pipeline on every push:
 
-1. **Backend** — Lint with ruff, type-check with mypy, run unit tests
-2. **Frontend** — Install dependencies, run Vitest
+1. **Backend** — Install uv + Python 3.13, lint with ruff, type-check with mypy, run unit tests (692 tests)
+2. **Frontend** — Install Node.js 22, run Vitest (42 tests)
 3. **Docker** (depends on both) — Validate docker-compose.yml, build all images
+
+## Development History
+
+This project was built incrementally across multiple phases:
+
+| Phase | Description | Tests Added |
+|-------|-------------|:-----------:|
+| Phase 1 — Core AI | 5-stage matching pipeline with pre-filter, embeddings, reranking, LLM scoring | 55 |
+| Phase 2 — Scraping | 8 English scrapers (JSearch, Greenhouse, Lever, Adzuna, Arbeitnow, RemoteOK, WeWorkRemotely, Workday) | 56 |
+| Phase 3 — DB & API | PostgreSQL ORM, FastAPI routers, WebSocket, ARQ worker | 47 |
+| Phase 4 — Browser Agent | LangGraph state machine, ATS strategies, human-in-the-loop interrupt | 71 |
+| Phase 5 — React Dashboard | React 19 frontend with TanStack Query, Zustand, Recharts, Tailwind CSS | 42 |
+| Chinese Pipeline | 10 Chinese scrapers, jieba ATS, BGE reranker, multilingual embeddings | 256 |
+| Resume Generator | External microservice integration, DB tracking, frontend UI | 73 |
+| Skill Market Analysis | Skill extraction, frequency/co-occurrence analysis, PDF reports, dashboard | 40 |
+| Improvement Sprint | 43 improvements across 6 sprints: security, reliability, frontend wiring, cleanup | 137 |
+
+### Improvement Sprint Details
+
+A comprehensive code review identified 43 improvements implemented across 6 sprints:
+
+1. **Critical Backend Fixes** — DB engine singleton (connection pool reuse), incremental skill extraction in worker, path traversal protection, sensitive field masking, configurable `data_dir`
+2. **Frontend Functional Fixes** — Settings page wired to API, resume file upload working, match list filters (q/location/workplace_type), co-occurrence drill-down fix, 404 catch-all route
+3. **Security Hardening** — API key authentication (`X-API-Key` header), SQL LIKE wildcard escaping, configurable CORS origins, 10 MB upload size limit, frontend sends API key
+4. **Reliability & Resilience** — Match trigger & rescore endpoints implemented, persistent httpx client for resume generator, meaningful health check (DB + Redis status), worker retry logic (max_tries=3)
+5. **Test Hardening** — Auth tests, path traversal tests, upload limit tests, input validation tests, health check tests
+6. **Cleanup & Polish** — Dead code removal, React ErrorBoundary, configurable WebSocket URL, API client delete method, QueryClient retry policy
 
 ## Tech Stack
 
@@ -743,7 +880,7 @@ GitHub Actions runs a 3-stage pipeline on every push:
 ### Infrastructure
 - **PostgreSQL 16** (primary database)
 - **Redis 7** (task queue backend)
-- **Docker Compose** (5-service deployment)
+- **Docker Compose** (6-service deployment)
 - **Nginx** (frontend reverse proxy in production)
 - **GitHub Actions** (CI/CD pipeline)
 

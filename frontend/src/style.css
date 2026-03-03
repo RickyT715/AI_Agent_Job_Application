@@ -903,6 +903,76 @@ main {
   opacity: 0.9;
 }
 
+/* ===== Resume Generator ===== */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: #fff;
+}
+
+.status-badge.pending { background-color: #f59e0b; }
+.status-badge.running { background-color: #3b82f6; }
+.status-badge.completed { background-color: #10b981; }
+.status-badge.failed { background-color: #ef4444; }
+.status-badge.unknown { background-color: #6b7280; }
+
+.resume-entry {
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.resume-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.resume-entry-meta {
+  font-size: 0.85em;
+  color: #6b7280;
+}
+
+.resume-entry-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.resume-error {
+  color: #ef4444;
+  font-size: 0.85em;
+  margin: 4px 0 0;
+}
+
+.resume-hint {
+  color: #6b7280;
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.resume-gen-error {
+  color: #ef4444;
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.resume-active-status {
+  margin-top: 12px;
+}
+
+.resume-previous {
+  margin-top: 16px;
+}
+
+.resume-previous h4 {
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .dashboard-content {

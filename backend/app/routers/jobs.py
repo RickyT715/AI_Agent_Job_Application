@@ -4,7 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth import require_api_key
 from app.core.rate_limit import limiter
+from app.core.utils import escape_like
 from app.db.session import get_db_session
 from app.models.job import Job
 from app.schemas.api import (
@@ -31,11 +33,13 @@ async def list_jobs(
     query = select(Job)
 
     if q:
+        safe_q = escape_like(q)
         query = query.where(
-            Job.title.ilike(f"%{q}%") | Job.description.ilike(f"%{q}%")
+            Job.title.ilike(f"%{safe_q}%") | Job.description.ilike(f"%{safe_q}%")
         )
     if location:
-        query = query.where(Job.location.ilike(f"%{location}%"))
+        safe_loc = escape_like(location)
+        query = query.where(Job.location.ilike(f"%{safe_loc}%"))
     if workplace_type:
         query = query.where(Job.workplace_type == workplace_type)
     if source:
@@ -73,7 +77,7 @@ async def get_job(
 
 @router.post("/scrape", response_model=TaskStatusResponse)
 @limiter.limit("10/minute")
-async def trigger_scraping(request: Request, request_body: ScrapeRequest):
+async def trigger_scraping(request: Request, request_body: ScrapeRequest, _key: str = Depends(require_api_key)):
     """Trigger a background scraping task."""
     arq_pool = getattr(request.app.state, "arq_pool", None)
     if arq_pool is None:

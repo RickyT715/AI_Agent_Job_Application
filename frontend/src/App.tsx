@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Link, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { DashboardPage } from "./pages/DashboardPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { SkillAnalysisPage } from "./pages/SkillAnalysisPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: false },
+    queries: { retry: 2, staleTime: 30_000 },
   },
 });
 
@@ -21,6 +23,9 @@ function NavBar() {
       <Link to="/settings" className={location.pathname === "/settings" ? "active" : ""}>
         Settings
       </Link>
+      <Link to="/skill-analysis" className={location.pathname === "/skill-analysis" ? "active" : ""}>
+        Skill Market
+      </Link>
     </nav>
   );
 }
@@ -32,10 +37,14 @@ export function App() {
         <div className="app">
           <NavBar />
           <main>
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Routes>
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/skill-analysis" element={<SkillAnalysisPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </ErrorBoundary>
           </main>
         </div>
       </BrowserRouter>

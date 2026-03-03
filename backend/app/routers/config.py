@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import MatchingWeights, UserConfig, get_settings, load_user_config
+from app.core.auth import require_api_key
 from app.db.session import get_db_session
 from app.models.user import User
 from app.schemas.api import (
@@ -14,6 +15,8 @@ from app.schemas.api import (
 )
 
 router = APIRouter(prefix="/api/config", tags=["config"])
+
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 @router.get("/preferences", response_model=PreferencesResponse)
@@ -52,13 +55,13 @@ def _config_to_response(config: UserConfig) -> PreferencesResponse:
         recruitment_type=config.recruitment_type,
         graduation_year=config.graduation_year,
         mokahr_org_ids=config.mokahr_org_ids,
-        alibaba_app_key=config.alibaba_app_key,
-        boss_zhipin_cookie=config.boss_zhipin_cookie,
+        alibaba_app_key="***" if config.alibaba_app_key else "",
+        boss_zhipin_cookie="***" if config.boss_zhipin_cookie else "",
     )
 
 
 @router.put("/preferences", response_model=PreferencesResponse)
-async def update_preferences(request: PreferencesUpdateRequest):
+async def update_preferences(request: PreferencesUpdateRequest, _key: str = Depends(require_api_key)):
     """Update user preferences.
 
     Validates the new preferences and saves to YAML config.
@@ -74,7 +77,7 @@ async def update_preferences(request: PreferencesUpdateRequest):
         try:
             MatchingWeights(**update_data["weights"])
         except ValueError as e:
-            raise HTTPException(status_code=422, detail=str(e))
+            raise HTTPException(status_code=422, detail=str(e)) from e
 
     # Handle anthropic_base_url separately (infrastructure setting)
     if "anthropic_base_url" in update_data:
@@ -87,7 +90,7 @@ async def update_preferences(request: PreferencesUpdateRequest):
     try:
         updated_config = UserConfig(**merged)
     except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e)) from e
 
     # Save to YAML
     import yaml
@@ -101,6 +104,7 @@ async def update_preferences(request: PreferencesUpdateRequest):
 async def upload_resume(
     file: UploadFile,
     db: AsyncSession = Depends(get_db_session),
+    _key: str = Depends(require_api_key),
 ):
     """Upload a resume file (text/plain or PDF).
 
@@ -110,6 +114,8 @@ async def upload_resume(
         raise HTTPException(status_code=400, detail="No file provided")
 
     content = await file.read()
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File too large (max 10 MB)")
 
     # For now, handle plain text only
     # TODO: Add PDF extraction support
@@ -144,6 +150,7 @@ async def upload_resume(
 async def upload_linkedin_profile(
     file: UploadFile,
     db: AsyncSession = Depends(get_db_session),
+    _key: str = Depends(require_api_key),
 ):
     """Upload a LinkedIn PDF export to extract profile data.
 
@@ -154,6 +161,8 @@ async def upload_linkedin_profile(
         raise HTTPException(status_code=400, detail="Please upload a PDF file")
 
     content = await file.read()
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File too large (max 10 MB)")
 
     try:
         from app.services.profile.linkedin_parser import parse_linkedin_pdf, profile_to_resume_text
@@ -161,7 +170,7 @@ async def upload_linkedin_profile(
         profile = parse_linkedin_pdf(content)
         resume_text = profile_to_resume_text(profile)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to parse LinkedIn PDF: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to parse LinkedIn PDF: {e}") from e
 
     # Store in first user record (single-user mode)
     result = await db.execute(select(User).limit(1))

@@ -1,4 +1,5 @@
 import type { MatchResponse } from "../types/api";
+import { ResumeGenerator } from "./ResumeGenerator";
 import { ScoreRadarChart } from "./ScoreRadarChart";
 import { SkillGapAnalysis } from "./SkillGapAnalysis";
 
@@ -55,6 +56,8 @@ export function MatchDetail({ match, onStartAgent }: MatchDetailProps) {
           </ul>
         </div>
       )}
+
+      <ResumeGenerator match={match} />
 
       {onStartAgent && (
         <button onClick={onStartAgent} className="start-agent-btn">

@@ -11,8 +11,9 @@ Simulates the entire user journey through the system:
   8. Generate cover letter
   9. Start browser agent, review, approve
   10. Verify application recorded
+  11. Generate tailored resume (mocked external microservice)
 
-All external services (LLMs, scraper APIs) are mocked.
+All external services (LLMs, scraper APIs, resume generator) are mocked.
 All internal code paths (DB, routers, services, agent graph) are real.
 """
 
@@ -895,9 +896,11 @@ class TestStep9_DockerConfig:
         assert "frontend" in services
         assert "db" in services
         assert "redis" in services
+        assert "resume-generator" in services
 
-        # Backend depends on healthy DB
+        # Backend depends on healthy DB and resume generator
         assert services["backend"]["depends_on"]["db"]["condition"] == "service_healthy"
+        assert services["backend"]["depends_on"]["resume-generator"]["condition"] == "service_healthy"
 
     def test_github_actions_workflow_exists(self):
         """CI workflow file exists."""
@@ -914,3 +917,121 @@ class TestStep9_DockerConfig:
         assert "backend" in config["jobs"]
         assert "frontend" in config["jobs"]
         assert "docker" in config["jobs"]
+
+
+# ---------------------------------------------------------------------------
+# Phase 10: Tailored resume generation (mocked external microservice)
+# ---------------------------------------------------------------------------
+
+class TestStep10_ResumeGeneration:
+    """Step 10: Generate tailored resume via external service (mocked)."""
+
+    async def test_health_check_not_configured(self, api_client: AsyncClient):
+        """Health endpoint returns unavailable when not configured."""
+        with patch("app.routers.resumes.get_settings") as mock_settings:
+            mock_settings.return_value.resume_generator_url = ""
+            resp = await api_client.get("/api/resumes/health")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["available"] is False
+
+    async def test_health_check_configured(self, api_client: AsyncClient):
+        """Health endpoint returns available when service is reachable."""
+        with (
+            patch("app.routers.resumes.get_settings") as mock_settings,
+            patch("app.routers.resumes.ResumeGeneratorClient") as mock_cls,
+        ):
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            mock_instance = AsyncMock()
+            mock_instance.health_check.return_value = {"status": "healthy"}
+            mock_cls.return_value = mock_instance
+            resp = await api_client.get("/api/resumes/health")
+        assert resp.status_code == 200
+        assert resp.json()["available"] is True
+
+    async def test_generate_resume_for_match(self, api_client: AsyncClient, db_factory):
+        """Full flow: seed match → generate resume → check status → list by match."""
+        # Seed user + job + match
+        async with db_factory() as session:
+            user = User(
+                email="resume@test.com",
+                full_name="Resume User",
+                resume_text=SAMPLE_RESUME,
+            )
+            session.add(user)
+            await session.flush()
+
+            job = Job(
+                external_id="resume-job-001",
+                source="test",
+                title="Senior Python Engineer",
+                company="CloudScale Inc.",
+                description="Build scalable APIs with FastAPI, PostgreSQL.",
+                location="Remote",
+            )
+            session.add(job)
+            await session.flush()
+
+            match = MatchResult(
+                user_id=user.id,
+                job_id=job.id,
+                overall_score=8.5,
+                score_breakdown={"skills": 9, "experience": 8},
+                reasoning="Strong Python match",
+                strengths=["Python", "FastAPI"],
+                missing_skills=["Kubernetes"],
+            )
+            session.add(match)
+            await session.commit()
+            match_id = match.id
+
+        # Generate resume
+        task_resp = {"id": "ext-resume-001", "status": "running"}
+        with (
+            patch("app.routers.resumes.get_settings") as mock_settings,
+            patch("app.routers.resumes.ResumeGeneratorClient") as mock_cls,
+        ):
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            mock_instance = AsyncMock()
+            mock_instance.sync_user_info.return_value = {"status": "ok"}
+            mock_instance.create_and_start.return_value = task_resp
+            mock_cls.return_value = mock_instance
+            resp = await api_client.post(
+                "/api/resumes/generate",
+                json={"match_id": match_id},
+            )
+        assert resp.status_code == 200
+        gen_data = resp.json()
+        assert gen_data["status"] == "running"
+        assert gen_data["external_task_id"] == "ext-resume-001"
+        resume_id = gen_data["id"]
+
+        # Check status (still running)
+        with (
+            patch("app.routers.resumes.get_settings") as mock_settings,
+            patch("app.routers.resumes.ResumeGeneratorClient") as mock_cls,
+        ):
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            mock_instance = AsyncMock()
+            mock_instance.get_task_status.return_value = {"status": "running"}
+            mock_cls.return_value = mock_instance
+            resp = await api_client.get(f"/api/resumes/{resume_id}/status")
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "running"
+
+        # List by match — should have 1 record
+        resp = await api_client.get(f"/api/resumes/by-match/{match_id}")
+        assert resp.status_code == 200
+        records = resp.json()
+        assert len(records) == 1
+        assert records[0]["external_task_id"] == "ext-resume-001"
+
+    async def test_generate_resume_match_not_found(self, api_client: AsyncClient):
+        """Generating for a nonexistent match returns 404."""
+        with patch("app.routers.resumes.get_settings") as mock_settings:
+            mock_settings.return_value.resume_generator_url = "http://fake:8000"
+            resp = await api_client.post(
+                "/api/resumes/generate",
+                json={"match_id": 99999},
+            )
+        assert resp.status_code == 404

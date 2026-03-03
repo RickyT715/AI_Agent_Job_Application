@@ -110,3 +110,77 @@ export interface ResumeUploadResponse {
   message: string;
   character_count: number;
 }
+
+// ---------------------------------------------------------------------------
+// Resume Generator (external microservice)
+// ---------------------------------------------------------------------------
+
+export interface ResumeGenerateRequest {
+  match_id: number;
+  generate_cover_letter?: boolean;
+  template_id?: string | null;
+  language?: string;
+  experience_level?: string;
+  provider?: string;
+}
+
+export interface ResumeGenerateResponse {
+  id: number;
+  match_id: number;
+  external_task_id: string;
+  status: string;
+  created_at: string | null;
+}
+
+export interface ResumeStatusResponse {
+  id: number;
+  match_id: number;
+  external_task_id: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  resume_pdf_path: string | null;
+  cover_letter_pdf_path: string | null;
+  cover_letter_text: string | null;
+  error_message: string | null;
+  language: string;
+  provider: string;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface ResumeGeneratorHealthResponse {
+  available: boolean;
+  detail: string;
+}
+
+// ---------------------------------------------------------------------------
+// Skill Market Analysis
+// ---------------------------------------------------------------------------
+
+export interface SkillFrequencyResponse {
+  skill_name: string;
+  category: string;
+  count: number;
+  percentage: number;
+}
+
+export interface SkillCoOccurrenceResponse {
+  skill_a: string;
+  skill_b: string;
+  co_count: number;
+  percentage: number;
+}
+
+export interface TitleGroupResponse {
+  title: string;
+  job_count: number;
+}
+
+export interface SkillMarketReportResponse {
+  title_pattern: string;
+  total_jobs: number;
+  top_skills: SkillFrequencyResponse[];
+  technical_skills: SkillFrequencyResponse[];
+  soft_skills: SkillFrequencyResponse[];
+  co_occurrences: SkillCoOccurrenceResponse[];
+  category_breakdown: Record<string, number>;
+}

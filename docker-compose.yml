@@ -34,6 +34,26 @@ services:
       retries: 5
 
   # ---------------------------------------------------------------------------
+  # Resume Generator (external microservice)
+  # ---------------------------------------------------------------------------
+  resume-generator:
+    build:
+      context: ../Resume_and_Cover_Letter_Generator/self_use/resume-generator/backend
+    ports:
+      - "48765:8000"
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - resume_output:/app/output
+
+  # ---------------------------------------------------------------------------
   # FastAPI backend
   # ---------------------------------------------------------------------------
   backend:
@@ -48,6 +68,7 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/job_agent
       REDIS_URL: redis://redis:6379/0
+      RESUME_GENERATOR_URL: http://resume-generator:8000
     volumes:
       - chroma_data:/app/data/chroma_db
       - ./backend/data:/app/data
@@ -55,6 +76,8 @@ services:
       db:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      resume-generator:
         condition: service_healthy
 
   # ---------------------------------------------------------------------------
@@ -70,6 +93,7 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/job_agent
       REDIS_URL: redis://redis:6379/0
+      RESUME_GENERATOR_URL: http://resume-generator:8000
     volumes:
       - chroma_data:/app/data/chroma_db
       - ./backend/data:/app/data
@@ -77,6 +101,8 @@ services:
       db:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      resume-generator:
         condition: service_healthy
 
   # ---------------------------------------------------------------------------
@@ -95,3 +121,4 @@ volumes:
   postgres_data:
   redis_data:
   chroma_data:
+  resume_output:

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { PreferencesResponse } from "../types/api";
 
+const API_BASE = "/api";
+
 interface PreferencesFormProps {
   preferences: PreferencesResponse;
   onSave: (updates: Partial<PreferencesResponse>) => void;
@@ -52,6 +54,9 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
     preferences.weights ?? { skills: 0.3, experience: 0.25, education: 0.15, location: 0.15, salary: 0.15 }
   );
   const [resumeFile, setResumeFile] = useState<string | null>(null);
+  const [resumeUploading, setResumeUploading] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [resumeCharCount, setResumeCharCount] = useState<number | null>(null);
   const [employmentTypes, setEmploymentTypes] = useState<string[]>(preferences.employment_types ?? ["FULLTIME"]);
   const [datePosted, setDatePosted] = useState(preferences.date_posted ?? "month");
   const [salaryCurrency, setSalaryCurrency] = useState(preferences.salary_currency ?? "USD");
@@ -96,10 +101,33 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
     setWeights((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleResumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setResumeUploading(true);
+    setResumeError(null);
+    setResumeCharCount(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const resp = await fetch(`${API_BASE}/config/resume`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!resp.ok) {
+        const detail = await resp.text();
+        throw new Error(detail || "Upload failed");
+      }
+      const data = await resp.json();
       setResumeFile(file.name);
+      setResumeCharCount(data.character_count ?? null);
+    } catch (err) {
+      setResumeError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setResumeUploading(false);
     }
   };
 
@@ -435,11 +463,29 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
             {resumeFile ? (
               <div className="resume-status">
                 Uploaded: {resumeFile}
+                {resumeCharCount !== null && (
+                  <span className="hint"> ({resumeCharCount} characters)</span>
+                )}
+                <label className="upload-area" style={{ marginTop: "0.5rem" }}>
+                  <span>Click to upload a different resume</span>
+                  <input
+                    type="file"
+                    accept=".pdf,.docx,.txt"
+                    onChange={handleResumeChange}
+                    style={{ display: "none" }}
+                    aria-label="Upload resume"
+                    disabled={resumeUploading}
+                  />
+                </label>
               </div>
             ) : (
               <label className="upload-area">
                 <span className="upload-icon">+</span>
-                <span>Click to upload your resume (PDF, DOCX, TXT)</span>
+                <span>
+                  {resumeUploading
+                    ? "Uploading..."
+                    : "Click to upload your resume (PDF, DOCX, TXT)"}
+                </span>
                 <span className="hint">Max 10 MB</span>
                 <input
                   type="file"
@@ -447,8 +493,12 @@ export function PreferencesForm({ preferences, onSave }: PreferencesFormProps) {
                   onChange={handleResumeChange}
                   style={{ display: "none" }}
                   aria-label="Upload resume"
+                  disabled={resumeUploading}
                 />
               </label>
+            )}
+            {resumeError && (
+              <p className="save-error">{resumeError}</p>
             )}
           </div>
         </div>

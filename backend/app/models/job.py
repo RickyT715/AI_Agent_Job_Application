@@ -35,6 +35,9 @@ class Job(Base, TimestampMixin):
     applications: Mapped[list["Application"]] = relationship(
         back_populates="job", cascade="all, delete-orphan"
     )
+    skills: Mapped[list["JobSkill"]] = relationship(
+        back_populates="job", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (
         Index("ix_job_external_source", "external_id", "source", unique=True),

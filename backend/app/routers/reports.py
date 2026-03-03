@@ -1,6 +1,7 @@
 """Report generation API endpoints."""
 
 import logging
+import re
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.config import get_settings
 from app.db.session import get_db_session
 from app.models.cover_letter import CoverLetter
 from app.models.job import Job
@@ -27,7 +29,12 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
-REPORTS_DIR = Path("data/reports")
+_REPORT_ID_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
+
+
+def _get_reports_dir() -> Path:
+    """Return the reports directory derived from settings.data_dir."""
+    return get_settings().data_dir / "reports"
 
 
 @router.post("/generate", response_model=TaskStatusResponse)
@@ -83,8 +90,9 @@ async def generate_report(
         content = html.encode("utf-8")
         ext = ".html"
 
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    report_path = REPORTS_DIR / f"{report_id}{ext}"
+    reports_dir = _get_reports_dir()
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    report_path = reports_dir / f"{report_id}{ext}"
     report_path.write_bytes(content)
 
     return TaskStatusResponse(
@@ -97,11 +105,15 @@ async def generate_report(
 @router.get("/{report_id}/download")
 async def download_report(report_id: str):
     """Download a generated PDF/HTML report."""
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    if not _REPORT_ID_RE.match(report_id):
+        raise HTTPException(status_code=400, detail="Invalid report ID format")
+
+    reports_dir = _get_reports_dir()
+    reports_dir.mkdir(parents=True, exist_ok=True)
 
     # Try PDF first, then HTML
-    pdf_path = REPORTS_DIR / f"{report_id}.pdf"
-    html_path = REPORTS_DIR / f"{report_id}.html"
+    pdf_path = reports_dir / f"{report_id}.pdf"
+    html_path = reports_dir / f"{report_id}.html"
 
     if pdf_path.exists():
         return Response(

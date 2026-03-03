@@ -6,7 +6,7 @@ import { MatchDetail } from "../components/MatchDetail";
 
 export function DashboardPage() {
   const { filters, selectedJobId, setFilters, setSelectedJob } = useAppStore();
-  const { data, isLoading, error } = useMatches(filters.min_score);
+  const { data, isLoading, error } = useMatches(filters);
 
   const matches = data?.items ?? [];
   const selectedMatch = matches.find((m) => m.job?.id === selectedJobId);

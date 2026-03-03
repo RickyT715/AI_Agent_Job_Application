@@ -5,14 +5,16 @@ import os
 import time
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.core.rate_limit import limiter
-from app.routers import agent, config, jobs, matches, reports
+from app.db.session import get_db_session
+from app.routers import agent, config, jobs, matches, reports, resumes, skill_analysis
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +106,7 @@ async def log_requests(request: Request, call_next):
 # CORS for frontend dev server
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=get_settings().cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -115,10 +117,37 @@ app.include_router(jobs.router)
 app.include_router(matches.router)
 app.include_router(agent.router)
 app.include_router(reports.router)
+app.include_router(resumes.router)
 app.include_router(config.router)
+app.include_router(skill_analysis.router)
 
 
 @app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy"}
+async def health_check(request: Request, db: AsyncSession = Depends(get_db_session)):
+    """Health check endpoint with database and Redis status."""
+    checks: dict[str, str] = {"api": "healthy"}
+
+    # Check database (uses DI, so test overrides apply)
+    try:
+        from sqlalchemy import text
+
+        await db.execute(text("SELECT 1"))
+        checks["database"] = "healthy"
+    except Exception:
+        checks["database"] = "unhealthy"
+
+    # Check Redis / ARQ pool
+    arq_pool = getattr(request.app.state, "arq_pool", None)
+    if arq_pool is None:
+        checks["redis"] = "unavailable"
+    else:
+        checks["redis"] = "healthy"
+
+    # "unhealthy" = configured but broken → 503; "unavailable" = not configured → ok
+    has_unhealthy = any(v == "unhealthy" for v in checks.values())
+    overall = "degraded" if has_unhealthy else "healthy"
+    status_code = 503 if has_unhealthy else 200
+    return JSONResponse(
+        content={"status": overall, "checks": checks},
+        status_code=status_code,
+    )

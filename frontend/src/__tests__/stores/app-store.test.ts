@@ -7,7 +7,6 @@ describe("useAppStore", () => {
     useAppStore.setState({
       filters: {},
       selectedJobId: null,
-      sidebarOpen: true,
     });
   });
 
@@ -40,11 +39,4 @@ describe("useAppStore", () => {
     expect(useAppStore.getState().selectedJobId).toBeNull();
   });
 
-  it("toggleSidebar toggles state", () => {
-    expect(useAppStore.getState().sidebarOpen).toBe(true);
-    useAppStore.getState().toggleSidebar();
-    expect(useAppStore.getState().sidebarOpen).toBe(false);
-    useAppStore.getState().toggleSidebar();
-    expect(useAppStore.getState().sidebarOpen).toBe(true);
-  });
 });

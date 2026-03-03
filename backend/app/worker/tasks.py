@@ -17,6 +17,7 @@ from app.schemas.matching import JobPosting
 from app.services.agent.graph import compile_agent_graph
 from app.services.agent.state import make_initial_state
 from app.services.matching.pipeline import MatchingPipeline
+from app.services.matching.skill_persistence import extract_and_persist_skills
 from app.services.scraping.api.jsearch import JSearchScraper
 from app.services.scraping.deduplicator import JobDeduplicator
 from app.services.scraping.orchestrator import ScrapingOrchestrator
@@ -174,7 +175,8 @@ async def run_scraping(
             "errors": result.errors,
         }
 
-    # Persist scraped jobs to database
+    # Persist scraped jobs to database, track new IDs
+    new_job_ids: list[int] = []
     async with get_db_session_ctx() as db:
         for posting in all_jobs:
             # Check for existing job by external_id + source
@@ -205,6 +207,17 @@ async def run_scraping(
                 raw_data=posting.raw_data,
             )
             db.add(job)
+            await db.flush()
+            new_job_ids.append(job.id)
+
+    # Extract and persist skills for newly added jobs only
+    if new_job_ids:
+        async with get_db_session_ctx() as db:
+            for job_id in new_job_ids:
+                job = await db.get(Job, job_id)
+                if job:
+                    await extract_and_persist_skills(db, job)
+        logger.info(f"Extracted skills for {len(new_job_ids)} new jobs")
 
     logger.info(f"Scraping complete: {results}")
     return results

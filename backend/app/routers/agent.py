@@ -1,7 +1,8 @@
 """Browser agent API and WebSocket endpoints."""
 
-from fastapi import APIRouter, HTTPException, Request, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, WebSocketDisconnect
 
+from app.core.auth import require_api_key
 from app.core.rate_limit import limiter
 from app.core.websocket import manager
 from app.schemas.api import (
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/api/agent", tags=["agent"])
 
 @router.post("/start", response_model=TaskStatusResponse)
 @limiter.limit("10/minute")
-async def start_agent(request: Request, request_body: AgentStartRequest):
+async def start_agent(request: Request, request_body: AgentStartRequest, _key: str = Depends(require_api_key)):
     """Start the browser agent for a job application.
 
     Enqueues an ARQ task and returns a task/thread ID for tracking.
@@ -32,7 +33,7 @@ async def start_agent(request: Request, request_body: AgentStartRequest):
 
 
 @router.post("/resume/{thread_id}", response_model=TaskStatusResponse)
-async def resume_agent(thread_id: str, request: AgentResumeRequest):
+async def resume_agent(thread_id: str, request: AgentResumeRequest, _key: str = Depends(require_api_key)):
     """Resume an interrupted agent with a human decision.
 
     Actions: approve, reject, edit

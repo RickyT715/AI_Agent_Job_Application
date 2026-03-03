@@ -76,5 +76,5 @@ jobs:
       - name: Validate docker-compose.yml
         run: docker compose config --quiet
 
-      - name: Build all images
-        run: docker compose build
+      - name: Build project images (excludes external resume-generator)
+        run: docker compose build backend worker frontend

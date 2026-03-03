@@ -4,10 +4,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from pydantic import SecretStr
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.config import Settings, get_settings, reset_settings
+from app.config import reset_settings
 from app.db.session import get_db_session
 from app.main import app
 from app.models.base import Base

@@ -1,12 +1,11 @@
 """Tests for sensitive field masking in the config preferences endpoint."""
 
-import tempfile
 from pathlib import Path
 
 import yaml
 from httpx import AsyncClient
 
-from app.config import get_settings, reset_settings
+from app.config import get_settings
 
 
 class TestSensitiveFieldMasking:

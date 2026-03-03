@@ -61,7 +61,10 @@ def _config_to_response(config: UserConfig) -> PreferencesResponse:
 
 
 @router.put("/preferences", response_model=PreferencesResponse)
-async def update_preferences(request: PreferencesUpdateRequest, _key: str = Depends(require_api_key)):
+async def update_preferences(
+    request: PreferencesUpdateRequest,
+    _key: str = Depends(require_api_key),
+):
     """Update user preferences.
 
     Validates the new preferences and saves to YAML config.

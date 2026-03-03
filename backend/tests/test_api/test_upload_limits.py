@@ -1,6 +1,5 @@
 """Tests for upload size limits on resume and linkedin-profile endpoints."""
 
-import pytest
 from httpx import AsyncClient
 
 

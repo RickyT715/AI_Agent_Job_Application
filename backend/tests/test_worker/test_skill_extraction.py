@@ -4,7 +4,7 @@ Verifies that run_scraping correctly tracks new job IDs and only calls
 extract_and_persist_skills for freshly inserted jobs.
 """
 
-from unittest.mock import AsyncMock, MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from app.schemas.matching import JobPosting
 from app.worker.tasks import run_scraping

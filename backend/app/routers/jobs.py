@@ -77,7 +77,11 @@ async def get_job(
 
 @router.post("/scrape", response_model=TaskStatusResponse)
 @limiter.limit("10/minute")
-async def trigger_scraping(request: Request, request_body: ScrapeRequest, _key: str = Depends(require_api_key)):
+async def trigger_scraping(
+    request: Request,
+    request_body: ScrapeRequest,
+    _key: str = Depends(require_api_key),
+):
     """Trigger a background scraping task."""
     arq_pool = getattr(request.app.state, "arq_pool", None)
     if arq_pool is None:

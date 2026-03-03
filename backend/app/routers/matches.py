@@ -100,7 +100,11 @@ async def get_match(
 
 
 @router.post("/run", response_model=TaskStatusResponse)
-async def trigger_matching(request: Request, body: MatchRunRequest | None = None, _key: str = Depends(require_api_key)):
+async def trigger_matching(
+    request: Request,
+    body: MatchRunRequest | None = None,
+    _key: str = Depends(require_api_key),
+):
     """Trigger the matching pipeline as a background task."""
     arq_pool = getattr(request.app.state, "arq_pool", None)
     if arq_pool is None:
